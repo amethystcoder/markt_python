@@ -1,5 +1,6 @@
 from db import db
 
+
 class Buyer(db.Model):
     __tablename__ = "buyers"
 
