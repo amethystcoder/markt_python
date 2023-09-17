@@ -66,6 +66,20 @@ To set up the development environment and run the Flask application locally, fol
 
 6. Access the application in your web browser at `http://localhost:5000`.
 
+## API Documentation
+
+You can access the API documentation to explore available endpoints and their usage.
+
+- **Swagger UI:** The API documentation is available through Swagger UI. To access it, follow these steps:
+
+  1. Start the application as described in the [Getting Started](#getting-started) section.
+
+  2. Open your web browser and navigate to `http://localhost:5000/swagger-ui`.
+
+The API documentation provides details about available endpoints, request and response schemas, and allows you to interact with the API.
+
+**Note:** This documentation is auto-generated using Flask-Smorest and provides a comprehensive view of the API's capabilities.
+
 ## Contribution
 
 Contributions to the project are welcome! If you would like to contribute code, please follow these steps:
