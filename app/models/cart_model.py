@@ -17,3 +17,11 @@ class Cart(db.Model):
     # Define relationships
     buyer = db.relationship("Buyer", back_populates="cart_items")
     product = db.relationship("Product", back_populates="carts")
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
