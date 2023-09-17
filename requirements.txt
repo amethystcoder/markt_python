@@ -1,0 +1,7 @@
+FLask
+Flask-Smorest
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Socketio
+marshmallow
+python-dotenv
