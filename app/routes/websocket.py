@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,session
+from flask import Flask
 from flask_socketio import SocketIO, emit, join_room
 import json
 from ..models import chat_model
@@ -19,7 +19,11 @@ def on_connection_established():
 @socketio.on('message')
 def message_parse(message):
     '''
-     
+    data from front-end :: data in back-end
+     message :: message
+     send_date_and_time :: date_created
+     sent_to :: recipent
+     sent_from :: sender
     '''
     decoded_message = json.loads(message)
     if decoded_message is not None:
@@ -32,9 +36,9 @@ def message_parse(message):
                 case 'message':
                     emit('message',decoded_message,room=decoded_message['sent_to'])
                     #TODO: store sent message to the database
-                    chat = chat_model.Chat()
-                    
-                    pass
+                    chat = chat_model.Chat(decoded_message['message'],decoded_message['send_date_and_time']
+                                           ,decoded_message['sent_to'],decoded_message['sent_from'])
+                    chat.save_to_db()
                 case _:
                     pass
         else:
@@ -48,7 +52,6 @@ def handle_error():
 @socketio.on("close")
 def close_connection(user_id):
     socketio.close_room(user_id)
-    pass
 
 if __name__ == '__main__':
     socketio.run(ChatWSapp,port=3000)
