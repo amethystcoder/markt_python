@@ -21,11 +21,11 @@ def arrange_chats(chats, user_id):
                         if arranged_message['user_id'] == chat.recipent or arranged_message['user_id'] == chat.sender:
                             arranged_message['messages'].append(
                                 {
-                                    "sent_to":chat[5],
-                                    "sent_from":chat[6],
+                                    "sent_to":chat.recipent,
+                                    "sent_from":chat.sender,
                                     "status":"",
-                                    "send_date_and_time":chat[4],
-                                    "message":chat[3]
+                                    "send_date_and_time":chat.date_created,
+                                    "message":chat.message
                                 }
                             )
                             added = True
@@ -50,11 +50,11 @@ def arrange_chats(chats, user_id):
                             
                         new_message_bundle['messages'].append(
                             {
-                                "sent_to":chat[5],
-                                "sent_from":chat[6],
+                                "sent_to":chat.recipent,
+                                "sent_from":chat.sender,
                                 "status":"",
-                                "send_date_and_time":chat[4],
-                                "message":chat[3]
+                                "send_date_and_time":chat.date_created,
+                                "message":chat.message
                             }
                         )
                         arranged_messages.append(new_message_bundle)
