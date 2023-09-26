@@ -1,3 +1,5 @@
+from .chat_model import Chat
+
 def arrange_chats(chats, user_id):
         '''arranges all unarranged chats of a particular user into bundles of 
         messages
@@ -10,13 +12,13 @@ def arrange_chats(chats, user_id):
             for chat in chats:
                 #A flag that determines whether a message has been added to the arranged_message
                 added = False
-                if type(chat) == tuple:
+                if type(chat) == Chat:
                     ''' The message bundle is a packet of a particular user(buyer/seller) the 
                             user with the user_id in the function arg has messaged or chatted with.
                             The bundle contains details about that particular user, and an array of 
                             the messages between the user and the user with the user_id in the function arg'''
                     for arranged_message in arranged_messages:
-                        if arranged_message['user_id'] == chat[5] or arranged_message['user_id'] == chat[6]:
+                        if arranged_message['user_id'] == chat.recipent or arranged_message['user_id'] == chat.sender:
                             arranged_message['messages'].append(
                                 {
                                     "sent_to":chat[5],
@@ -41,10 +43,10 @@ def arrange_chats(chats, user_id):
                         }
                         
                         #setting the user_id of the dictionary chat bundle
-                        if user_id == chat[5]:
-                            new_message_bundle['user_id'] = chat[6]
-                        elif user_id == chat[6]:
-                            new_message_bundle['user_id'] = chat[5]
+                        if user_id == chat.recipent:
+                            new_message_bundle['user_id'] = chat.sender
+                        elif user_id == chat.sender:
+                            new_message_bundle['user_id'] = chat.recipent
                             
                         new_message_bundle['messages'].append(
                             {
