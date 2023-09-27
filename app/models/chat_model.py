@@ -14,7 +14,7 @@ class Chat(db.Model):
     unique_id = db.Column(db.String(400), nullable=False, unique=True)
     #The message sent  
     message = db.Column(db.String(400), nullable=False)
-    date_created = db.Column(db.TIMESTAMP, nullable=False)
+    date_created = db.Column(db.Date, nullable=False)
     recipent = db.Column(db.String(400), nullable=False)
     #The user who sent the chat
     sender = db.Column(db.String(400), nullable=False)
@@ -30,17 +30,23 @@ class Chat(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def retrieve_all_chats_using_user_id(self,user_id):
+    def retrieve_all_chats_using_user_id(self,user_id,date_start,date_end):
         """Gets all messages connected to a user(buyer or seller).
         gets all messages, chats e.t.c from the database where the 
-        sender or recipent of the chat is the user with the `user_id`
+        sender or recipent of the chat is the user with the `user_id` 
+        from a particular date to another
 
         Args:
             user_id (String):
             The specified unique_id of the user(buyer/seller)
         """
         return arrange_chats(
-            db.session.query(Chat).filter(Chat.sender == user_id or Chat.recipent == user_id).all()
+            db.session.query(Chat).filter(Chat.sender == user_id or Chat.recipent == user_id)
+            .filter(
+                Chat.date_created >= date(date_start['year'],date_start['month'],date_start['day']) 
+                and
+                Chat.date_created <= date(date_end['year'],date_end['month'],date_end['day']) 
+                     ).order_by(Chat.date_created.asc()).all()
             )
     
     def retrieve_chats_in_date_packets_using_user_id(self,sender_id,recipent_id,date_start,date_end):
@@ -58,7 +64,7 @@ class Chat(db.Model):
                 Chat.date_created >= date(date_start['year'],date_start['month'],date_start['day']) 
                 and
                 Chat.date_created <= date(date_end['year'],date_end['month'],date_end['day']) 
-                     ).all()
+                     ).order_by(Chat.date_created.asc()).all()
 
     def delete_from_db(self):
         db.session.delete(self)
