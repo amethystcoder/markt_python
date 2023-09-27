@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit, join_room
 import json
-from ..models import chat_model
+from .models import chat_model
 
 ChatWSapp = Flask(__name__)
 socketio = SocketIO(ChatWSapp)
@@ -52,6 +52,7 @@ def handle_error():
 @socketio.on("close")
 def close_connection(user_id):
     socketio.close_room(user_id)
+    emit('close',{'message':'closed chat'})
 
 if __name__ == '__main__':
     socketio.run(ChatWSapp,port=3000)
