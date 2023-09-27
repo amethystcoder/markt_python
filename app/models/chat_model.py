@@ -1,9 +1,10 @@
 from db import db
+from datetime import date
 from .arrange_chats import arrange_chats
 
 class Chat(db.Model):
     """Controls all database crud operations related to user chats 
-      """
+    """
     
     __tablename__ = "chats"
 
@@ -35,14 +36,26 @@ class Chat(db.Model):
         sender or recipent of the chat is the user with the `user_id`
 
         Args:
-            user_id (String): _description_
+            user_id (String):
             The specified unique_id of the user(buyer/seller)
         """
-        return arrange_chats(db.session.query(Chat).filter(Chat.sender == user_id or Chat.recipent == user_id))
+        return arrange_chats(
+            db.session.query(Chat).filter(Chat.sender == user_id or Chat.recipent == user_id).all()
+            )
     
-    def retrieve_chats_in_date_packets_using_user_id(self,user_id):
-        return db.session.query(Chat).get({'sent_from':user_id})
+    def retrieve_chats_in_date_packets_using_user_id(self,sender_id,recipent_id,date):
+        ''' 
+        This function retrieves chats between two users from a particular date to another
+        sender_id is the id of one of the users
+        recipent_id is the id of the other user
+        
+        '''
+        return db.session.query(Chat).filter(
+            Chat.sender == sender_id or Chat.recipent == sender_id
+            or Chat.sender == recipent_id or Chat.recipent == recipent_id
+            ).filter(Chat.date_created == '').all()
 
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+
