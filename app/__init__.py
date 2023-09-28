@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_socketio import SocketIO  # Assuming you will use Flask-SocketIO for chat
 import os
 
-db = SQLAlchemy()
+from db import db 
 migrate = Migrate()
 socketio = SocketIO()
 
