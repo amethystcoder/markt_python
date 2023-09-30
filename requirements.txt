@@ -3,5 +3,6 @@ Flask-Smorest
 Flask-SQLAlchemy
 Flask-Migrate
 Flask-Socketio
+passlib
 marshmallow
 python-dotenv
