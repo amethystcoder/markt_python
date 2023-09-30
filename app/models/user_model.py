@@ -1,4 +1,4 @@
-from db import db
+nofrom db import db
 from passlib.hash import pbkdf2_sha256
 
 
@@ -7,7 +7,6 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     unique_id = db.Column(db.String(400), nullable=False, unique=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     profile_picture = db.Column(db.String(200))
