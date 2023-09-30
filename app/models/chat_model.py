@@ -1,6 +1,6 @@
 from db import db
 from datetime import date
-from .arrange_chats import arrange_chats
+from .group_chats import group_chats
 
 class Chat(db.Model):
     """Controls all database crud operations related to user chats 
@@ -40,7 +40,7 @@ class Chat(db.Model):
             user_id (String):
             The specified unique_id of the user(buyer/seller)
         """
-        return arrange_chats(
+        return group_chats(
             db.session.query(Chat).filter(Chat.sender == user_id or Chat.recipent == user_id)
             .filter(
                 Chat.date_created >= date(date_start['year'],date_start['month'],date_start['day']) 
