@@ -1,21 +1,30 @@
 from .chat_model import Chat
+from .user_model import User
 
 
-def group_chats(chats, user_id):
-    """Arranges all unarranged chats of a particular user into bundles of messages.
+def group_chats(user_id):
+    """Groups all ungrouped chats of a particular user into bundles of messages.
 
-    `chats` is a list of objects of type chat.
-    `user_id` is the unique_id of the chat sender.
+    Args:
+        user_id (str): The unique_id of the chat sender.
+
+    Returns:
+        list: List of dictionaries representing chat bundles.
     """
-    group_messages = []
+    grouped_messages = []
 
-    if isinstance(chats, list):
+    # Fetch chats from the database using SQLAlchemy query
+    chats = Chat.query.filter((Chat.sender == user_id) | (Chat.recipient == user_id)).all()
+
+    if chats:
         for chat in chats:
+            # A flag that determines whether a message has been added to the grouped_messages
             added = False
+
             if isinstance(chat, Chat):
-                for group_message in group_messages:
-                    if group_message['user_id'] == chat.recipient or group_message['user_id'] == chat.sender:
-                        group_message['messages'].append(
+                for grouped_message in grouped_messages:
+                    if grouped_message['user_id'] == chat.recipient or grouped_message['user_id'] == chat.sender:
+                        grouped_message['messages'].append(
                             {
                                 "sent_to": chat.recipient,
                                 "sent_from": chat.sender,
@@ -26,30 +35,28 @@ def group_chats(chats, user_id):
                         )
                         added = True
                         break
+
                 if not added:
+                    # Fetch other data like `username`, `user_profile_image`, and `user_type` from the User model
+                    user = User.query.filter_by(unique_id=new_message_bundle['user_id']).first()
+
                     new_message_bundle = {
-                        'user_id': '',
-                        'user_name': '',  # You can fill in these details from the user model
-                        'user_profile_image': '',  # You can fill in these details from the user model
-                        'user_type': '',  # You can fill in these details from the user model
-                        'messages': []
+                        'user_id': user.unique_id,
+                        'user_name': user.username,
+                        'user_profile_image': user.profile_picture,
+                        'user_type': user.user_type,
+                        'messages': [
+                            {
+                                "sent_to": chat.recipient,
+                                "sent_from": chat.sender,
+                                "status": "",
+                                "send_date_and_time": chat.date_created,
+                                "message": chat.message
+                            }
+                        ]
                     }
 
-                    if user_id == chat.recipient:
-                        new_message_bundle['user_id'] = chat.sender
-                    elif user_id == chat.sender:
-                        new_message_bundle['user_id'] = chat.recipient
-
-                    new_message_bundle['messages'].append(
-                        {
-                            "sent_to": chat.recipient,
-                            "sent_from": chat.sender,
-                            "status": "",
-                            "send_date_and_time": chat.date_created,
-                            "message": chat.message
-                        }
-                    )
-                    group_messages.append(new_message_bundle)
+                    grouped_messages.append(new_message_bundle)
                     added = True
 
-    return group_messages
+    return grouped_messages
