@@ -23,6 +23,10 @@ class User(db.Model):
     user_status = db.Column(db.String(255), default='active')
     # Add other common attributes here
 
+    # Define a relationship with the Chat model
+    sent_chats = db.relationship("Chat", back_populates="sender", foreign_keys="Chat.sender")
+    received_chats = db.relationship("Chat", back_populates="recipient", foreign_keys="Chat.recipient")
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
