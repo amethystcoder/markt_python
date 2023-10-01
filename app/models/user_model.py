@@ -1,4 +1,4 @@
-nofrom db import db
+from db import db
 from passlib.hash import pbkdf2_sha256
 
 
