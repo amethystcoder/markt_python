@@ -7,6 +7,8 @@ class Buyer(User):
 
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     # Add Buyer-specific attributes here
+    
+    username = db.Column(db.String(80), unique=True, nullable=False)
 
     def save_to_db(self):
         db.session.add(self)

@@ -7,7 +7,6 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     unique_id = db.Column(db.String(400), nullable=False, unique=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     profile_picture = db.Column(db.String(200))
@@ -23,6 +22,10 @@ class User(db.Model):
     user_type = db.Column(db.String(255), nullable=False)
     user_status = db.Column(db.String(255), default='active')
     # Add other common attributes here
+
+    # Define a relationship with the Chat model
+    sent_chats = db.relationship("Chat", back_populates="sender", foreign_keys="Chat.sender")
+    received_chats = db.relationship("Chat", back_populates="recipient", foreign_keys="Chat.recipient")
 
     def save_to_db(self):
         db.session.add(self)
