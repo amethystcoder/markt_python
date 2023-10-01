@@ -21,13 +21,13 @@ def handle_disconnect(data):
 
 @socketio.on('message')
 def handle_message(data):
-    '''
+    """
     data from front-end :: data in back-end
      message :: message
      send_date_and_time :: date_created
      sent_to :: recipient
      sent_from :: sender
-    '''
+    """
     decoded_message = json.loads(data)
     if decoded_message is not None:
         message_type = decoded_message.get('type')
@@ -39,7 +39,7 @@ def handle_message(data):
             chat = chat_model.Chat(
                 unique_id=chat_model.Chat.generate_unique_id(),
                 message=decoded_message['message'],
-                date_created=decoded_message['send_date_and_time'],
+                timestamp=decoded_message['send_date_and_time'],
                 recipient=decoded_message['sent_to'],
                 sender=decoded_message['sent_from']
             )

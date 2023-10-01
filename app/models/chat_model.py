@@ -19,7 +19,8 @@ class Chat(db.Model):
     sender_user = db.relationship("User", foreign_keys=[sender], back_populates="sent_chats")
     recipient_user = db.relationship("User", foreign_keys=[recipient], back_populates="received_chats")
 
-    def __init__(self, message, timestamp, recipient, sender):
+    def __init__(self, unique_id, message, timestamp, recipient, sender):
+        self.unique_id = unique_id
         self.message = message
         self.timestamp = timestamp
         self.recipient = recipient
