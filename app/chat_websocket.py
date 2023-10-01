@@ -40,7 +40,7 @@ def handle_message(data):
                 unique_id=chat_model.Chat.generate_unique_id(),
                 message=decoded_message['message'],
                 date_created=decoded_message['send_date_and_time'],
-                recipent=decoded_message['sent_to'],
+                recipient=decoded_message['sent_to'],
                 sender=decoded_message['sent_from']
             )
             chat.save_to_db()

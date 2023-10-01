@@ -14,10 +14,10 @@ def group_chats(chats, user_id):
             added = False
             if isinstance(chat, Chat):
                 for group_message in group_messages:
-                    if group_message['user_id'] == chat.recipent or group_message['user_id'] == chat.sender:
+                    if group_message['user_id'] == chat.recipient or group_message['user_id'] == chat.sender:
                         group_message['messages'].append(
                             {
-                                "sent_to": chat.recipent,
+                                "sent_to": chat.recipient,
                                 "sent_from": chat.sender,
                                 "status": "",
                                 "send_date_and_time": chat.date_created,
@@ -35,14 +35,14 @@ def group_chats(chats, user_id):
                         'messages': []
                     }
 
-                    if user_id == chat.recipent:
+                    if user_id == chat.recipient:
                         new_message_bundle['user_id'] = chat.sender
                     elif user_id == chat.sender:
-                        new_message_bundle['user_id'] = chat.recipent
+                        new_message_bundle['user_id'] = chat.recipient
 
                     new_message_bundle['messages'].append(
                         {
-                            "sent_to": chat.recipent,
+                            "sent_to": chat.recipient,
                             "sent_from": chat.sender,
                             "status": "",
                             "send_date_and_time": chat.date_created,

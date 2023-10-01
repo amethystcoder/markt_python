@@ -15,11 +15,11 @@ class Chat(db.Model):
     recipient = db.Column(db.String(400), nullable=False)
     sender = db.Column(db.String(400), nullable=False)
 
-    def __init__(self, unique_id, message, date_created, recipent, sender):
+    def __init__(self, unique_id, message, date_created, recipient, sender):
         self.unique_id = unique_id
         self.message = message
         self.date_created = date_created
-        self.recipent = recipent
+        self.recipient = recipient
         self.sender = sender
 
     @staticmethod
