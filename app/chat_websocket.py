@@ -21,11 +21,29 @@ def handle_disconnect(data):
 
 @socketio.on('message')
 def handle_message(data):
+    '''
+    data from front-end :: data in back-end
+     message :: message
+     send_date_and_time :: date_created
+     sent_to :: recipient
+     sent_from :: sender
+    '''
     decoded_message = json.loads(data)
     if decoded_message is not None:
-        # Handle message processing and broadcasting here
-        # You can save the message to the database, emit it to recipients, etc.
-        emit('message', decoded_message, room=decoded_message['sent_to'])
+        message_type = decoded_message.get('type')
+        if message_type == 'register':
+            join_room(decoded_message['register_id'])
+        elif message_type == 'message':
+            emit('message', decoded_message, room=decoded_message['sent_to'])
+            # TODO: Store sent message to the database
+            chat = chat_model.Chat(
+                unique_id=generate_unique_id(),  # Use a function to generate a unique ID
+                message=decoded_message['message'],
+                date_created=decoded_message['send_date_and_time'],
+                recipent=decoded_message['sent_to'],
+                sender=decoded_message['sent_from']
+            )
+            chat.save_to_db()
 
 
 @socketio.on('typing')
