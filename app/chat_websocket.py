@@ -12,13 +12,6 @@ def handle_connect(data):
     emit('connect', {'message': 'connected'})
 
 
-@socketio.on('disconnect')
-def handle_disconnect(data):
-    user_id = data['user_id']
-    leave_room(user_id)
-    emit('disconnect', {'message': 'disconnected'})
-
-
 @socketio.on('message')
 def handle_message(data):
     '''
@@ -37,10 +30,11 @@ def handle_message(data):
             emit('message', decoded_message, room=decoded_message['sent_to'])
             # TODO: Store sent message to the database
             chat = chat_model.Chat(
-                decoded_message['message'],
-                decoded_message['send_date_and_time'],
-                decoded_message['sent_to'],
-                decoded_message['sent_from']
+                unique_id=generate_unique_id(),  # Use a function to generate a unique ID
+                message=decoded_message['message'],
+                date_created=decoded_message['send_date_and_time'],
+                recipent=decoded_message['sent_to'],
+                sender=decoded_message['sent_from']
             )
             chat.save_to_db()
 
