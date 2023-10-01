@@ -35,9 +35,9 @@ def handle_message(data):
             join_room(decoded_message['register_id'])
         elif message_type == 'message':
             emit('message', decoded_message, room=decoded_message['sent_to'])
-            # TODO: Store sent message to the database
+            # Store sent message to the database
             chat = chat_model.Chat(
-                unique_id=generate_unique_id(),  # Use a function to generate a unique ID
+                unique_id=chat_model.Chat.generate_unique_id(),
                 message=decoded_message['message'],
                 date_created=decoded_message['send_date_and_time'],
                 recipent=decoded_message['sent_to'],
