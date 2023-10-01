@@ -50,6 +50,12 @@ def handle_error(data):
     pass
 
 
+@socketio.on("close")
+def close_connection(user_id):
+    socketio.close_room(user_id)
+    emit('close', {'message': 'closed chat'})
+
+
 @socketio.on('typing')
 def handle_typing(data):
     emit('typing', data, room=data['recipient'])
