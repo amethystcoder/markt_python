@@ -1,5 +1,7 @@
 from .chat_model import Chat
 from .user_model import User
+from sqlalchemy.orm import aliased
+from db import db
 
 
 def group_chats(user_id):
@@ -11,52 +13,55 @@ def group_chats(user_id):
     Returns:
         list: List of dictionaries representing chat bundles.
     """
+    # Create aliases for sender and recipient
+    sender_alias = aliased(User)
+    recipient_alias = aliased(User)
+
+    # Fetch distinct sender-recipient pairs
+    pairs = (
+        db.session.query(Chat.sender, Chat.recipient)
+        .filter((Chat.sender == user_id) | (Chat.recipient == user_id))
+        .distinct()
+        .all()
+    )
+
     grouped_messages = []
 
-    # Fetch chats from the database using SQLAlchemy query
-    chats = Chat.query.filter((Chat.sender == user_id) | (Chat.recipient == user_id)).all()
+    for sender, recipient in pairs:
+        # Fetch user data using aliases
+        sender_data = sender_alias.query.filter_by(unique_id=sender).first()
+        recipient_data = recipient_alias.query.filter_by(unique_id=recipient).first()
 
-    if chats:
-        for chat in chats:
-            # A flag that determines whether a message has been added to the grouped_messages
-            added = False
+        # Fetch messages between the sender and recipient
+        messages = (
+            Chat.query.filter(
+                (
+                        (Chat.sender == sender) & (Chat.recipient == recipient) |
+                        (Chat.sender == recipient) & (Chat.recipient == sender)
+                )
+            )
+            .order_by(Chat.date_created)
+            .all()
+        )
 
-            if isinstance(chat, Chat):
-                for grouped_message in grouped_messages:
-                    if grouped_message['user_id'] == chat.recipient or grouped_message['user_id'] == chat.sender:
-                        grouped_message['messages'].append(
-                            {
-                                "sent_to": chat.recipient,
-                                "sent_from": chat.sender,
-                                "status": "",
-                                "send_date_and_time": chat.date_created,
-                                "message": chat.message
-                            }
-                        )
-                        added = True
-                        break
+        # Create a bundle
+        new_message_bundle = {
+            'user_id': sender_data.unique_id if user_id != sender_data.unique_id else recipient_data.unique_id,
+            'user_name': sender_data.username if user_id != sender_data.unique_id else recipient_data.username,
+            'user_profile_image': sender_data.profile_picture if user_id != sender_data.unique_id else recipient_data.profile_picture,
+            'user_type': sender_data.user_type if user_id != sender_data.unique_id else recipient_data.user_type,
+            'messages': [
+                {
+                    "sent_to": chat.recipient,
+                    "sent_from": chat.sender,
+                    "status": "",
+                    "send_date_and_time": chat.date_created,
+                    "message": chat.message
+                }
+                for chat in messages
+            ]
+        }
 
-                if not added:
-                    # Fetch other data like `username`, `user_profile_image`, and `user_type` from the User model
-                    user = User.query.filter_by(unique_id=new_message_bundle['user_id']).first()
-
-                    new_message_bundle = {
-                        'user_id': user.unique_id,
-                        'user_name': user.username,
-                        'user_profile_image': user.profile_picture,
-                        'user_type': user.user_type,
-                        'messages': [
-                            {
-                                "sent_to": chat.recipient,
-                                "sent_from": chat.sender,
-                                "status": "",
-                                "send_date_and_time": chat.date_created,
-                                "message": chat.message
-                            }
-                        ]
-                    }
-
-                    grouped_messages.append(new_message_bundle)
-                    added = True
+        grouped_messages.append(new_message_bundle)
 
     return grouped_messages
