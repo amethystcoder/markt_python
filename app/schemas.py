@@ -13,3 +13,9 @@ class ProductSchema(Schema):
     stock_quantity = fields.Int(strict=True)
     category = fields.String()
     #product_image = db.Column(db.String(400), nullable=False)
+    
+class CategorySchema:
+    name = fields.String()
+    tags = fields.List(
+        fields.Dict(keys=fields.String() ,values=fields.String() | fields.List(fields.String()))
+        )
