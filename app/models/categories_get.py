@@ -31,8 +31,11 @@ class Categories:
             self.list_of_categories = self.read_from_categories()
         all_tags = []
         for category in self.list_of_categories:
-            if type(category["tags"]) == list:
-                [all_tags.append(tags["name"]) for tags in category["tags"]]
+            if category['name'] == 'all':
+                pass
+            else:
+                if type(category["tags"]) == list:
+                    [all_tags.append(tags["name"]) for tags in category["tags"]]
         
         return all_tags
 
@@ -42,10 +45,11 @@ class Categories:
             self.list_of_categories = self.read_from_categories()
         all_tags = []
         for category in self.list_of_categories:
-            if type(category["tags"]) == list and category["name"] == category_name:
-                [all_tags.append(tags["name"]) for tags in category["tags"]]
+            if category['name'] == 'all':
+                pass
+            else:
+                if type(category["tags"]) == list and category["name"] == category_name:
+                    [all_tags.append(tags["name"]) for tags in category["tags"]]
         
         return all_tags
 
-cat = Categories()
-print(cat.get_all_tags())

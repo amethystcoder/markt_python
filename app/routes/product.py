@@ -53,15 +53,16 @@ class Categories(MethodView):
       gets a particular product using its id, along with its images
       seller description, e.t.c
       """
+      category_tags = Categories()
       match type:
         case "tags":
-          return 
+          return category_tags.get_all_tags()
         case "categorynames":
-          return 
+          return category_tags.get_category_names()
         case "all":
-          return 
+          return category_tags.get_all_categories_and_tags()
         case _:
-          return 
+          return category_tags.get_all_categories_and_tags()
 
 
 @product_bp.route("/random/<amount>")
