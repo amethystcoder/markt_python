@@ -14,7 +14,6 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     stock_quantity = db.Column(db.Integer, nullable=False)
     category = db.Column(db.String(255), nullable=False)
-    #product_image = db.Column(db.String(400), nullable=False)
 
     # Define a many-to-one relationship between Product and Seller
     seller = db.relationship('Seller', back_populates='products')
@@ -51,8 +50,17 @@ class Product(db.Model):
     def get_product_using_id(self,product_id):
         return db.session.query(Product).filter(Product.product_id == product_id).first()
     
+    @classmethod
     def get_products_using_sellerid(self,seller_id):
         return db.session.query(Product).filter(Product.seller_id == seller_id).all()
+    
+    @classmethod
+    def search_product_using_name(self,product_name):
+        return db.session.query(Product).filter(Product.name.like("%"+category_name+"%")).all()
+    
+    @classmethod
+    def search_product_using_category(self,category_name):
+        return db.session.query(Product).filter(Product.category.like("%"+category_name+"%")).all()
     
     def create_product(self):
         self.product_id = self.generate_unique_id()

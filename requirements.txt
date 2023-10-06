@@ -6,3 +6,4 @@ Flask-Socketio
 passlib
 marshmallow
 python-dotenv
+Pillow

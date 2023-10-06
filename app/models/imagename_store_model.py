@@ -11,12 +11,21 @@ class ImageNameStore(db.Model):
     found_under = db.Column(db.String(255), nullable=False)#the place the image is found i.e products,chat,e.t.c
     image_use_origin_id = db.Column(db.String(255), nullable=False)#id of the place (chat,product) where the image is found
     
+    # Define a many-to-one relationship between ImageNameStore and Product
+    product = db.relationship('Product', back_populates='imagenamestore')
+    
     def __init__(self,image_name,found_under,image_use_origin_id):
         self.image_name = image_name
         self.found_under = found_under
         self.image_use_origin_id = image_use_origin_id
 
+    @classmethod
+    def getproductthumbnail(product_id):
+        return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).first()
     
+    @classmethod
+    def getproductimages(product_id):
+        return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).all()
     
     def save_to_db(self):
         db.session.add(self)
