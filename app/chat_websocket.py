@@ -1,8 +1,10 @@
-from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_socketio import emit, join_room, leave_room
 import json
-from .models import Chat
 
-socketio = SocketIO()
+
+from app import create_app, Chat
+
+app, socketio = create_app()
 
 
 @socketio.on('connect')
@@ -57,3 +59,7 @@ def handle_read(data):
     emit('read', data, room=data['recipient'])
 
 # You can add more events as needed based on your chat feature requirements
+
+
+if __name__ == '__main__':
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
