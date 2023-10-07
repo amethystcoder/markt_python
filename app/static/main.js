@@ -1,23 +1,32 @@
-// main.js
+document.addEventListener("DOMContentLoaded", function() {
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const socket = io.connect('http://' + document.domain + ':' + location.port);
-
-    // Connect Event
-    socket.on('connect', () => {
-        console.log('Connected to WebSocket');
+    socket.on('connect', function() {
+        console.log('Connected to the server!');
     });
 
-    // Custom Event (you can add more as needed)
-    socket.on('message', (data) => {
-        console.log('Received message:', data);
-        // Handle the received message on the client side
+    socket.on('message', function(data) {
+        displayMessage(data.sender, data.content);
     });
 
-    // Add more event handlers as needed
+    function displayMessage(sender, content) {
+        var messageContainer = document.getElementById('messages');
+        var messageElement = document.createElement('div');
+        messageElement.innerHTML = `<strong>${sender}:</strong> ${content}`;
+        messageContainer.appendChild(messageElement);
+    }
 
-    // Disconnect Event
-    socket.on('disconnect', () => {
-        console.log('Disconnected from WebSocket');
-    });
+    window.sendMessage = function() {
+        var messageInput = document.getElementById('messageInput');
+        var messageContent = messageInput.value;
+
+        socket.emit('message', {
+            type: 'text',
+            content: messageContent,
+            sender: 'your_user_id',  // Replace with actual user ID
+            recipient: 'recipient_user_id'  // Replace with actual recipient user ID
+        });
+
+        messageInput.value = '';
+    };
 });

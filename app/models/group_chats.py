@@ -1,67 +1,55 @@
 from .chat_model import Chat
 from .user_model import User
-from sqlalchemy.orm import aliased
-from db import db
+from sqlalchemy import or_
 
 
-def group_chats(user_id):
+def group_chats(user_id, page=1, messages_per_page=10):
     """Groups all ungrouped chats of a particular user into bundles of messages.
 
     Args:
         user_id (str): The unique_id of the chat sender.
+        page (int): Page number for pagination.
+        messages_per_page (int): Number of messages to fetch per page.
 
     Returns:
         list: List of dictionaries representing chat bundles.
     """
-    # Create aliases for sender and recipient
-    sender_alias = aliased(User)
-    recipient_alias = aliased(User)
+    grouped_messages = []
 
-    # Fetch distinct sender-recipient pairs
-    pairs = (
-        db.session.query(Chat.sender, Chat.recipient)
-        .filter((Chat.sender == user_id) | (Chat.recipient == user_id))
-        .distinct()
+    # Calculate offset for pagination
+    offset = (page - 1) * messages_per_page
+
+    # Fetch chats from the database using SQLAlchemy query
+    chats = (
+        Chat.query
+        .filter(or_(Chat.sender == user_id, Chat.recipient == user_id))
+        .order_by(Chat.timestamp.desc())  # Change to use timestamp for ordering
+        .offset(offset)
+        .limit(messages_per_page)
         .all()
     )
 
-    grouped_messages = []
+    if chats:
+        for chat in chats:
+            # Fetch other data like `username`, `user_profile_image`, and `user_type` from the User model
+            user = User.query.filter_by(unique_id=chat.sender).first()
 
-    for sender, recipient in pairs:
-        # Fetch user data using aliases
-        sender_data = sender_alias.query.filter_by(unique_id=sender).first()
-        recipient_data = recipient_alias.query.filter_by(unique_id=recipient).first()
+            new_message_bundle = {
+                'user_id': user.unique_id,
+                'user_name': user.username,
+                'user_profile_image': user.profile_picture,
+                'user_type': user.user_type,
+                'messages': [
+                    {
+                        "sent_to": chat.recipient,
+                        "sent_from": chat.sender,
+                        "status": "",
+                        "send_date_and_time": chat.timestamp,  # Change to use timestamp
+                        "message": chat.message
+                    }
+                ]
+            }
 
-        # Fetch messages between the sender and recipient
-        messages = (
-            Chat.query.filter(
-                (
-                        (Chat.sender == sender) & (Chat.recipient == recipient) |
-                        (Chat.sender == recipient) & (Chat.recipient == sender)
-                )
-            )
-            .order_by(Chat.date_created)
-            .all()
-        )
-
-        # Create a bundle
-        new_message_bundle = {
-            'user_id': sender_data.unique_id if user_id != sender_data.unique_id else recipient_data.unique_id,
-            'user_name': sender_data.username if user_id != sender_data.unique_id else recipient_data.username,
-            'user_profile_image': sender_data.profile_picture if user_id != sender_data.unique_id else recipient_data.profile_picture,
-            'user_type': sender_data.user_type if user_id != sender_data.unique_id else recipient_data.user_type,
-            'messages': [
-                {
-                    "sent_to": chat.recipient,
-                    "sent_from": chat.sender,
-                    "status": "",
-                    "send_date_and_time": chat.date_created,
-                    "message": chat.message
-                }
-                for chat in messages
-            ]
-        }
-
-        grouped_messages.append(new_message_bundle)
+            grouped_messages.append(new_message_bundle)
 
     return grouped_messages

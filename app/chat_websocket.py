@@ -22,24 +22,29 @@ def handle_disconnect(data):
 @socketio.on('message')
 def handle_message(data):
     decoded_message = json.loads(data)
-
     if decoded_message is not None:
         message_type = decoded_message.get('type')
+        if message_type == 'register':
+            join_room(decoded_message['register_id'])
+        elif message_type == 'message':
+            unique_id = Chat.generate_unique_id()
+            emit('message', decoded_message, room=decoded_message['sent_to'])
 
-        if message_type in ['text', 'image', 'product']:
-            # Handle different message types
-            # For simplicity, I'll assume 'text' and 'image' for now
-            message_content = decoded_message.get('content', '')
+            message_content = decoded_message.get('message', '')
+            image_url = decoded_message.get('image_url', None)
+            product_name = decoded_message.get('product_name', None)
 
             chat = Chat(
-                message_type=message_type,
-                message_content=message_content,
-                sender=decoded_message['sender'],
-                recipient=decoded_message['recipient']
+                unique_id=unique_id,
+                message=message_content,
+                timestamp=decoded_message['send_date_and_time'],
+                recipient=decoded_message['sent_to'],
+                sender=decoded_message['sent_from'],
+                message_type=decoded_message.get('message_type', 'text'),  # default to 'text'
+                image_url=image_url,
+                product_name=product_name
             )
             chat.save_to_db()
-
-            emit('message', decoded_message, room=decoded_message['recipient'])
 
 
 @socketio.on('typing')
