@@ -1,3 +1,4 @@
+from .user_model import User
 from .seller_model import Seller
 from .buyer_model import Buyer
 from .cart_model import Cart

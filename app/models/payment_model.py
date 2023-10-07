@@ -6,7 +6,7 @@ class Payment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     payment_id = db.Column(db.String(400), nullable=False)
-    order_id = db.Column(db.String(400), db.ForeignKey('order.id'), nullable=False)
+    order_id = db.Column(db.String(400), db.ForeignKey('orders.id'), nullable=False)
     payment_method = db.Column(db.String(255), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     payment_status = db.Column(db.String(255), nullable=False)
