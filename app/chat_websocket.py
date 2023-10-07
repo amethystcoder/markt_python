@@ -1,6 +1,6 @@
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import json
-from .models import chat_model
+from .models import Chat
 
 socketio = SocketIO()
 
@@ -21,29 +21,25 @@ def handle_disconnect(data):
 
 @socketio.on('message')
 def handle_message(data):
-    """
-    data from front-end :: data in back-end
-     message :: message
-     send_date_and_time :: date_created
-     sent_to :: recipient
-     sent_from :: sender
-    """
     decoded_message = json.loads(data)
+
     if decoded_message is not None:
         message_type = decoded_message.get('type')
-        if message_type == 'register':
-            join_room(decoded_message['register_id'])
-        elif message_type == 'message':
-            emit('message', decoded_message, room=decoded_message['sent_to'])
-            # Store sent message to the database
-            chat = chat_model.Chat(
-                unique_id=chat_model.Chat.generate_unique_id(),
-                message=decoded_message['message'],
-                timestamp=decoded_message['send_date_and_time'],
-                recipient=decoded_message['sent_to'],
-                sender=decoded_message['sent_from']
+
+        if message_type in ['text', 'image', 'product']:
+            # Handle different message types
+            # For simplicity, I'll assume 'text' and 'image' for now
+            message_content = decoded_message.get('content', '')
+
+            chat = Chat(
+                message_type=message_type,
+                message_content=message_content,
+                sender=decoded_message['sender'],
+                recipient=decoded_message['recipient']
             )
             chat.save_to_db()
+
+            emit('message', decoded_message, room=decoded_message['recipient'])
 
 
 @socketio.on('typing')
