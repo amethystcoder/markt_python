@@ -27,6 +27,10 @@ class ImageNameStore(db.Model):
     def getproductimages(product_id):
         return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).all()
     
+    @classmethod
+    def getchatimages(chat_id):
+        return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == chat_id).all()
+    
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

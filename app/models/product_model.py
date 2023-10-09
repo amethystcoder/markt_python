@@ -56,7 +56,7 @@ class Product(db.Model):
     
     @classmethod
     def search_product_using_name(self,product_name):
-        return db.session.query(Product).filter(Product.name.like("%"+category_name+"%")).all()
+        return db.session.query(Product).filter(Product.name.like("%"+product_name+"%")).all()
     
     @classmethod
     def search_product_using_category(self,category_name):

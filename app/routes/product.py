@@ -6,6 +6,7 @@ from ..schemas import ProductSchema,CategorySchema
 from ..models.product_model import Product
 from ..models.categories_get import Categories
 from ..models.imagename_store_model import ImageNameStore
+import tempfile
 
 product_bp = Blueprint("products", "product", description="Endpoint for all API calls related to products", url_prefix="/products")
 
@@ -14,21 +15,23 @@ class Products(MethodView):
     @product_bp.response(200, ProductSchema)
     def post(self,product_data):
       """
-      
-        Creates a new product
-      Args:
-          product_data (_dict_): a dictionary containing information about the product
-      Returns:
-          _dict_ | bool: the product
+      Creates a new product
+      Args: product_data (_dict_): a dictionary containing information about the product
+      Returns:_dict_ | bool: the product
       """
       try:
         product = Product(product_data["seller_id"],product_data["product_name"],
                         product_data["description"],product_data["product_price"],
                         product_data["quantity"],product_data["category"])
         product_images = request.files
-        
-        #Product images would be added to uploads folder and database
-        
+        for key,file in product_images.items():
+          #Product images would be added to uploads folder and database
+          if ImageSaver.is_valid_file(file.filename) and ImageSaver.is_valid_file_size(file.content_length) and ImageSaver.is_valid_mime(file.mimetype):
+            location = tempfile.gettempdir()+'/'+file.filename
+            savedimagename = ImageSaver.compressimage(location)
+            if savedimagename is not False and type(savedimagename) == str:
+              new_image = ImageNameStore(savedimagename,'products',product.product_id)
+              new_image.save_to_db()
         product.save_to_db()
         return parsedict(product=product)
       except ConnectionError:
