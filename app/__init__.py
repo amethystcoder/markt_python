@@ -1,11 +1,11 @@
 from flask import Flask
 from flask_migrate import Migrate
 from .models import Chat
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO
 from db import db
 from flask_cors import CORS
 
-socketio = SocketIO()
+from .chat_websocket import socketio
 migrate = Migrate()
 cors = CORS()
 
