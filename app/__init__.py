@@ -17,8 +17,10 @@ def create_app(config_name="development"):
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
-    socketio.init_app(app, cors_allowed_origins="*")  # Initialize Flask-SocketIO
-    cors.init_app(app)
+    # Initialize Flask-SocketIO with CORS
+    cors.init_app(app, resources={r"/socket.io/*": {"origins": "http://127.0.0.1:5000"}})
+    socketio.init_app(app, cors_allowed_origins="http://127.0.0.1:5000")  # Would be replaced with the actual domain
+    # of the frontend during prod test.
 
     with app.app_context():
         db.create_all()
