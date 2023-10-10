@@ -66,8 +66,27 @@ class Product(db.Model):
         self.product_id = self.generate_unique_id()
         self.save_to_db()
     
-    def update_product(self):
-        return
+    def update_product(self,product_data):
+        """updates part or all of the current map/session of self(present class)
+    
+            only name,description,price,stock_quantity and category can be updated
+        """
+        try:
+            if product_data["name"] is not None and type(product_data["name"]) == str:
+                self.name = product_data["name"]
+            if product_data["description"] is not None and type(product_data["description"]) == str:
+                self.description = product_data["description"]
+            if product_data["price"] is not None and type(product_data["price"]) == str:
+                self.price = product_data["price"]
+            if product_data["stock_quantity"] is not None and type(product_data["stock_quantity"]) == str:
+                self.stock_quantity = product_data["stock_quantity"]
+            if product_data["category"] is not None and type(product_data["category"]) == str:
+                self.category = product_data["category"]
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            return False
     
     def delete_from_db(self):
         db.session.delete(self)

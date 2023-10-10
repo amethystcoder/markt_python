@@ -7,3 +7,4 @@ passlib
 marshmallow
 python-dotenv
 Pillow
+rembg

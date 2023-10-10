@@ -40,8 +40,7 @@ class Products(MethodView):
 @product_bp.route("/<product_id>")
 class Products(MethodView):
     @product_bp.response(200, ProductSchema)
-    def get(self,product_id):
-          
+    def get(self,product_id): 
       """
       gets a particular product using its id, along with its images
       seller description, e.t.c
@@ -52,8 +51,12 @@ class Products(MethodView):
     
     #edit product
     @product_bp.response(200, ProductSchema)
-    def patch(self,product_data):
-          
+    def patch(self,product_id,product_data):
+      """
+      product_data is a dictionary containing the product data to update
+      """
+      product = Product(product_id=product_id)
+      product.update_product(product_data)
       return 
     
     @product_bp.response(200, ProductSchema)
