@@ -17,5 +17,5 @@ class ProductSchema(Schema):
 class CategorySchema:
     name = fields.String()
     tags = fields.List(
-        fields.Dict(keys=fields.String() ,values=fields.String() | fields.List(fields.String()))
+        fields.Dict(keys=fields.String() ,values=fields.String() or fields.List(fields.String()))
         )

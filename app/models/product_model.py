@@ -62,9 +62,8 @@ class Product(db.Model):
     def search_product_using_category(self,category_name):
         return db.session.query(Product).filter(Product.category.like("%"+category_name+"%")).all()
     
-    def create_product(self):
+    def setproductid(self):
         self.product_id = self.generate_unique_id()
-        self.save_to_db()
     
     def update_product(self,product_data):
         """updates part or all of the current map/session of self(present class)

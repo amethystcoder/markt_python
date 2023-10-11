@@ -23,6 +23,7 @@ class Products(MethodView):
         product = Product(product_data["seller_id"],product_data["product_name"],
                         product_data["description"],product_data["product_price"],
                         product_data["quantity"],product_data["category"])
+        product.setproductid()
         product_images = request.files
         for key,file in product_images.items():
           #Product images would be added to uploads folder and database
@@ -56,13 +57,16 @@ class Products(MethodView):
       product_data is a dictionary containing the product data to update
       """
       product = Product(product_id=product_id)
-      product.update_product(product_data)
-      return 
+      return product.update_product(product_data)
     
     @product_bp.response(200, ProductSchema)
     def delete(self,product_id):
-      product_to_delete = Product(product_id=product_id)
-      return product_to_delete.delete_from_db()
+      try:
+        product_to_delete = Product(product_id=product_id)
+        product_to_delete.delete_from_db()
+        return True
+      except Exception as e:
+        return False
       
 @product_bp.route("/categories/<type>")
 class Categories(MethodView):
