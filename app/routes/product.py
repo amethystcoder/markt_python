@@ -28,8 +28,10 @@ class Products(MethodView):
         for key,file in product_images.items():
           #Product images would be added to uploads folder and database
           if ImageSaver.is_valid_file(file.filename) and ImageSaver.is_valid_file_size(file.content_length) and ImageSaver.is_valid_mime(file.mimetype):
+            #compress image and remove image background
+            #would add an optional parameter incase a seller does not want his image removed
             location = tempfile.gettempdir()+'/'+file.filename
-            savedimagename = ImageSaver.compressimage(location)
+            savedimagename = ImageSaver.compress_image_and_remove_background(location)
             if savedimagename is not False and type(savedimagename) == str:
               new_image = ImageNameStore(savedimagename,'products',product.product_id)
               new_image.save_to_db()

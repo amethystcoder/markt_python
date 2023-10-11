@@ -1,5 +1,6 @@
 from PIL import Image
 import uuid
+from rembg import remove
 import os
 
 class ImageSaver:
@@ -35,6 +36,27 @@ class ImageSaver:
                 image.resize((new_width,new_height))
                 image_name = self.generateimagename()
                 image.save("app/uploads/"+image_name+".jpg","JPEG",optimize=True,quality=50)
+                return image_name
+        except OSError:
+            return False
+        
+    @classmethod
+    def compress_image_and_remove_background(self,image_location):
+        """compress an image
+        
+        Keyword arguments:
+        image_location - the directory where the image is located
+        Return: a boolean
+        """
+        try:
+            with Image.open(image_location) as image:
+                width,height = image.size
+                new_width = width * 0.3
+                new_height = height * 0.3
+                image.resize((new_width,new_height))
+                image_name = self.generateimagename()
+                image_with_background_removed = remove(image)
+                image_with_background_removed.save("app/uploads/"+image_name+".jpg","JPEG",optimize=True,quality=50)
                 return image_name
         except OSError:
             return False

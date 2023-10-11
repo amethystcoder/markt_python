@@ -95,8 +95,12 @@
     {
         "name": "gadgets",
         "tags":[
-            {"name":"phones","descs":[]},
-            {"name":"laptops","descs":[]},
+            {"name":"phones","descs":[
+                "iPhone","Samsung","Android","Huawei","Techno","Gionee"
+            ]},
+            {"name":"laptops","descs":[
+                "Screentouch","Dell","HP","Windows","Macbook","Toshiba"
+            ]},
             {"name":"watches","descs":[]},
             {"name":"smart equipments","descs":[]}
         ]
@@ -145,11 +149,20 @@
     },
     {
         "name": "groceries",
-        "tags":[]
+        "tags":[
+            {"name":"cereals","descs":[]}
+        ]
     },
     {
         "name": "drycleaning",
-        "tags":[]
+        "tags":[
+            {"name":"machines","descs":[
+                "washingmachine","iron"
+            ]},
+            {"name":"equipment","descs":[
+                "ironingboard","basket","pegs","hangers"
+            ]}
+        ]
     },
     {
         "name": "repair",
@@ -189,7 +202,13 @@
     },
     {
         "name": "music and sound",
-        "tags":[]
+        "tags":[
+            {"name":"instruments","descs":[
+                "piano","guitar","saxophone","drumset","talking drum","gongs","trumpet","trombone",
+                "violin","keyboard","flute","recorder","bagpipes"
+            ]},
+            {"name":"equipment","descs":[]}
+        ]
     },
     {
         "name": "creativity and art",
