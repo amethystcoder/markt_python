@@ -17,7 +17,38 @@ def handle_disconnect(data):
     user_id = data['user_id']
     leave_room(user_id)
     emit('disconnect', {'message': 'disconnected'})
+    
+@socketio.on('register')
+def on_connection_established(reg):
+    clients_cache.append({"client_id":reg})   
+    join_room(reg)
+    emit('connect',{'message':'conected'})
 
+@socketio.on('reconnect')
+def on_connection_established(reg):
+    clients_cache.append({"client_id":reg})   
+    join_room(reg)
+    emit('connect',{'message':'conected'})
+    
+    @socketio.on("error")
+def handle_error():
+    pass
+
+@socketio.on("close")
+def close_connection(user_id):
+    socketio.close_room(user_id)
+    emit('close',{'message':'closed chat'})
+    
+@socketio.on('typing')
+def handle_typing(data):
+    emit('typing', data, room=data['recipient'])
+
+
+@socketio.on('read')
+def handle_read(data):
+    emit('read', data, room=data['recipient'])
+
+# You can add more events as needed based on your chat feature requirements
 
 @socketio.on('message')
 def handle_message(data):
@@ -30,29 +61,18 @@ def handle_message(data):
     """
     decoded_message = json.loads(data)
     if decoded_message is not None:
-        message_type = decoded_message.get('type')
-        if message_type == 'register':
-            join_room(decoded_message['register_id'])
-        elif message_type == 'message':
-            emit('message', decoded_message, room=decoded_message['sent_to'])
-            # Store sent message to the database
-            chat = chat_model.Chat(
+        emit('message',decoded_message,room=decoded_message['sent_to'])
+        #TODO: store sent message to the database
+        chat = chat_model.Chat(
                 unique_id=chat_model.Chat.generate_unique_id(),
                 message=decoded_message['message'],
                 timestamp=decoded_message['send_date_and_time'],
                 recipient=decoded_message['sent_to'],
                 sender=decoded_message['sent_from']
-            )
-            chat.save_to_db()
+        chat.save_to_db()
 
 
-@socketio.on('typing')
-def handle_typing(data):
-    emit('typing', data, room=data['recipient'])
 
+if __name__ == '__main__':
+    socketio.run(ChatWSapp,port=3000)
 
-@socketio.on('read')
-def handle_read(data):
-    emit('read', data, room=data['recipient'])
-
-# You can add more events as needed based on your chat feature requirements
