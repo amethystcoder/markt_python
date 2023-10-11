@@ -1,12 +1,10 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_socketio import SocketIO  # Assuming you will use Flask-SocketIO for chat
 import os
+from .chat_websocket import socketio
+from db import db
 
-db = SQLAlchemy()
 migrate = Migrate()
-socketio = SocketIO()
 
 
 def create_app(config_name="development"):
