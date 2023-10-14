@@ -17,11 +17,12 @@ def create_app(config_name="development"):
     socketio.init_app(app)  # Initialize Flask-SocketIO
 
     # Import and register blueprints here
-    from .routes import cart, order, payment, user, websocket, product, example
+    from .routes import cart, order, payment, user, websocket, product, productquery, example
 
     app.register_blueprint(cart.cart_bp)
     app.register_blueprint(order.order_bp)
     app.register_blueprint(payment.payment_bp)
+    app.register_blueprint(payment.productquery_bp)
     app.register_blueprint(user.user_bp)
     app.register_blueprint(websocket.websocket_bp)
     app.register_blueprint(product.product_bp)
