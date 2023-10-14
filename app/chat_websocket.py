@@ -4,6 +4,7 @@ from .models import chat_model
 
 socketio = SocketIO()
 
+clients_cache = []
 
 @socketio.on('connect')
 def handle_connect(data):
@@ -30,7 +31,7 @@ def on_connection_established(reg):
     join_room(reg)
     emit('connect',{'message':'conected'})
     
-    @socketio.on("error")
+@socketio.on("error")
 def handle_error():
     pass
 
@@ -62,17 +63,11 @@ def handle_message(data):
     decoded_message = json.loads(data)
     if decoded_message is not None:
         emit('message',decoded_message,room=decoded_message['sent_to'])
-        #TODO: store sent message to the database
         chat = chat_model.Chat(
                 unique_id=chat_model.Chat.generate_unique_id(),
                 message=decoded_message['message'],
                 timestamp=decoded_message['send_date_and_time'],
                 recipient=decoded_message['sent_to'],
                 sender=decoded_message['sent_from']
+        )
         chat.save_to_db()
-
-
-
-if __name__ == '__main__':
-    socketio.run(ChatWSapp,port=3000)
-
