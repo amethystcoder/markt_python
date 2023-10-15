@@ -44,4 +44,3 @@ class ChatMessage(db.Model):
     timestamp = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
     sender_id = db.Column(db.Integer, nullable=False)
     room_id = db.Column(db.String(50), db.ForeignKey('messages.room_id', nullable=False))
-    
