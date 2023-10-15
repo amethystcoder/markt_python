@@ -23,8 +23,7 @@ class User(db.Model):
     # Add other common attributes here
 
     # Define a relationship with the Chat model
-    sent_chats = db.relationship("Chat", back_populates="sender", foreign_keys="Chat.sender")
-    received_chats = db.relationship("Chat", back_populates="recipient", foreign_keys="Chat.recipient")
+    chats = db.relationship('Chat', back_populates='user')
 
     def save_to_db(self):
         db.session.add(self)
