@@ -35,6 +35,10 @@ class Message(db.Model):
     room_id = db.Column(db.String(50), nullable=False, unique=True)
     messages = db.relationship('ChatMessage', backref='message', lazy=True)
 
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
 
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -45,7 +49,6 @@ class ChatMessage(db.Model):
     sender_id = db.Column(db.Integer, nullable=False)
     room_id = db.Column(db.String(50), db.ForeignKey('messages.room_id', nullable=False))
 
-    @classmethod
-    def save_to_db(cls):
-        db.session.add(cls)
+    def save_to_db(self):
+        db.session.add(self)
         db.session.commit()

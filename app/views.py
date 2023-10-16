@@ -6,7 +6,7 @@ from flask import (
     jsonify
 )
 from db import db
-from models import (
+from app.models import (
     User,
     Chat,
     Message,
@@ -120,8 +120,7 @@ def new_chat(seller_email):
         existing_chat.chat_list.append({"user_id": recipient_user.id, "room_id": room_id})
 
         # Save the changes to the database
-        db.session.add(existing_chat)
-        db.session.commit()
+        existing_chat.save_to_db()
 
         # Create a new chat list for the recipient user if it doesn't exist
         recipient_chat = Chat.query.filter_by(user_id=recipient_user.id).first()
@@ -132,8 +131,7 @@ def new_chat(seller_email):
 
         # Add the new chat to the chat list of the recipient user
         recipient_chat.chat_list.append({"user_id": user_id, "room_id": room_id})
-        db.session(recipient_chat)
-        db.session.commit()
+        recipient_chat.save_to_db()
 
         # Create a new message entry for the chat room
         new_message = Message(room_id=room_id)
