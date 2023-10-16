@@ -6,7 +6,6 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    unique_id = db.Column(db.String(400), nullable=False, unique=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     profile_picture = db.Column(db.String(200))
@@ -24,8 +23,7 @@ class User(db.Model):
     # Add other common attributes here
 
     # Define a relationship with the Chat model
-    sent_chats = db.relationship("Chat", back_populates="sender", foreign_keys="Chat.sender")
-    received_chats = db.relationship("Chat", back_populates="recipient", foreign_keys="Chat.recipient")
+    chats = db.relationship('Chat', back_populates='user')
 
     def save_to_db(self):
         db.session.add(self)
