@@ -1,51 +1,91 @@
 from flask_socketio import SocketIO, emit, join_room, leave_room
-import json
+from app.models import User, Chat, Message, ChatMessage
 
-
-from app import Chat
 socketio = SocketIO()
 
 
-@socketio.on('connect')
-def handle_connect(data):
-    user_id = data['user_id']
-    join_room(user_id)
-    emit('connect', {'message': 'connected'})
+# Join-chat event. Emit online message to other users and join the room
+@socketio.on("join-chat")
+def join_private_chat(data):
+    room = data["rid"]
+    join_room(room=room)
+    socketio.emit(
+        "joined-chat",
+        {"msg": f"{room} is now online."},
+        room=room,
+        # include_self=False,
+    )
 
 
-@socketio.on('disconnect')
-def handle_disconnect(data):
-    user_id = data['user_id']
-    leave_room(user_id)
-    emit('disconnect', {'message': 'disconnected'})
+# Outgoing event handler
+@socketio.on("outgoing")
+def handle_text_message(json, methods=["GET", "POST"]):
+    room_id = json["rid"]
+    timestamp = json["timestamp"]
+    content = json["content"]
+    #message_type = json["message_type"]
+    sender_id = json["sender_id"]
+
+    # Get the message entry for the chat room
+    message_entry = Message.query.filter_by(room_id=room_id).first()
+
+    # Add the new message to the conversation
+    chat_message = ChatMessage(
+        content=content,
+        #message_type=message_type,
+        timestamp=timestamp,
+        sender_id=sender_id,
+        room_id=room_id,
+    )
+    # Add the new chat message to the messages relationship of the message
+    message_entry.messages.append(chat_message)
+
+    # Updated the database with the new message
+    chat_message.save_to_db()
+    message_entry.save_to_db()
+
+    # Emit the message(s) sent to other users in the room
+    socketio.emit(
+        "message",
+        json,
+        room=room_id,
+        include_self=False,
+    )
 
 
-@socketio.on('message')
-def handle_message(data):
-    decoded_message = json.loads(data)
-    if decoded_message is not None:
-        message_type = decoded_message.get('type')
-        if message_type == 'register':
-            join_room(decoded_message['register_id'])
-        elif message_type == 'message':
-            unique_id = Chat.generate_unique_id()
-            emit('message', decoded_message, room=decoded_message['sent_to'])
+@socketio.on("imageData")
+def handle_image_message(json, methods=["GET", "POST"]):
+    room_id = json["rid"]
+    timestamp = json["timestamp"]
+    image_url = json["image_url"]
+    #message_type = json["message_type"]
+    sender_id = json["sender_id"]
 
-            message_content = decoded_message.get('message', '')
-            image_url = decoded_message.get('image_url', None)
-            product_name = decoded_message.get('product_name', None)
+    # Get the message entry for the chat room
+    message_entry = Message.query.filter_by(room_id=room_id).first()
 
-            chat = Chat(
-                unique_id=unique_id,
-                message=message_content,
-                timestamp=decoded_message['send_date_and_time'],
-                recipient=decoded_message['sent_to'],
-                sender=decoded_message['sent_from'],
-                message_type=decoded_message.get('message_type', 'text'),  # default to 'text'
-                image_url=image_url,
-                product_name=product_name
-            )
-            chat.save_to_db()
+    # Add the new message to the conversation
+    chat_message = ChatMessage(
+        image_url=image_url,
+        message_type="image",
+        timestamp=timestamp,
+        sender_id=sender_id,
+        room_id=room_id,
+    )
+    # Add the new chat message to the messages relationship of the message
+    message_entry.messages.append(chat_message)
+
+    # Updated the database with the new message
+    chat_message.save_to_db()
+    message_entry.save_to_db()
+
+    # Emit the message(s) sent to other users in the room
+    socketio.emit(
+        "message",
+        json,
+        room=room_id,
+        include_self=False,
+    )
 
 
 @socketio.on('typing')
@@ -56,6 +96,7 @@ def handle_typing(data):
 @socketio.on('read')
 def handle_read(data):
     emit('read', data, room=data['recipient'])
+
 
 # You can add more events as needed based on your chat feature requirements
 

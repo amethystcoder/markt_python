@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
-from .models import Chat
+import models
 # from flask_socketio import SocketIO
 from db import db
 from flask_cors import CORS
