@@ -4,6 +4,8 @@ from app.models import User, Chat, Message, ChatMessage
 socketio = SocketIO()
 
 
+# clients_cache = []
+
 # Join-chat event. Emit online message to other users and join the room
 @socketio.on("join-chat")
 def join_private_chat(data):
@@ -23,7 +25,7 @@ def handle_text_message(json, methods=["GET", "POST"]):
     room_id = json["rid"]
     timestamp = json["timestamp"]
     content = json["content"]
-    #message_type = json["message_type"]
+    # message_type = json["message_type"]
     sender_id = json["sender_id"]
 
     # Get the message entry for the chat room
@@ -32,7 +34,7 @@ def handle_text_message(json, methods=["GET", "POST"]):
     # Add the new message to the conversation
     chat_message = ChatMessage(
         content=content,
-        #message_type=message_type,
+        # message_type=message_type,
         timestamp=timestamp,
         sender_id=sender_id,
         room_id=room_id,
@@ -58,7 +60,7 @@ def handle_image_message(json, methods=["GET", "POST"]):
     room_id = json["rid"]
     timestamp = json["timestamp"]
     image_url = json["image_url"]
-    #message_type = json["message_type"]
+    # message_type = json["message_type"]
     sender_id = json["sender_id"]
 
     # Get the message entry for the chat room
@@ -97,6 +99,36 @@ def handle_typing(data):
 def handle_read(data):
     emit('read', data, room=data['recipient'])
 
+
+@socketio.on("error")
+def handle_error():
+    pass
+
+
+"""@socketio.on('disconnect')
+def handle_disconnect(data):
+    user_id = data['user_id']
+    leave_room(user_id)
+    emit('disconnect', {'message': 'disconnected'})
+
+
+@socketio.on('register')
+def on_connection_established(reg):
+    clients_cache.append({"client_id": reg})
+    join_room(reg)
+    emit('connect', {'message': 'conected'})
+
+
+@socketio.on('reconnect')
+def on_connection_established(reg):
+    clients_cache.append({"client_id": reg})
+    join_room(reg)
+    emit('connect', {'message': 'conected'})
+    
+    @socketio.on("close")
+    def close_connection(user_id):
+        socketio.close_room(user_id)
+        emit('close',{'message':'closed chat'})"""
 
 # You can add more events as needed based on your chat feature requirements
 
