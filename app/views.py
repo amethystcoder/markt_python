@@ -86,7 +86,7 @@ def get_user():
 
     :return: json object with current user
     """
-    return session["user"]
+    return jsonify(session["user"])
 
 
 @chat_test_blp.route('/new_chat/<string:seller_email>', methods=["POST"])
@@ -163,7 +163,7 @@ def get_messages():
     return jsonify(messages)
 
 
-@chat_test_blp.route('/get_last_messages/', methods=["GET", "POST"])
+@chat_test_blp.route('/get_last_message/', methods=["GET", "POST"])
 def get_last_messages():
     """
     can be used for the chat inbox UI window
