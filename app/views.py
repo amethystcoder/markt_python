@@ -6,7 +6,12 @@ from flask import (
     jsonify
 )
 from db import db
-from models import User, Chat, Message, ChatMessage
+from models import (
+    User,
+    Chat,
+    Message,
+    ChatMessage,
+    get_messages_in_bundles_of_timestamp)
 
 chat_test_blp = Blueprint('chat_test', __name__)
 
@@ -141,13 +146,24 @@ def new_chat(seller_email):
 @chat_test_blp.route('/get_messages/', methods=["GET", "POST"])
 def get_messages():
     """
-
+    Gets all the message history in a certain room, in bundles of timestamp, indexed and paginated.
     :return: all messages in a particular room_id
     """
-    pass
+    # Get the room id in the URL or set to None
+    room_id = request.args.get("rid", None)
+
+    # Get all the message history in a certain room
+
+    # Get the Message object for the chat room
+    message = Message.query.filter_by(room_id=room_id).first()
+
+    # Using the function in group_chats to get message in bundles
+    messages = get_messages_in_bundles_of_timestamp(message, bundle_size=100, page=1)
+
+    return jsonify(messages)
 
 
-@chat_test_blp.route('/get_messages/', methods=["GET", "POST"])
+@chat_test_blp.route('/get_last_messages/', methods=["GET", "POST"])
 def get_last_messages():
     """
     can be used for the chat inbox UI window

@@ -1,55 +1,47 @@
-from .chat_model import Chat
-from .user_model import User
-from sqlalchemy import or_
+def get_messages_in_bundles_of_timestamp(message, bundle_size=100, page=1):
+    """Gets a list of messages in bundles of timestamp using indexing and pagination to fetch messages in smaller, more manageable chunks.
+
+  Args:
+    message: The Message object.
+    bundle_size: The number of messages to include in each bundle.
+    page: The page number of the results to fetch.
+
+  Returns:
+    A list of bundles of messages, where each bundle is a list of messages with the same timestamp.
+  """
+
+    # Get the total number of messages in the conversation.
+    total_messages = len(message.messages)
+
+    # Calculate the start and end indices for the current page.
+    start_index = (page - 1) * bundle_size
+    end_index = min(start_index + bundle_size, total_messages)
+
+    # Get the messages for the current page.
+    messages = message.messages[start_index:end_index]
+
+    # Group the messages by timestamp.
+    messages_by_timestamp = {}
+    for message in messages:
+        timestamp = message.timestamp.date()
+        if timestamp not in messages_by_timestamp:
+            messages_by_timestamp[timestamp] = []
+        messages_by_timestamp[timestamp].append(message)
+
+    # Return the list of bundles of messages.
+    bundles = []
+    for timestamp, messages in messages_by_timestamp.items():
+        bundles.append({
+            'timestamp': timestamp,
+            'messages': messages
+        })
+    return bundles
 
 
-def group_chats(user_id, page=1, messages_per_page=10):
-    """Groups all ungrouped chats of a particular user into bundles of messages.
+"""# Example usage:
 
-    Args:
-        user_id (str): The unique_id of the chat sender.
-        page (int): Page number for pagination.
-        messages_per_page (int): Number of messages to fetch per page.
+# Get the first page of messages in bundles of 100 messages.
+bundles = get_messages_in_bundles_of_timestamp(message, bundle_size=100, page=1)
 
-    Returns:
-        list: List of dictionaries representing chat bundles.
-    """
-    grouped_messages = []
-
-    # Calculate offset for pagination
-    offset = (page - 1) * messages_per_page
-
-    # Fetch chats from the database using SQLAlchemy query
-    chats = (
-        Chat.query
-        .filter(or_(Chat.sender == user_id, Chat.recipient == user_id))
-        .order_by(Chat.timestamp.desc())  # Change to use timestamp for ordering
-        .offset(offset)
-        .limit(messages_per_page)
-        .all()
-    )
-
-    if chats:
-        for chat in chats:
-            # Fetch other data like `username`, `user_profile_image`, and `user_type` from the User model
-            user = User.query.filter_by(unique_id=chat.sender).first()
-
-            new_message_bundle = {
-                'user_id': user.unique_id,
-                'user_name': user.username,
-                'user_profile_image': user.profile_picture,
-                'user_type': user.user_type,
-                'messages': [
-                    {
-                        "sent_to": chat.recipient,
-                        "sent_from": chat.sender,
-                        "status": "",
-                        "send_date_and_time": chat.timestamp,  # Change to use timestamp
-                        "message": chat.message
-                    }
-                ]
-            }
-
-            grouped_messages.append(new_message_bundle)
-
-    return grouped_messages
+# Get the second page of messages in bundles of 100 messages.
+bundles = get_messages_in_bundles_of_timestamp(message, bundle_size=100, page=2)"""
