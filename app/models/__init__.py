@@ -8,3 +8,5 @@ from .product_model import Product
 from .buyer_query_model import BuyerQuery
 from .buyer_request_model import BuyerRequest
 from .chat_model import Chat
+from .chat_model import Message
+from chat_model import ChatMessage
