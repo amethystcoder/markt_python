@@ -6,8 +6,8 @@ class Cart(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cart_id = db.Column(db.String(400), nullable=False)
-    buyer_id = db.Column(db.String(400), db.ForeignKey('buyer.unique_id'), nullable=False)
-    product_id = db.Column(db.String(400), db.ForeignKey('product.id'), nullable=False)
+    buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
+    product_id = db.Column(db.String(400), db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     has_discount = db.Column(db.Boolean, nullable=False)
     discount_price = db.Column(db.Float, nullable=False)
