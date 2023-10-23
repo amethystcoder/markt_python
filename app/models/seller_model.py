@@ -6,6 +6,7 @@ class Seller(User):
     __tablename__ = "sellers"
 
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    unique_id = db.Column(db.String(400), nullable=False, unique=True)
     # Add Seller-specific attributes here
     shop_name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.String(400), nullable=False)

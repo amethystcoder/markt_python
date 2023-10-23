@@ -1,6 +1,6 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
-from flask import request
+from flask import abort, request
 from .image_resizer_and_uploader import ImageSaver
 from ..schemas import ProductSchema,CategorySchema
 from ..models.product_model import Product
@@ -12,7 +12,8 @@ product_bp = Blueprint("products", "product", description="Endpoint for all API 
 
 @product_bp.route("/new")
 class Products(MethodView):
-    @product_bp.response(200, ProductSchema)
+    @product_bp.arguments(ProductSchema)
+    @product_bp.response(201, ProductSchema)
     def post(self,product_data):
       """
       Creates a new product
@@ -53,13 +54,16 @@ class Products(MethodView):
       return parsedict(product=product,images=ImageNameStore.getproductimages(product_id=product_id))
     
     #edit product
-    @product_bp.response(200, ProductSchema)
-    def patch(self,product_id,product_data):
+    @product_bp.response(201, ProductSchema)
+    def put(self,product_id,product_data):
       """
       product_data is a dictionary containing the product data to update
       """
-      product = Product(product_id=product_id)
-      return product.update_product(product_data)
+      try:
+        product = Product(product_id=product_id)
+        return product.update_product(product_data)
+      except Exception as e:
+        abort(404, message="Item not found.")
     
     @product_bp.response(200, ProductSchema)
     def delete(self,product_id):
@@ -68,7 +72,7 @@ class Products(MethodView):
         product_to_delete.delete_from_db()
         return True
       except Exception as e:
-        return False
+        abort(404, message="Item not found.")
       
 @product_bp.route("/categories/<type>")
 class Categories(MethodView):
