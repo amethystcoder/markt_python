@@ -26,7 +26,7 @@ def on_connection_established(reg):
     emit('connect',{'message':'conected'})
 
 @socketio.on('reconnect')
-def on_connection_established(reg):
+def on_connection_re_established(reg):
     clients_cache.append({"client_id":reg})   
     join_room(reg)
     emit('connect',{'message':'conected'})
