@@ -38,8 +38,8 @@ class Products(MethodView):
               new_image.save_to_db()
         product.save_to_db()
         return parsedict(product=product)
-      except ConnectionError:
-        return False
+      except Exception as e:
+        abort(500, message="Could not save Successfully")
 
 @product_bp.route("/<product_id>")
 class Products(MethodView):
