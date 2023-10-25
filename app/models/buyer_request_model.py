@@ -1,7 +1,7 @@
 from db import db
 import time
-
-
+import hashlib
+import uuid
 
 class BuyerRequest(db.Model):
     __tablename__ = "buyer_request"
@@ -11,17 +11,24 @@ class BuyerRequest(db.Model):
     buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
     product_description = db.Column(db.String(400), nullable=False)
     category = db.Column(db.String(255))
-    created_at = db.Column(db.TIMESTAMP, default=time.asctime(), nullable=False)
+    created_at = db.Column(db.TIMESTAMP, default=time.time(), nullable=False)
     status = db.Column(db.String(255), default="open")
 
     # Define relationship
     buyer = db.relationship("Buyer", back_populates="requests")
     
     def __init__(self,buyer_id,product_description,category):
+        self.unique_id = self.generate_unique_id()
         self.buyer_id = buyer_id
         self.product_description = product_description
         self.category = category
         
+    def generate_unique_id():
+        unique_id = str(uuid.uuid4()).encode()
+        return hashlib.sha256(unique_id).hexdigest()
+    
+    def get_requests_through_buyer_id(buyer_id):
+        return db.session.query(BuyerRequest).filter(BuyerRequest.buyer_id == buyer_id).all()
 
     def save_to_db(self):
         db.session.add(self)
