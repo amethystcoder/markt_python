@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
+from .routes import productrequest
 import models
 from db import db
 from flask_cors import CORS
@@ -28,7 +29,7 @@ def create_app(config_name="development"):
         from .routes import cart, order, payment, user, websocket, example
 
     # Import and register blueprints here
-    from .routes import cart, order, payment, user, websocket, product, productquery, example
+    from .routes import cart, order, payment, user, websocket, product, example
 
     app.register_blueprint(cart.cart_bp)
     app.register_blueprint(order.order_bp)
@@ -41,10 +42,10 @@ def create_app(config_name="development"):
 
 
 
-        # Register chat test blueprints
-        from .views import chat_test_blp
-        app.register_blueprint(chat_test_blp)
+    # Register chat test blueprints
+    from .views import chat_test_blp
+    app.register_blueprint(chat_test_blp)
 
-        # Include other configurations and setup as needed
+    # Include other configurations and setup as needed
 
-        return app, socketio
+    return app, socketio

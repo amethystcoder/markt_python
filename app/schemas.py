@@ -29,3 +29,10 @@ class CartSchema:
     discount_price = fields.Float()
     discount_percent = fields.Float()
     #order_status = db.Column(db.String(255), default='pending')
+    
+class ProductRequestSchema:
+    buyer_id = fields.String()
+    product_description = fields.String()
+    category = fields.String()
+    created_at = fields.DateTime()
+    status = fields.String()
