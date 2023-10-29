@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Chat Test</title>
-     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <title>Markt Chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Kindly change this to fit your needs -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" 
+    integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" 
+    crossorigin="anonymous"></script>-->
+    <script src="chatscript.js"></script>
 </head>
 <body>
-    <section class="msger">
-        <header class="msger-header">
-               <div class="msger-header-title">
-                    <i class="fas fa-comment-alt"></i> Markt Place Connect
-               </div>
+    <section class="all-messages">
+        <header class="main-header">
+            <h1 class="main-heading">Markt Chat</h1>
+            <h3>Chats</h3>
+        </header>
+        <ul class="chats-list">
 
-               <div class="msger-header-options">
-                    <span><i class="fas fa-cog"></i></span>
-               </div>
-          </header>
-        <main id="messages" class="msger-chat">
-            <!-- Empty container for messages -->
-        </main>
-        <form class="msger-inputarea">
-               <input type="text" class="msger-input" placeholder="Enter your message...">
-               <!-- <button id="toggleEmojiTray">
-                    <i class="fa-regular fa-face-smile"></i>
-               </button>
-               <div class="emoji-tray">
-                    <button class="emoji">😀</button>
-                    <button class="emoji">😍</button>
-                    <button class="emoji">🥰</button>
-                    <button class="emoji">😂</button>
-                    <button class="emoji">🤣</button>
-                    <button class="emoji">😎</button>
-                    <button class="emoji">😊</button>
-                    <button class="emoji">😜</button>
-                    <button class="emoji">😇</button>
-                    <button class="emoji">🙌</button>
-               </div> -->
-               <button type="submit" class="msger-send-btn">Send</button>
-          </form>
+        </ul>
     </section>
-
-     <script src="https://kit.fontawesome.com/2a49fbdbb8.js" crossorigin="anonymous"></script>
-     <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <section class="chat-space">
+        <header class="chat-space-header">
+            <button onclick="remove_selected_chat()">Back</button>
+            <img src="" class="profile-image" alt="" width="50" height="50">
+            <div class="user-data">
+                <h1 class="user-name">Username</h1>
+                <span class="user-status">
+                    <span class="status-color"></span>
+                    <p class="status-text">offline</p>
+                </span>
+            </div>
+        </header>
+        <div class="no-messages-space">
+            <p>click on a chat to view</p>
+        </div>
+        <div class="chat-messages-space">
+            <section class="chat-messages"></section>
+            <div class="chat-input-nav">
+                <span class="chat-input-container">
+                    <textarea name="" class="chat-input" placeholder="Enter message"></textarea>
+                    <label class="add-image" for="chat-image">upload</label>
+                    <input type="file" name="chat-image" id="chat-image" accept="image/jpeg,image/png"
+                    onchange="handle_image_uploads()" multiple>
+                </span>
+                <button onclick="send_message()">Send</button>
+            </div>
+        </div>
+    </section>
 </body>
-</html>
+</html> 
