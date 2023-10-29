@@ -35,8 +35,8 @@ def create_app(config_name="development"):
         app.register_blueprint(example.example_blp)
 
         # Register chat test blueprints
-        from .views import chat_test_blp
-        app.register_blueprint(chat_test_blp)
+        from .views import views
+        app.register_blueprint(views)
 
         # Include other configurations and setup as needed
 
