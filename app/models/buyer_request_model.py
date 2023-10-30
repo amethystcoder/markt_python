@@ -17,19 +17,35 @@ class BuyerRequest(db.Model):
     # Define relationship
     buyer = db.relationship("Buyer", back_populates="requests")
     
-    def __init__(self,buyer_id,product_description,category):
-        self.unique_id = self.generate_unique_id()
-        self.buyer_id = buyer_id
-        self.product_description = product_description
-        self.category = category
+    def __init__(self,buyer_id,product_description,category,unique_id):
+        if unique_id is not None:
+            self = self.get_requests_through_id(unique_id)
+        else:
+            self.unique_id = self.generate_unique_id()
+            self.buyer_id = buyer_id
+            self.product_description = product_description
+            self.category = category
         
     def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
     
+    @classmethod
+    def get_requests_through_id(id):
+        return db.session.query(BuyerRequest).filter(BuyerRequest.unique_id == id).all()
+    
+    @classmethod
     def get_requests_through_buyer_id(buyer_id):
         return db.session.query(BuyerRequest).filter(BuyerRequest.buyer_id == buyer_id).all()
+    
+    @classmethod
+    def get_requests_using_category(*args):
+        return db.session.query(BuyerRequest).filter(BuyerRequest.category._in(list(args))).all()
 
+    @classmethod
+    def delete_all_buyer_requests(buyer_id):
+        return db.session.query(BuyerRequest).filter(BuyerRequest.buyer_id == buyer_id).delete()
+    
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
