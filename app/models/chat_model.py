@@ -42,12 +42,11 @@ class Message(db.Model):
 
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    message_type = db.Column(db.String(50), nullable=False, default='text')  # 'text', 'image', etc
-    content = db.Column(db.String(400))
-    image_url = db.Column(db.String(255))  # handling image messages
+    message = db.Column(db.String(400))
+    image = db.Column(db.Integer)  # handling image messages
     timestamp = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
     sender_id = db.Column(db.Integer, nullable=False)
-    room_id = db.Column(db.String(50), db.ForeignKey('messages.room_id', nullable=False))
+    room_id = db.Column(db.String(50), db.ForeignKey('messages.room_id'), nullable=False)
 
     def save_to_db(self):
         db.session.add(self)
