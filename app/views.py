@@ -42,3 +42,60 @@ def login():
         Response: Flask response object.
     """
     pass
+
+
+@views.route('/')
+def landing_page():
+    """
+    Renders landing page interface.
+
+    Returns:
+        Response: Flask response object.
+    """
+
+@views.route("/new-chat/", methods=["GET"])
+@login_required
+def new_chat():
+    """
+    Creates a new chat room and adds users to the chat list.
+
+    Returns:
+        Response: Flask response object.
+    """
+    user_id = session["user"]["id"]
+    # Get the other user in the URL or set to None
+    recepient_user_id = request.args.get("recipient_id", None)
+
+    recipient_user = User.query.filter_by(id=recepient_user_id).first()
+   
+    user_chat = Chat.query.filter_by(user_id=user_id).first()
+
+    # Check if the new chat is already in the chat list
+    if recipient_user.id not in [user_chat["user_id"] for user_chat in user_chat.chat_list]:
+        # Generate a room_id
+        room_id = user_chat.generate_unique_id()
+
+        # Add the new chat to the chat list of the current user
+        updated_chat_list = user_chat.chat_list + [{"user_id": recipient_user.id, "room_id": room_id}]
+        user_chat.chat_list = updated_chat_list
+
+        # Save the changes to the database
+        user_chat.save_to_db()
+
+        # Create a new chat list for the recipient user if it doesn't exist
+        recipient_chat = Chat.query.filter_by(user_id=recipient_user.id).first()
+        if not recipient_chat:
+            recipient_chat = Chat(user_id=recipient_user.id, chat_list=[])
+            recipient_chat.save_to_db()
+
+        # Add the new chat to the chat list of the recipient user
+        updated_chat_list = recipient_chat.chat_list + [{"user_id": user_id, "room_id": room_id}]
+        recipient_chat.chat_list = updated_chat_list
+        recipient_chat.save_to_db()
+
+        # Create a new message entry for the chat room
+        new_message = Message(room_id=room_id)
+        new_message.save_to_db()
+
+    return redirect(url_for("views.chat"))
+
