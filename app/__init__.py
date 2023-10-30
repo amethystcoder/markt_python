@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
-import models
+import app.models
 from db import db
 from flask_cors import CORS
 

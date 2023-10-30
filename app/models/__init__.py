@@ -9,5 +9,5 @@ from .buyer_query_model import BuyerQuery
 from .buyer_request_model import BuyerRequest
 from .chat_model import Chat
 from .chat_model import Message
-from chat_model import ChatMessage
-from group_chats import get_messages_in_bundles_of_timestamp
+from .chat_model import ChatMessage
+from .group_chats import get_messages_in_bundles_of_timestamp
