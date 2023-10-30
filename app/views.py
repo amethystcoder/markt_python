@@ -112,13 +112,13 @@ def chat():
     pass
 
 
-@views.route("/imageUploadChat")
+@views.route("/imageUploadChat", methods=["POST"])
 @login_required
 def upload_image():
     """
     The route expects an image file in the request (assuming the file input in the form has the name attribute set to 'image').
     TODO
-    - Get chat's room id e.g rid = request.form.get('roomid')
+    - Get chat's room id e.g rid = request.form.get('imagerid')
     - The image is then uploaded to a cloud storage or any method we would utilize
     - A thumbnail URL can be generated using the cloud service. 
     - This URL is then stored in the message entry for the chat room, and the fact that it's an image (set image to 1).
