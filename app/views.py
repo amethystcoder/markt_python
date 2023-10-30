@@ -99,3 +99,31 @@ def new_chat():
 
     return redirect(url_for("views.chat"))
 
+
+@views.route("/chat")
+@login_required
+def chat():
+    """
+    Renders the chat interface and displays chat messages.
+
+    Returns:
+        Response: Flask response object.
+    """
+    pass
+
+
+@views.route("/imageUploadChat")
+@login_required
+def upload_image():
+    """
+    The route expects an image file in the request (assuming the file input in the form has the name attribute set to 'image').
+    TODO
+    - Get chat's room id e.g rid = request.form.get('roomid')
+    - The image is then uploaded to a cloud storage or any method we would utilize
+    - A thumbnail URL can be generated using the cloud service. 
+    - This URL is then stored in the message entry for the chat room, and the fact that it's an image (set image to 1).
+    - Set the session variable 'imageid' to the ID of the newly created image
+
+    """
+    # Redirect to the 'chat' route after image upload
+    return redirect(url_for('views.chat'))
