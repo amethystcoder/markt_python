@@ -45,6 +45,10 @@ class User(db.Model):
 
     def set_password(self, password):
         self.password = pbkdf2_sha256.hash(password)
+        
+    def change_password(self, password):
+        self.password = pbkdf2_sha256.hash(password)
+        db.session.commit()
 
     def check_password(self, password):
         return pbkdf2_sha256.verify(password, self.password)

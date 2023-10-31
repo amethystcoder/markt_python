@@ -26,10 +26,10 @@ def create_app(config_name="development"):
         db.create_all()
 
         # Import and register blueprints here
-        from .routes import cart, order, payment, user, websocket, example
+        from .routes import cart, order, payment, user, websocket, product, example, forgot_password_handler
 
     # Import and register blueprints here
-    from .routes import cart, order, payment, user, websocket, product, example
+    from .routes import cart, order, payment, user, websocket, product, example, forgot_password_handler
 
     app.register_blueprint(cart.cart_bp)
     app.register_blueprint(order.order_bp)
@@ -39,6 +39,7 @@ def create_app(config_name="development"):
     app.register_blueprint(websocket.websocket_bp)
     app.register_blueprint(product.product_bp)
     app.register_blueprint(example.example_blp)
+    app.register_blueprint(forgot_password_handler.pswd_retrvl_bp)
 
 
 

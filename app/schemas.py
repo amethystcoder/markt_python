@@ -36,3 +36,10 @@ class ProductRequestSchema:
     category = fields.String()
     created_at = fields.DateTime()
     status = fields.String()
+    
+class PasswordRetrievalSchema:
+    id = fields.Int(strict=True)
+    recovery_code = fields.Int(strict=True)
+    user_id = fields.String()
+    email = fields.String()
+    expiration_time = fields.Int(strict=True)
