@@ -7,6 +7,7 @@ from app import socketio
 
 views = Blueprint('views', __name__, static_folder='static', template_folder='templates')
 
+
 # NOTE, we create a new chat list for any newly registered user (the register route)
 
 
@@ -53,6 +54,7 @@ def landing_page():
         Response: Flask response object.
     """
 
+
 @views.route("/new-chat/", methods=["GET"])
 @login_required
 def new_chat():
@@ -64,23 +66,23 @@ def new_chat():
     """
     user_id = session["user"]["id"]
     # Get the other user in the URL or set to None
-    recepient_user_id = request.args.get("recipient_id", None)
+    recipient_user_id = request.args.get("recipient_id", None)
 
-    recipient_user = User.query.filter_by(id=recepient_user_id).first()
-   
-    user_chat = Chat.query.filter_by(user_id=user_id).first()
+    recipient_user = User.query.filter_by(id=recipient_user_id).first()
+
+    existing_chat = Chat.query.filter_by(user_id=user_id).first()
 
     # Check if the new chat is already in the chat list
-    if recipient_user.id not in [user_chat["user_id"] for user_chat in user_chat.chat_list]:
+    if recipient_user.id not in [user_chat["user_id"] for user_chat in existing_chat.chat_list]:
         # Generate a room_id
-        room_id = user_chat.generate_unique_id()
+        room_id = Chat.generate_unique_id()
 
         # Add the new chat to the chat list of the current user
-        updated_chat_list = user_chat.chat_list + [{"user_id": recipient_user.id, "room_id": room_id}]
-        user_chat.chat_list = updated_chat_list
+        updated_chat_list = existing_chat.chat_list + [{"user_id": recipient_user.id, "room_id": room_id}]
+        existing_chat.chat_list = updated_chat_list
 
         # Save the changes to the database
-        user_chat.save_to_db()
+        existing_chat.save_to_db()
 
         # Create a new chat list for the recipient user if it doesn't exist
         recipient_chat = Chat.query.filter_by(user_id=recipient_user.id).first()
@@ -119,8 +121,8 @@ def upload_image():
     The route expects an image file in the request (assuming the file input in the form has the name attribute set to 'image').
     TODO
     - Get chat's room id e.g rid = request.form.get('imagerid')
-    - The image is then uploaded to a cloud storage or any method we would utilize
-    - A thumbnail URL can be generated using the cloud service. 
+    - The image is then uploaded to a cloud storage or any method we would utilize(maybe the upload folder or storage bucket)
+    - A thumbnail URL can be generated using the cloud service (or functions from ImageSaver class).
     - This URL is then stored in the message entry for the chat room, and the fact that it's an image (set image to 1).
     - Set the session variable 'imageid' to the ID of the newly created image
 
