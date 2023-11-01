@@ -3,18 +3,28 @@ from flask_migrate import Migrate
 from .routes import productrequest
 import models
 from db import db
+from flask_mail import Mail
 from flask_cors import CORS
 
 from .chat_websocket import socketio
 migrate = Migrate()
 cors = CORS()
+mail = Mail()
 
 
 def create_app(config_name="development"):
     app = Flask(__name__)
     app.config.from_object(f"config.{config_name.capitalize()}Config")
 
+    ''' app.config['MAIL_SERVER']='smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = 'yourId@gmail.com'
+    app.config['MAIL_PASSWORD'] = '*****'
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True '''
+
     # Initialize extensions
+    mail.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
     # Initialize Flask-SocketIO with CORS
