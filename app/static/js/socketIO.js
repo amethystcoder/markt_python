@@ -5,7 +5,14 @@ let selectedchat = undefined
 
 window.addEventListener("load",()=>{
     //Add socketio events as needed corresponding to how it is on the server side
-    //const socket = io.connect(`http://` );
+    const socket = io.connect('http://127.0.0.1:5000/' );
+
+    socket.on('error', data=>{
+        let username = document.getElementById('username');
+        if (data['username']== username.innerHTML){
+            alert(data['msg'])
+        }
+    })
     
 
     check_chat_status()
