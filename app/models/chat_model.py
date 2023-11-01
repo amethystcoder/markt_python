@@ -43,7 +43,7 @@ class Message(db.Model):
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.String(400))
-    image = db.Column(db.Integer)  # handling image messages
+    image = db.Column(db.Integer)  # handling image messages, 0 --> text 1 --> image
     timestamp = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
     sender_id = db.Column(db.Integer, nullable=False)
     room_id = db.Column(db.String(50), db.ForeignKey('messages.room_id'), nullable=False)
