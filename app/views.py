@@ -125,7 +125,7 @@ def upload_image():
     - The image is then uploaded to a cloud storage or any method we would utilize(maybe the upload folder or storage bucket)
     - A thumbnail URL can be generated using the cloud service (or functions from ImageSaver class).
     - This URL is then stored in the message entry for the chat room, and the fact that it's an image (set image to 1).
-    - Set the session variable 'imageid' to the ID of the newly created image
+    - Set the session variable 'imageid' to the ID of chatMessage entry the newly created image
 
     """
     # Redirect to the 'chat' route after image upload
