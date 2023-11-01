@@ -1,3 +1,4 @@
+// OPTION A - if we don't want the client/socketio script linked to all templated related to initiating chat
 // Link all html templates with the chat messsage/icon to this script
 
 function createChat(recipientId) {

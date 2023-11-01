@@ -55,6 +55,7 @@ def landing_page():
     """
 
 
+# OPTION A - if we don't want the client/socketio script linked to all templated related to initiating chat
 @views.route("/new-chat/", methods=["GET"])
 @login_required
 def new_chat():
