@@ -7,13 +7,22 @@ window.addEventListener("load",()=>{
     //Add socketio events as needed corresponding to how it is on the server side
     const socket = io.connect('http://127.0.0.1:5000/' );
 
+    socket.on('connect', function() {
+        socket.emit('message',{data: 'I\'m connected!'});
+        // helpful if user initiated a chat or loads up the chat page, auto select the first chat in the list
+        let saved = document.getElementById('chat-roomId-saved').innerHTML;
+        if (saved){
+            socket.emit('getChat', {rid:saved});
+        }
+    });
+
     socket.on('error', data=>{
         let username = document.getElementById('username');
         if (data['username']== username.innerHTML){
             alert(data['msg'])
         }
-    })
-    
+    });
+
 
     check_chat_status()
     const chatList = document.querySelector(".chats-list")

@@ -19,6 +19,12 @@
             <h1 class="main-heading">Markt Chat</h1>
             <h3>Chats</h3>
         </header>
+        <hr>
+        {% if count > 0 %}
+            <span id="chat-roomId-saved" style="display: none;">{{room_id}</span>
+        {% else %}
+            <span id="chat-roomId-saved" style="display: none;"></span>
+        {% endif %}
         <ul class="chats-list">
 
         </ul>
