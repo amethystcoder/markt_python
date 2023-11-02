@@ -11,7 +11,7 @@ socketio = SocketIO()
 def handle_con_message(data):
     print(data)
 
-    send({"msg": data['data'], "wid":"1", "channel_d":"2"})
+    send({"msg": data['data'], "wid": "1", "channel_d": "2"})
 
 
 # Join-chat event. Emit online message to other users and join the room
