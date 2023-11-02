@@ -8,7 +8,8 @@ window.addEventListener("load",()=>{
     const socket = io.connect('http://127.0.0.1:5000/' );
 
     socket.on('connect', function() {
-        socket.emit('message',{data: 'I\'m connected!'});
+        socket.emit('message', {data: 'I\'m connected!'});
+
         // helpful if user initiated a chat or loads up the chat page, auto select the first chat in the list
         let saved = document.getElementById('chat-roomId-saved').innerHTML;
         if (saved){
