@@ -11,7 +11,7 @@ socketio = SocketIO()
 def handle_con_message(data):
     print(data)
 
-    send({"msg": data['data'], "wid": "1", "channel_d": "2"})
+    send({"msg": data['data'], "conf_id": "1"})
 
 
 # Join-chat event. Emit online message to other users and join the room
@@ -57,7 +57,7 @@ def handle_message(json, methods=["GET", "POST"]):
 
     # Emit the message(s) sent to other users in the room
     socketio.emit(
-        "message",
+        "receiveMessage",
         json,
         room=room_id,
         include_self=False,
@@ -81,7 +81,7 @@ def send_image(json, methods=["GET", "POST"]):
 
         # Emit the message(s) sent to other users in the room
         socketio.emit(
-            "message",
+            "receiveMessage",
             json,
             room=json["room_id"],
             include_self=False,

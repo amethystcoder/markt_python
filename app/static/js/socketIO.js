@@ -24,6 +24,12 @@ window.addEventListener("load",()=>{
         }
     });
 
+    socket.on('message', data => {
+        if (data.conf_id == "1"){
+            console.log(data.msg);
+        }
+    });
+
 
     check_chat_status()
     const chatList = document.querySelector(".chats-list")
