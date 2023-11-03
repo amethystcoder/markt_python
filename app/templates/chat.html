@@ -26,9 +26,19 @@
             <span id="chat-roomId-saved" style="display: none;"></span>
         {% endif %}
         <span id="userId" style="display: none;">{{user_id}}</span>
-        <ul class="chats-list">
 
+        <ul class="chats-list">
+            {% for chat in data %}
+            <li class="spec-chat">
+                <div class="user-det-cont">
+                    <h1>{{ chat["username"] }}</h1>
+                    <p> {{chat["last_message"] }}</p>
+                </div>
+                <img src="{{ chat['user_image'] }}" class="user-profile-image">
+            </li>
+            {%endfor%}
         </ul>
+
     </section>
     <section class="chat-space">
         <header class="chat-space-header">
@@ -52,7 +62,7 @@
                 <span class="chat-input-container">
                     <textarea name="" class="chat-input" placeholder="Enter message"></textarea>
                     <form action="/imageUploadChat" method="POST" id="imageForm" enctype="multipart/form-data">
-                        <label class="add-image" for="chat-image"" id="send-image">
+                        <label class="add-image" for="chat-image" id="send-image">
                             upload
                            </label>
                            <input style="display: none;" id="file-upload" type="file" name="chat-image" id="chat-image" accept="image/jpeg,image/png"/>
