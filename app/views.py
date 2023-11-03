@@ -55,7 +55,7 @@ def landing_page():
     """
 
 
-# OPTION A - if we don't want the client/socketio script linked to all templated related to initiating chat
+# Serves as api for initiating/creating chat
 @views.route("/new-chat/", methods=["GET"])
 @login_required
 def new_chat():
@@ -100,7 +100,13 @@ def new_chat():
         new_message = Message(room_id=room_id)
         new_message.save_to_db()
 
-    return redirect(url_for("views.chat"))
+    room_id = None
+    for user_chat in existing_chat.chatlist:
+        if user_chat["user_id"] == recipient_user.id:
+            room_id = user_chat["room_id"]
+            break
+
+    return redirect(url_for("views.chat", rid=room_id))
 
 
 @views.route("/chat")
@@ -112,6 +118,8 @@ def chat():
     Returns:
         Response: Flask response object.
     """
+    # Get the room id in the URL or set to None
+    room_id = request.args.get("rid", None)  # To auto select that chat in the list --> UI
     pass
 
 
