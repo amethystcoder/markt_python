@@ -101,7 +101,7 @@ def new_chat():
         new_message.save_to_db()
 
     room_id = None
-    for user_chat in existing_chat.chatlist:
+    for user_chat in existing_chat.chat_list:
         if user_chat["user_id"] == recipient_user.id:
             room_id = user_chat["room_id"]
             break
