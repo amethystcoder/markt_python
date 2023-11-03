@@ -198,7 +198,9 @@
     },
     {
         "name": "toys and kids",
-        "tags":[]
+        "tags":[
+            {"name":"traditional","descs":[]}
+        ]
     },
     {
         "name": "music and sound",
