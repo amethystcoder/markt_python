@@ -14,6 +14,11 @@ def handle_con_message(data):
     send({"msg": data['data'], "conf_id": "1"})
 
 
+@socketio.on('getChats')
+def send_chats(data):
+    pass
+
+
 # Join-chat event. Emit online message to other users and join the room
 @socketio.on("join-chat")
 def join_private_chat(data):
