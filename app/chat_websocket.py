@@ -19,6 +19,11 @@ def send_chats(data):
     pass
 
 
+@socketio.on('getMessages')
+def send_messages(data):
+    pass
+
+
 # Join-chat event. Emit online message to other users and join the room
 @socketio.on("join-chat")
 def join_private_chat(data):
