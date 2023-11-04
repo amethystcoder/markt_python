@@ -25,7 +25,7 @@ def send_messages(data):
 
 
 # Join-chat event. Emit online message to other users and join the room
-@socketio.on("join-chat")
+@socketio.on('join-chat')
 def join_private_chat(data):
     room = data["rid"]
     join_room(room=room)
@@ -38,7 +38,7 @@ def join_private_chat(data):
 
 
 # Outgoing event handler
-@socketio.on("sendMessage")
+@socketio.on('sendMessage')
 def handle_message(json, methods=["GET", "POST"]):
     room_id = json["rid"]
     timestamp = json["timestamp"]
@@ -74,7 +74,7 @@ def handle_message(json, methods=["GET", "POST"]):
     )
 
 
-@socketio.on("sendImage")
+@socketio.on('sendImage')
 def send_image(json, methods=["GET", "POST"]):
     # Get ChatMessage id with session['image_id'] (logic handled in upload image route)
     if ChatMessage.query.filter_by(id=session['imageid']).count() == 1:
@@ -108,7 +108,7 @@ def handle_read(data):
     emit('read', data, room=data['recipient'])
 
 
-@socketio.on("error")
+@socketio.on('error')
 def handle_error():
     pass
 
