@@ -36,6 +36,45 @@ window.addEventListener("load",()=>{
         }
     });
 
+    socket.on('getChatsJS', data=>{
+        var list = document.getElementById('chats-list');
+        removeAllChildNodes(list);
+        var channels = data['chats']
+        for (var i = 0; i < data['chatCount']; i++){
+            const li = document.createElement("li");
+            const div = document.createElement("div");
+            const h1 = document.createElement("h1");
+            const p = document.createElement("p");
+            const img = document.createElement("img");
+            const span = document.createElement("span");
+
+            li.classList.add('spec-chat')
+
+            div.classList.add('user-det-cont');
+            h1.innerHTML = chats[i][i].name;
+            p.innerHTML = chats[i][i].last_message; // Not implemented in the server side yet
+            div.appendChild(h1);
+            div.appendChild(p);
+
+            img.src = chats[i][i].user_img;
+            img.classList.add('user-profile-image');
+
+            span.classList.add('cid');
+            span.innerHTML = chats[i][i].id;
+
+            li.appendChild(div);
+            li.appendChild(img);
+            li.appendChild(span);
+
+            div.addEventListener('click', function(){
+
+                socket.emit('join-chat',{rid: chats[i][i].id});
+                socket.emit('getMessages', {rid:chats[i][i].id});
+            })
+            list.appendChild(li);
+        }
+    })
+
 
     check_chat_status()
     const chatList = document.querySelector(".chats-list")

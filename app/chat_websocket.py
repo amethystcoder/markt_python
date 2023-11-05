@@ -27,9 +27,10 @@ def send_chats(data):
         ch.append({i: {
             'id': c["room_id"],
             'name': User.query.filter_by(c["user_id"]).username,
+            'user_img': User.query.filter_by(c["user_id"]).image
         }})
         i = i + 1
-    emit('getChannelsJS', {"channels": ch, "channelCount": chat_count, "user": User.query.filter_by(user_id).username})"""
+    emit('getChatsJS', {"chats": ch, "chatCount": chat_count, "user": User.query.filter_by(user_id).username})"""
 
 
 @socketio.on('getMessages')
