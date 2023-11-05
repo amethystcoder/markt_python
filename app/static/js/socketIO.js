@@ -11,8 +11,10 @@ window.addEventListener("load",()=>{
     socket.on('connect', function() {
         socket.emit('message', {data: 'I\'m connected!'});
 
+        /*
         let current_user = document.getElementById('userId').innerHTML;
         socket.emit('getChats', {userId:current_user});  // or we can get user_id from session in the server side
+        */
 
         // helpful if user initiated a chat using the message button, auto select that chat in the list
         let saved = document.getElementById('chat-roomId-saved').innerHTML;

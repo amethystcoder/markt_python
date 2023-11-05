@@ -14,9 +14,22 @@ def handle_con_message(data):
     send({"msg": data['data'], "conf_id": "1"})
 
 
-@socketio.on('getChats')
+"""@socketio.on('getChats')
 def send_chats(data):
-    pass
+    user_id = data['userId']
+    user_chats = Chat.query.filter_by(user_id=user_id).first()
+    chat_list = user_chats.chat_list if user_chats else []
+
+    ch = []
+    chat_count = len(chat_list)
+    i = 0
+    for c in chat_list:
+        ch.append({i: {
+            'id': c["room_id"],
+            'name': User.query.filter_by(c["user_id"]).username,
+        }})
+        i = i + 1
+    emit('getChannelsJS', {"channels": ch, "channelCount": chat_count, "user": User.query.filter_by(user_id).username})"""
 
 
 @socketio.on('getMessages')
