@@ -35,6 +35,7 @@
                     <p> {{chat["last_message"] }}</p>
                 </div>
                 <img src="{{ chat['user_image'] }}" class="user-profile-image">
+                <span class="cid" style="display: none;">{{chat["room_id"]}}</span>
             </li>
             {%endfor%}
         </ul>
