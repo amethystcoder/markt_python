@@ -11,10 +11,10 @@ window.addEventListener("load",()=>{
     socket.on('connect', function() {
         socket.emit('message', {data: 'I\'m connected!'});
 
-        /*
+
         let current_user = document.getElementById('userId').innerHTML;
         socket.emit('getChats', {userId:current_user});  // or we can get user_id from session in the server side
-        */
+
 
         // helpful if user initiated a chat using the message button, auto select that chat in the list
         let saved = document.getElementById('chat-roomId-saved').innerHTML;
@@ -52,7 +52,7 @@ window.addEventListener("load",()=>{
 
             div.classList.add('user-det-cont');
             h1.innerHTML = chats[i][i].name;
-            p.innerHTML = chats[i][i].last_message; // Not implemented in the server side yet
+            p.innerHTML = chats[i][i].last_message;
             div.appendChild(h1);
             div.appendChild(p);
 

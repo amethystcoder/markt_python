@@ -14,7 +14,7 @@ def handle_con_message(data):
     send({"msg": data['data'], "conf_id": "1"})
 
 
-"""@socketio.on('getChats')
+@socketio.on('getChats')
 def send_chats(data):
     user_id = data['userId']
     user_chats = Chat.query.filter_by(user_id=user_id).first()
@@ -24,13 +24,33 @@ def send_chats(data):
     chat_count = len(chat_list)
     i = 0
     for c in chat_list:
+
+        # Query the database to get the username and image of users in a user's chat
+        user = User.query.filter_by(c["user_id"])
+        username = user.username
+        image = user.image
+
+        try:
+            # Get the Message object for the chat room
+            message = Message.query.filter_by(room_id=c["room_id"]).first()
+
+            # Get the last ChatMessage object in the Message's messages relationship
+            last_message = message.messages[-1]
+
+            # Get the message content of the last ChatMessage object
+            last_message_content = last_message.content
+        except (AttributeError, IndexError):
+            # Set variable to this when no messages have been sent to the room
+            last_message_content = "This place is empty. No messages ..."
+
         ch.append({i: {
             'id': c["room_id"],
-            'name': User.query.filter_by(c["user_id"]).username,
-            'user_img': User.query.filter_by(c["user_id"]).image
+            'name': username,
+            'user_img': image,
+            'last_message': last_message_content
         }})
         i = i + 1
-    emit('getChatsJS', {"chats": ch, "chatCount": chat_count, "user": User.query.filter_by(user_id).username})"""
+    emit('getChatsJS', {"chats": ch, "chatCount": chat_count, "user": User.query.filter_by(user_id).username})
 
 
 @socketio.on('getMessages')
