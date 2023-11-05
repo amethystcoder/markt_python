@@ -39,7 +39,7 @@ window.addEventListener("load",()=>{
     socket.on('getChatsJS', data=>{
         var list = document.getElementById('chats-list');
         removeAllChildNodes(list);
-        var channels = data['chats']
+        var chats = data['chats']
         for (var i = 0; i < data['chatCount']; i++){
             const li = document.createElement("li");
             const div = document.createElement("div");
