@@ -131,7 +131,7 @@ def parsedict(product,images):
     "quantity":product.stock_quantity,
     "category":product.category,
     "product_id":product.product_id,
-    "product_images":[image for image in images]
+    "product_images":[image.image_name for image in images]
     }
   
 #TODO: searchproductwithcategory
