@@ -55,7 +55,23 @@ def send_chats(data):
 
 @socketio.on('getMessages')
 def send_messages(data):
-    pass
+    chats = Message.query.filter_by(room_id=data['rid']).first().messages if data else []
+    chats_count = len(chats)
+    i = 0
+    ch = []
+    room = data['rid']
+    join_room(room)
+    for c in chats:
+        ch.append({i: {
+            'id': c.id,
+            'message': c.content,
+            'sender_id': c.sender_id,
+            'rid': c.room_id,
+            'image': c.image
+        }})
+        i = i + 1
+    emit('receiveMessageJS', {"chats": ch}, broadcast=True,
+         room=room)
 
 
 # Join-chat event. Emit online message to other users and join the room
@@ -104,7 +120,7 @@ def handle_message(json, methods=["GET", "POST"]):
         "receiveMessage",
         json,
         room=room_id,
-        include_self=False,
+        # include_self=False,
     )
 
 
@@ -117,7 +133,8 @@ def send_image(json, methods=["GET", "POST"]):
 
         json = {
             'message': chat_message.content,
-            'sender_username': User.query.filter_by(id=json["sender_id"]).username,
+            # 'sender_username': User.query.filter_by(id=json["sender_id"]).username,
+            'sender_id': json["sender_id"],
             'rid': chat_message.room_id,
             'timestamp': chat_message.timestamp,
             'image': 1
@@ -128,7 +145,7 @@ def send_image(json, methods=["GET", "POST"]):
             "receiveMessage",
             json,
             room=json["room_id"],
-            include_self=False,
+            # include_self=False,
         )
 
 
