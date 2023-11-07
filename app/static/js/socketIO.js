@@ -68,8 +68,8 @@ window.addEventListener("load",()=>{
 
             div.addEventListener('click', function(){
 
-                socket.emit('join-chat',{rid: chats[i][i].id});
-                socket.emit('getMessages', {rid:chats[i][i].id});
+                socket.emit('join-chat',{rid: chats[i][i].id}); // correction needed
+                socket.emit('getMessages', {rid:chats[i][i].id}); // correction needed
             })
             list.appendChild(li);
         }
