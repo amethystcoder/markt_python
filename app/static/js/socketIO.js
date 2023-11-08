@@ -1,6 +1,5 @@
 const allMessages = document.querySelector(".all-messages")
 const chatSpace = document.querySelector(".chat-space")
-let chats = document.querySelectorAll('.cid');
 
 let selectedchat = undefined
 
@@ -74,6 +73,27 @@ window.addEventListener("load",()=>{
             list.appendChild(li);
         }
     })
+
+    let chats = document.querySelectorAll('.cid');
+
+    // When a chat is clicked, dynamically update chat-roomId-saved to the room id of the selected chat
+    for (let c =0; c<chats.length;c++){
+        let el = chats[c].parentNode
+        //console.log(el.childNodes);
+        el.addEventListener('click', function(){
+            let saved = document.getElementById('chat-roomId-saved');
+            //console.log(saved.innerHTML);
+
+            saved.innerHTML=this.childNodes[5].innerHTML;
+            console.log(saved.innerHTML)
+            selectedchat = saved.innerHTML;
+            //chatMessages.replaceChildren("")
+            check_chat_status()
+
+            //console.log(this.childNodes[5].innerHTML)
+            //console.log(saved.innerHTML)
+        })
+    }
 
 
     check_chat_status()
