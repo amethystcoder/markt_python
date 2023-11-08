@@ -60,17 +60,17 @@
             <section class="chat-messages"></section>
             <form action="">
             <div class="chat-input-nav">
-                <span class="chat-input-container">
+                <div class="chat-input-container">
                     <textarea name="" class="chat-input" placeholder="Enter message"></textarea>
                     <form action="/imageUploadChat" method="POST" id="imageForm" enctype="multipart/form-data">
-                        <label class="add-image" for="chat-image" id="send-image">
+                        <label class="add-image" for="file-upload" id="send-image">
                             upload
                            </label>
-                           <input style="display: none;" id="file-upload" type="file" name="chat-image" id="chat-image" accept="image/jpeg,image/png"/>
+                           <input style="display: none;" id="file-upload" type="file" name="chat-image"  accept="image/jpeg,image/png"/>
                            <input style="display: none;" type="text" value="" name="imagerid" id="imagerid">
                            <input style="display: none;" type="text" value="" name="imageusername" id="imageusername">
-                      </form>
-                </span>
+                    </form>
+                </div>
                 <button id="send-message" type="submit">Send</button>
             </div>
             </form>
