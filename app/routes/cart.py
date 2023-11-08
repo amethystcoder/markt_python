@@ -66,6 +66,7 @@ class CheckoutCart(MethodView):
         order = Order(buyer_id=cart_items.buyer_id,product_id=product.product_id,seller_id=product.seller_id,
                       total_price=product_total_price,quantity=cart_items.quantity,delivery_address="")
         order.save_to_db()
+        Cart.delete_all_buyer_cart_items(buyer_id=cartdata["buyer_id"])
     except Exception as e:
       abort(500,"Could not save")
         

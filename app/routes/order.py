@@ -73,6 +73,16 @@ class BuyerOrders():
         [parse_buyer_orders(order=order,buyer=Buyer(order.buyer_id),product=Product(order.product_id),seller=Seller(order.seller_id),product_image=ImageNameStore.getproductthumbnail(order.product_id)) for order in Order.get_buyer_orders(buyer_id)]
     except Exception as e:
       abort(500,"could not create")
+      
+''' @order_bp.route("/buyers/update/complete")
+class CompleteOrders():
+  @order_bp.response(200, OrderSchema)
+  def patch(self,order_id):
+    try:
+      order = Order(order_id=order_id)
+      order.complete_order()
+    except Exception as e:
+      abort(404,"order not found") '''
             
 def parse_unaccepted_orders(order,buyer,product,product_image):
     return {
