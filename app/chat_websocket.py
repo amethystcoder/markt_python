@@ -89,11 +89,11 @@ def join_private_chat(data):
 
 # Outgoing event handler
 @socketio.on('sendMessage')
-def handle_message(json, methods=["GET", "POST"]):
-    room_id = json["rid"]
-    timestamp = json["timestamp"]
-    content = json["message"]
-    sender_id = json["sender_id"]
+def handle_message(data, methods=["GET", "POST"]):
+    room_id = data["rid"]
+    timestamp = data["timestamp"]
+    content = data["message"]
+    sender_id = data["sender_id"]
 
     # Get the message entry for the chat room
     message_entry = Message.query.filter_by(room_id=room_id).first()
@@ -113,28 +113,28 @@ def handle_message(json, methods=["GET", "POST"]):
     chat_message.save_to_db()
     message_entry.save_to_db()
 
-    json["image"] = 0
+    data["image"] = 0
 
     # Emit the message(s) sent to other users in the room
     socketio.emit(
         "receiveMessage",
-        json,
+        data,
         room=room_id,
         # include_self=False,
     )
 
 
 @socketio.on('sendImage')
-def send_image(json, methods=["GET", "POST"]):
+def send_image(data, methods=["GET", "POST"]):
     # Get ChatMessage id with session['image_id'] (logic handled in upload image route)
     if ChatMessage.query.filter_by(id=session['imageid']).count() == 1:
         chat_message = ChatMessage.query.filter_by(id=session['imageid']).first()
         session['image_id'] = -1  # image sent
 
-        json = {
+        data = {
             'message': chat_message.content,
-            # 'sender_username': User.query.filter_by(id=json["sender_id"]).username,
-            'sender_id': json["sender_id"],
+            # 'sender_username': User.query.filter_by(id=data["sender_id"]).username,
+            'sender_id': data["sender_id"],
             'rid': chat_message.room_id,
             'timestamp': chat_message.timestamp,
             'image': 1
@@ -143,8 +143,8 @@ def send_image(json, methods=["GET", "POST"]):
         # Emit the message(s) sent to other users in the room
         socketio.emit(
             "receiveMessage",
-            json,
-            room=json["room_id"],
+            data,
+            room=data["room_id"],
             # include_self=False,
         )
 
