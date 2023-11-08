@@ -13,7 +13,7 @@ pswd_retrvl_bp = Blueprint("Retrieve Password", "retrieve password", description
 
 @pswd_retrvl_bp.route("/create")
 class PasswordRetrival(MethodView):
-    @pswd_retrvl_bp(201, PasswordRetrievalSchema)
+    @pswd_retrvl_bp.response(201, PasswordRetrievalSchema)
     def post(self,data):
         try:
             PasswordRetrievalData.delete_all_other_recovery_attempts(data["email"])
@@ -31,7 +31,7 @@ class PasswordRetrival(MethodView):
 
 @pswd_retrvl_bp.route("/check")
 class PasswordCodeCheck(MethodView):
-    @pswd_retrvl_bp(201, PasswordRetrievalSchema)
+    @pswd_retrvl_bp.response(201, PasswordRetrievalSchema)
     def post(self,data):
         try:
             password_retrieval_to_check = PasswordRetrievalData(email=data["email"])

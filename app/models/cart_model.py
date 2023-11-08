@@ -42,6 +42,10 @@ class Cart(db.Model):
     def update_cart_quantity(self,newquantity):
         self.quantity = newquantity
         db.session.commit()
+        
+    @classmethod
+    def delete_all_buyer_cart_items(self,buyer_id):
+        return db.session.query(Cart).filter(Cart.buyer_id == buyer_id).delete()
     
     def save_to_db(self):
         db.session.add(self)

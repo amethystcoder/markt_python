@@ -21,7 +21,7 @@ class ImageNameStore(db.Model):
 
     @classmethod
     def getproductthumbnail(product_id):
-        return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).first()
+        return [db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).first()]
     
     @classmethod
     def getproductimages(product_id):

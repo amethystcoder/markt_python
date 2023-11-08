@@ -43,3 +43,14 @@ class PasswordRetrievalSchema:
     user_id = fields.String()
     email = fields.String()
     expiration_time = fields.Int(strict=True)
+    
+class OrderSchema:
+    id = fields.Int(strict=True)
+    buyer_id = fields.String()
+    seller_id = fields.String()
+    product_id = fields.String()
+    quantity = fields.Int(strict=True)
+    total_price = fields.Float()
+    order_status = fields.String()
+    order_date = fields.DateTime()
+    delivery_address = fields.String()
