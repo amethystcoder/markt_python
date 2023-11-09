@@ -70,8 +70,7 @@ def send_messages(data):
             'image': c.image
         }})
         i = i + 1
-    emit('receiveMessageJS', {"chats": ch}, broadcast=True,
-         room=room)
+    emit('receiveMessageJS', {"chats": ch, "room_id": room}, broadcast=True)
 
 
 # Join-chat event. Emit online message to other users and join the room

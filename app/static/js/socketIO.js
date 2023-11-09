@@ -33,6 +33,86 @@ window.addEventListener("load",()=>{
         }
     });
 
+    socket.on('receiveMessageJS', data=>{
+        let roomId = document.getElementById('chat-roomId-saved').innerHTML;
+        if (data['room_id']==roomId){
+            const userName = document.querySelector(".user-name")
+            const statusText = document.querySelector(".status-text")
+            const statusColor = document.querySelector(".status-color")
+
+            //change the status and username and profile image to that of the selected chat
+            userName.innerHTML = data["name"] // Still have to work on this, maybe the chat database model
+            statusText.innerHTML = data["status"] // This too
+
+            let chatMessages = document.querySelector(".chat-messages")
+            let chatImageUploader = document.querySelector("#chat-image")
+            removeAllChildNodes(chatMessages)
+            let chats = data['chats']
+            let userId = document.getElementById('userId').innerHTML;
+
+            if(data["status"] === "online"){
+                statusColor.style.backgroundColor = "green"
+            }
+            else{
+                statusColor.style.backgroundColor = "darkgray"
+            }
+
+            for (let i = 0; i < chats.length; i++){
+                if (userId == chats[i][i].sender_id){
+                    if (chats[i][i].image == 0){
+                        let messageCont = document.createElement("div")
+                        let messageBubble = document.createElement("div")
+                        messageCont.classList.add("sent-by-you")
+                        messageBubble.classList.add("bubble-sent-by-you")
+
+                        messageBubble.innerHTML = chats[i][i].message
+                        messageCont.appendChild(messageBubble)
+
+                        chatMessages.appendChild(messageCont)
+                    }
+                    else if (chats[i][i].image == 1){
+                        let messageCont = document.createElement("div")
+                        messageCont.classList.add("sent-by-you")
+
+                        let image = document.createElement("img")
+                        image.setAttribute("src", chats[i][i].message)
+                        //image.src = URL.createObjectURL(chatImageUploader.files[i])
+                        image.classList.add("uploaded-images")
+                        messageCont.appendChild(image)
+                        chatMessages.appendChild(messageCont)
+                    }
+                }
+                else{
+                    if (chats[i][i].image == 0){
+                        let messageCont = document.createElement("div")
+                        let messageBubble = document.createElement("div")
+                        messageCont.classList.add("sent-by-other")
+                        messageBubble.classList.add("bubble-sent-by-other")
+
+                        messageBubble.innerHTML = chats[i][i].message
+                        messageCont.appendChild(messageBubble)
+
+                        chatMessages.appendChild(messageCont)
+                    }
+                    else if (chats[i][i].image == 1){
+                        let messageCont = document.createElement("div")
+                        messageCont.classList.add("sent-by-other")
+
+                        let image = document.createElement("img")
+                        image.setAttribute("src", chats[i][i].message)
+                        //image.src = URL.createObjectURL(chatImageUploader.files[i])
+                        image.classList.add("uploaded-images")
+                        messageCont.appendChild(image)
+                        chatMessages.appendChild(messageCont)
+                    }
+                }
+            }
+            //console.log(data)
+            chatMessages.scrollBy(0,chatMessages.scrollHeight)
+        }
+
+    })
+
     socket.on('getChatsJS', data=>{
         let list = document.getElementById('chats-list');
         removeAllChildNodes(list);
