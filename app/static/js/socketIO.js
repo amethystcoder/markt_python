@@ -234,6 +234,7 @@ window.addEventListener("load",()=>{
     })
 
     let chats = document.querySelectorAll('.cid');
+    let sendMessage = document.getElementById('send-message');
 
     // When a chat is clicked, dynamically update chat-roomId-saved to the room id of the selected chat
     for (let c =0; c<chats.length;c++){
