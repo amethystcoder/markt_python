@@ -273,6 +273,19 @@ window.addEventListener("load",()=>{
     let chats = document.querySelectorAll('.cid');
     let sendMessage = document.getElementById('send-message');
 
+    sendMessage.addEventListener('click', function(){
+        let chatMessageInput = document.querySelector(".chat-input")
+        let msg = chatMessageInput.value;
+        let saved = document.getElementById('chat-roomId-saved').innerHTML;
+        let userId = document.getElementById('userId').innerHTML;
+        let timestamp = Date.now() / 1000
+
+        //socket.emit('join-chat',{rid: saved});
+        socket.emit('handle_message', {message: msg, rid: saved, sender_id:userId, timestamp:timestamp})
+
+        chatMessageInput.value = "";
+    });
+
     // When a chat is clicked, dynamically update chat-roomId-saved to the room id of the selected chat
     for (let c =0; c<chats.length;c++){
         let el = chats[c].parentNode
