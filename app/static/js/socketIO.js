@@ -16,7 +16,7 @@ window.addEventListener("load",()=>{
         // helpful if user initiated a chat using the message button, auto select that chat in the list
         let saved = document.getElementById('chat-roomId-saved').innerHTML;
         if (saved){
-            socket.emit('getMessages', {rid:saved});
+            socket.emit('getChat', {rid:saved, userId:current_user});
         }
     });
 
@@ -189,6 +189,10 @@ window.addEventListener("load",()=>{
             chatMessages.scrollBy(0,chatMessages.scrollHeight)
         }
 
+    })
+
+    socket.on('getChatsJS', data=>{
+        
     })
 
     socket.on('getChatsJS', data=>{

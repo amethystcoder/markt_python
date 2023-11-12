@@ -14,6 +14,22 @@ def handle_con_message(data):
     send({"msg": data['data'], "conf_id": "1"})
 
 
+@socketio.on('getChat')
+def get_chat(data):
+    rid = data['rid']
+    user_id = data["userId"]
+    user_chats = Chat.query.filter_by(user_id=user_id).first()
+    chat_list = user_chats.chat_list if user_chats else []
+
+    # Getting the chat info from the room id
+    chat = []
+    for c in chat_list:
+        if c['room_id'] == rid:
+            chat.append(c)
+
+    emit('getChatJS', {"chat": chat, })
+
+
 @socketio.on('getChats')
 def send_chats(data):
     user_id = data['userId']
