@@ -305,7 +305,7 @@ window.addEventListener("load",()=>{
         })
     }
 
-
+/*
     check_chat_status()
     const chatList = document.querySelector(".chats-list")
     const chatMessages = document.querySelector(".chat-messages")
@@ -375,7 +375,7 @@ window.addEventListener("load",()=>{
         chatList.appendChild(newchatelem)
     })
 })
-
+*/
 function check_chat_status(){
     let noMessagesSpace = document.querySelector(".no-messages-space")
     let chatMessagesSpace = document.querySelector(".chat-messages-space")
@@ -407,6 +407,7 @@ function remove_selected_chat(){
     statusColor.style.backgroundColor = "darkgray"
 }
 
+/*
 function send_message(){
     const chatMessages = document.querySelector(".chat-messages")
     let chatInput = document.querySelector(".chat-input")
@@ -477,3 +478,4 @@ let chats = [{
         {sent_to:"you",sent_from:"maze",status:"read",send_date_and_time:"00:04",message:"hello"},
     ]
 }]
+*/
