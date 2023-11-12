@@ -57,7 +57,27 @@
             <p>click on a chat to view</p>
         </div>
         <div class="chat-messages-space">
-            <section class="chat-messages"></section>
+            <section class="chat-messages">
+                {% for j in messages %}
+                    {% if j.sender_username == user_data["username"] %}
+                    <div class="sent-by-you">
+                        {% if j.image == 0 %}
+                            <div class="bubble-sent-by-you"> {{j.message}} </div>
+                        {% else %}
+                            <img src="{{j.message}}" alt="">
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="sent-by-other">
+                        {% if j.image == 0 %}
+                            <div class="bubble-sent-by-other"> {{j.message}} </div>
+                        {% else %}
+                            <img src="{{j.message}}" alt="">
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {%endfor%}
+            </section>
             <form action="">
             <div class="chat-input-nav">
                 <div class="chat-input-container">
