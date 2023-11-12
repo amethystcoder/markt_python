@@ -27,7 +27,7 @@ def get_chat(data):
         if c["room_id"] == rid:
             user = User.query.filter_by(c["user_id"])
             name = user.username
-            image = user.image
+            image = user.profile_picture
             chat["name"] = name
             chat["user_img"] = image
             chat["room_id"] = c["room_id"]
@@ -49,7 +49,7 @@ def send_chats(data):
         # Query the database to get the username and image of users in a user's chat
         user = User.query.filter_by(c["user_id"])
         username = user.username
-        image = user.image
+        image = user.profile_picture
 
         try:
             # Get the Message object for the chat room
