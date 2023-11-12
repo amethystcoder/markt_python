@@ -115,7 +115,7 @@ window.addEventListener("load",()=>{
 
     socket.on('receiveMessage', data=>{
         let roomId = document.getElementById('chat-roomId-saved').innerHTML;
-        if (data['room_id']==roomId){
+        if (data['rid']==roomId){
             const userName = document.querySelector(".user-name")
             const statusText = document.querySelector(".status-text")
             const statusColor = document.querySelector(".status-color")

@@ -139,7 +139,7 @@ def handle_message(data, methods=["GET", "POST"]):
     socketio.emit(
         "receiveMessage",
         data,
-        room=room_id,
+        # room=room_id,
         # include_self=False,
     )
 
@@ -164,7 +164,7 @@ def send_image(data, methods=["GET", "POST"]):
         socketio.emit(
             "receiveMessage",
             data,
-            room=data["room_id"],
+            # room=data["room_id"],
             # include_self=False,
         )
 
