@@ -191,8 +191,41 @@ window.addEventListener("load",()=>{
 
     })
 
-    socket.on('getChatsJS', data=>{
-        
+    socket.on('getChatJS', data=>{
+        let list = document.getElementById('chats-list');
+        removeAllChildNodes(list);
+        let chat = data['chat']
+
+        const li = document.createElement("li");
+        const div = document.createElement("div");
+        const h1 = document.createElement("h1");
+        const p = document.createElement("p");
+        const img = document.createElement("img");
+        const span = document.createElement("span");
+
+        li.classList.add('spec-chat')
+
+        div.classList.add('user-det-cont');
+        h1.innerHTML = chat.name;
+        p.innerHTML = "";
+        div.appendChild(h1);
+        div.appendChild(p);
+
+        img.src = chat.user_img;
+        img.classList.add('user-profile-image');
+
+        span.classList.add('cid');
+        span.innerHTML = chat.room_id;
+
+        li.appendChild(div);
+        li.appendChild(img);
+        li.appendChild(span);
+
+        socket.emit('join-chat',{rid: chat.room_id});
+        socket.emit('getMessages', {rid: chat.room_id});
+
+        list.appendChild(li);
+
     })
 
     socket.on('getChatsJS', data=>{

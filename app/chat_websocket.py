@@ -22,10 +22,15 @@ def get_chat(data):
     chat_list = user_chats.chat_list if user_chats else []
 
     # Getting the chat info from the room id
-    chat = []
+    chat = {}
     for c in chat_list:
-        if c['room_id'] == rid:
-            chat.append(c)
+        if c["room_id"] == rid:
+            user = User.query.filter_by(c["user_id"])
+            name = user.username
+            image = user.image
+            chat["name"] = name
+            chat["user_img"] = image
+            chat["room_id"] = c["room_id"]
 
     emit('getChatJS', {"chat": chat, })
 
