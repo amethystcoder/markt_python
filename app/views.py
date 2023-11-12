@@ -120,7 +120,52 @@ def chat():
     """
     # Get the room id in the URL or set to None
     room_id = request.args.get("rid", None)  # To auto select that chat in the list --> UI
-    pass
+
+    # Get the chat list for the user
+    current_user_id = session["user"]["id"]
+    current_user_chats = Chat.query.filter_by(user_id=current_user_id).first()
+    chat_list = current_user_chats.chat_list if current_user_chats else []
+
+    # Initialize context that contains information about the chat room
+    data = []
+
+    for chat in chat_list:
+        # Query the database to get the username of users in a user's chat list
+        username = User.query.get(chat["user_id"]).username
+        user_image = User.query.get(chat["user_id"]).profile_image
+        is_active = room_id == chat["room_id"]
+
+        try:
+            # Get the Message object for the chat room
+            message = Message.query.filter_by(room_id=chat["room_id"]).first()
+
+            # Get the last ChatMessage object in the Message's messages relationship
+            last_message = message.messages[-1]
+
+            # Get the message content of the last ChatMessage object
+            last_message_content = last_message.content
+        except (AttributeError, IndexError):
+            # Set variable to this when no messages have been sent to the room
+            last_message_content = "This place is empty. No messages ..."
+
+        data.append({
+            "username": username,
+            "user_image": user_image,
+            "room_id": chat["room_id"],
+            "is_active": is_active,
+            "last_message": last_message_content,
+        })
+
+    # Get all the message history in a certain room
+    messages = Message.query.filter_by(room_id=room_id).first().messages if room_id else []
+
+    return render_template(
+        "/views/chat.html",
+        user_data=session["user"],
+        room_id=room_id,
+        data=data,
+        messages=messages,
+    )
 
 
 @views.route("/imageUploadChat", methods=["POST"])
