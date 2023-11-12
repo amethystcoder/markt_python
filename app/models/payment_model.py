@@ -14,6 +14,9 @@ class Payment(db.Model):
 
     # Define relationship
     order = db.relationship("Order", back_populates="payments")
+    
+    def __init__(self):
+        pass
 
     def save_to_db(self):
         db.session.add(self)

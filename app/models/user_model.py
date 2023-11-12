@@ -6,6 +6,7 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
+    unique_id = db.Column(db.String(400), nullable=False, unique=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     profile_picture = db.Column(db.String(200))
@@ -24,6 +25,15 @@ class User(db.Model):
 
     # Define a relationship with the Chat model
     chats = db.relationship('Chat', back_populates='user')
+    
+    def __init__(self,*args, **kwargs):
+        for key,value in kwargs.items():
+            if key == "email":
+                self.email = value
+            if key == "password":
+                self.password = value
+            if key == "unique_id":
+                self.unique_id = value
 
     def save_to_db(self):
         db.session.add(self)
@@ -35,6 +45,10 @@ class User(db.Model):
 
     def set_password(self, password):
         self.password = pbkdf2_sha256.hash(password)
+        
+    def change_password(self, password):
+        self.password = pbkdf2_sha256.hash(password)
+        db.session.commit()
 
     def check_password(self, password):
         return pbkdf2_sha256.verify(password, self.password)

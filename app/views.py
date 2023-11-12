@@ -160,7 +160,7 @@ def chat():
     messages = Message.query.filter_by(room_id=room_id).first().messages if room_id else []
 
     return render_template(
-        "/views/chat.html",
+        "chat.html",
         user_data=session["user"],
         room_id=room_id,
         data=data,
