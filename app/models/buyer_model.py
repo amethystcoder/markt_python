@@ -10,6 +10,15 @@ class Buyer(User):
     # Add Buyer-specific attributes here
     
     username = db.Column(db.String(80), unique=True, nullable=False)
+    
+    def __init__(self,unique_id,username):
+        if unique_id is not None:
+            self = self.get_buyer(unique_id=unique_id)
+        else:
+            self.username = username
+            
+    def get_buyer(self,unqiue_id):
+        return db.session.query(Buyer).filter(Buyer.unique_id == unqiue_id).first()
 
     def save_to_db(self):
         db.session.add(self)

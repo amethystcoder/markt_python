@@ -305,6 +305,7 @@ window.addEventListener("load",()=>{
         })
     }
 
+})
 /*
     check_chat_status()
     const chatList = document.querySelector(".chats-list")
