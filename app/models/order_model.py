@@ -1,5 +1,8 @@
 from db import db
 import time
+import hashlib
+import uuid
+
 
 
 class Order(db.Model):
@@ -56,6 +59,10 @@ class Order(db.Model):
     @classmethod
     def get_buyer_orders(self, buyer_id):
         return db.session.query(Order).filter(Order.buyer_id == buyer_id).all()
+    
+    def generate_unique_id():
+        unique_id = str(uuid.uuid4()).encode()
+        return hashlib.sha256(unique_id).hexdigest()
 
     def accept_order(self):
         self.order_status = "accepted"
@@ -66,6 +73,7 @@ class Order(db.Model):
         db.session.commit()
 
     def save_to_db(self):
+        self.order_id = self.generate_unique_id()
         db.session.add(self)
         db.session.commit()
 

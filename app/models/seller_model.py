@@ -31,7 +31,11 @@ class Seller(User):
             
     def get_seller(self,uniue_id):
         return db.session.query(Seller).filter(Seller.unique_id == uniue_id).first()
-
+    
+    def update_rating(self,rating):
+        self.total_raters = self.total_raters + 1
+        self.total_rating = self.total_rating + rating
+        db.session.commit()
 
     def save_to_db(self):
         db.session.add(self)

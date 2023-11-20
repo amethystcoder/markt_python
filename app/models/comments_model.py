@@ -35,19 +35,19 @@ class Comments(db.Model):
         return hashlib.sha256(unique_id).hexdigest()
     
     @classmethod
-    def get_comment_using_id(comment_id):
+    def get_comment_using_id(self,comment_id):
         return db.session.query(Comments).filter(Comments.comment_id == comment_id).first()
     
     @classmethod
-    def get_product_comments(product_id):
+    def get_product_comments(self,product_id):
         return db.session.query(Comments).filter(Comments.comment_place_id == product_id).all()
     
     @classmethod
-    def get_buyer_comments(buyer_id):
+    def get_buyer_comments(self,buyer_id):
         return db.session.query(Comments).filter(Comments.buyer_id == buyer_id).all()
     
     @classmethod
-    def get_seller_comments(seller_id):
+    def get_seller_comments(self,seller_id):
         return db.session.query(Comments).filter(Comments.comment_place_id == seller_id).all()
     
     def save_to_db(self):

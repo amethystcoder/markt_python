@@ -26,19 +26,19 @@ class Favorite(db.Model):
         return hashlib.sha256(unique_id).hexdigest()
     
     @classmethod
-    def get_favorite_using_id(id):
+    def get_favorite_using_id(self,id):
         return db.session.query(Favorite).filter(Favorite.id == id).first()
     
     @classmethod
-    def delete_all_buyer_favorites(buyer_id):
+    def delete_all_buyer_favorites(self,buyer_id):
         return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).delete()
     
     @classmethod
-    def get_all_buyer_favorites_that_are_sellers(buyer_id):
+    def get_all_buyer_favorites_that_are_sellers(self,buyer_id):
         return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).filter(Favorite.favorite_type == "seller").all()
     
     @classmethod
-    def get_all_buyer_favorites_that_are_products(buyer_id):
+    def get_all_buyer_favorites_that_are_products(self,buyer_id):
         return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).filter(Favorite.favorite_type == "product").all()
     
     def save_to_db(self):
