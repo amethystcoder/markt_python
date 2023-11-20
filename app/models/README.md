@@ -101,15 +101,6 @@
 | product_image  | VARCHAR(400) | NOT NULL                     | URL or path to the product image.               |
 
 
-#### BuyerQuery Table
-| Column Name    | Data Type  | Constraints                   | Description                                       |
-| ---------------|------------|-------------------------------|---------------------------------------------------|
-| id             | INT        | PRIMARY KEY, AUTO_INCREMENT   | Unique identifier for each query.                |
-| buyer_id       | VARCHAR(400) | NOT NULL                     | Unique identifier for the buyer making the query. |
-| description    | VARCHAR(400) | NOT NULL                     | Description of the query.                       |
-| category       | VARCHAR(255) |                             | Category of the query.                          |
-| created_at     | TIMESTAMP  | NOT NULL                     | Timestamp when the query was created.           |
-
 #### BuyerRequest Table
 | Column Name    | Data Type  | Constraints                   | Description                                       |
 | ---------------|------------|-------------------------------|---------------------------------------------------|
@@ -119,6 +110,25 @@
 | category       | VARCHAR(255) |                             | Category of the requested product.              |
 | created_at     | TIMESTAMP  | NOT NULL                     | Timestamp when the request was created.         |
 | status         | VARCHAR(255) | DEFAULT 'open'               | Status of the request (e.g., open, closed).     |
+
+#### Comments Table
+| Column Name    | Data Type  | Constraints                   | Description                                       |
+| ---------------|------------|-------------------------------|---------------------------------------------------|
+| id             | INT        | PRIMARY KEY, AUTO_INCREMENT   | Unique identifier for each request.              |
+| comment_id       | VARCHAR(400) | NOT NULL                     | Unique identifier for the buyer making the request. |
+| buyer_id          | VARCHAR(400) | NOT NULL                 | id of the buyer making the comment           |
+| comment_title       | VARCHAR(255) |                             | Title of the comment .              |
+| buyer_name     | VARCHAR(255)  | NOT NULL                     |  name of the buyer making the comment         |
+| comment_place_id    | VARCHAR(255) | NOT NULL               | the id of the product or seller the comment was made about     |
+| comment_date   | TIMESTAMP | NOT NULL               | date the comment was made     |
+
+#### Favorites Table
+| Column Name    | Data Type  | Constraints                   | Description                                       |
+| ---------------|------------|-------------------------------|---------------------------------------------------|
+| id             | INT        | PRIMARY KEY, AUTO_INCREMENT   | Unique identifier for each request.              |
+| buyer_id       | VARCHAR(400) | NOT NULL                     | Unique identifier for the buyer that has the favorite |
+| favorite_item_id | VARCHAR(400) | NOT NULL                 | id of the product or seller the buyer is adding to his favorites           |
+| favorite_type       | VARCHAR(255) | NOT NULL               | whether the type is a seller or a product              |
 
 #### Other Tables
 

@@ -1,4 +1,6 @@
 from db import db
+import hashlib
+import uuid
 
 
 class Cart(db.Model):
@@ -47,7 +49,12 @@ class Cart(db.Model):
     def delete_all_buyer_cart_items(self,buyer_id):
         return db.session.query(Cart).filter(Cart.buyer_id == buyer_id).delete()
     
+    def generate_unique_id():
+        unique_id = str(uuid.uuid4()).encode()
+        return hashlib.sha256(unique_id).hexdigest()
+    
     def save_to_db(self):
+        self.cart_id = self.generate_unique_id()
         db.session.add(self)
         db.session.commit()
 
