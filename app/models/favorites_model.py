@@ -4,7 +4,7 @@ import uuid
 
 
 class Favorite(db.Model):
-    __tablename__ = "favortites"
+    __tablename__ = "favorites"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
@@ -21,10 +21,6 @@ class Favorite(db.Model):
             self.buyer_id = buyer_id
             self.product_id = product_id
     
-    def generate_unique_id():
-        unique_id = str(uuid.uuid4()).encode()
-        return hashlib.sha256(unique_id).hexdigest()
-    
     @classmethod
     def get_favorite_using_id(self,id):
         return db.session.query(Favorite).filter(Favorite.id == id).first()
@@ -34,12 +30,20 @@ class Favorite(db.Model):
         return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).delete()
     
     @classmethod
+    def get_all_buyer_favorites(self,buyer_id):
+        return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).all()
+    
+    @classmethod
     def get_all_buyer_favorites_that_are_sellers(self,buyer_id):
         return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).filter(Favorite.favorite_type == "seller").all()
     
     @classmethod
     def get_all_buyer_favorites_that_are_products(self,buyer_id):
         return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).filter(Favorite.favorite_type == "product").all()
+    
+    def generate_unique_id(self):
+        unique_id = str(uuid.uuid4()).encode()
+        return hashlib.sha256(unique_id).hexdigest()
     
     def save_to_db(self):
         db.session.add(self)

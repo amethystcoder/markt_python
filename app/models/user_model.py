@@ -37,6 +37,8 @@ class User(db.Model):
         """
         
         for key,value in kwargs.items():
+            if key == "using_seller_id":
+                self = self.get_user_using_id(kwargs["unique_id"])
             if key == "create_new":
                 self.email = kwargs["email"]
                 self.password = self.set_password(kwargs["password"])
@@ -97,6 +99,9 @@ class User(db.Model):
                 return user
             return None
         return None
+    
+    def get_user_using_id(self,unique_id):
+        return db.session.query(User).filter(User.unique_id == unique_id).first()
 
     def set_password(self, password):
         self.password = pbkdf2_sha256.hash(password)

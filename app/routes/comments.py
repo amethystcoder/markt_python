@@ -39,7 +39,7 @@ class ProductComment(MethodView):
     @comment_bp.response(200, CommentSchema)
     def get(self,product_id):
       try:
-          return Comments.get_product_comments(product_id=product_id)
+          return [parse_comment(comments) for comments in Comments.get_product_comments(product_id=product_id)]
       except Exception as e:
           abort(404,"not found")
   
@@ -49,7 +49,7 @@ class CommentOnSeller(MethodView):
     @comment_bp.response(200, CommentSchema)
     def get(self,seller_id):
       try:
-          return Comments.get_seller_comments(seller_id=seller_id)
+          return [parse_comment(comments) for comments in Comments.get_seller_comments(seller_id=seller_id)]
       except Exception as e:
           abort(404,"not found")
 
@@ -64,5 +64,13 @@ class Comment(MethodView):
       except Exception as e:
         abort(404,"not found")
   
-def parse_comment(comment):
-    return{}
+def parse_comment(comment:Comments):
+    return{
+        "id":comment.id,
+        "comment_id":comment.comment_id,
+        "comment_title":comment.comment_title,
+        "buyer_id":comment.buyer_id,
+        "buyer_name":comment.buyer_name,
+        "comment_place_id":comment.comment_place_id,
+        "comment_date":comment.comment_date
+    }

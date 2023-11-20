@@ -21,15 +21,15 @@ class ImageNameStore(db.Model):
         self.image_use_origin_id = image_use_origin_id
 
     @classmethod
-    def getproductthumbnail(product_id):
+    def getproductthumbnail(self,product_id):
         return [db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).first()]
 
     @classmethod
-    def getproductimages(product_id):
+    def getproductimages(self,product_id):
         return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).all()
 
     @classmethod
-    def getchatimages(chat_id):
+    def getchatimages(self,chat_id):
         return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == chat_id).all()
 
     def save_to_db(self):
