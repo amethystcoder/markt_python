@@ -1,5 +1,7 @@
 from db import db
 from passlib.hash import pbkdf2_sha256
+import hashlib
+import uuid
 
 
 class User(db.Model):
@@ -69,6 +71,10 @@ class User(db.Model):
         db.session.delete(self)
         db.session.commit()
         
+    def generate_unique_id():
+        unique_id = str(uuid.uuid4()).encode()
+        return hashlib.sha256(unique_id).hexdigest()
+    
     def get_reset_user_using_email_or_phone(self,email,phone):
         if email is not None:
             return db.session.query(User).filter(User.email == email).first()
