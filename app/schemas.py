@@ -109,4 +109,5 @@ class CommentSchema:
 class FavoriteSchema:
     id = fields.Int(strict=True)
     buyer_id = fields.String()
-    product_id = fields.String()
+    favorite_item_id = fields.String() #the id of the buyer favorite (seller or product)
+    favorite_type = fields.String() #seller or product
