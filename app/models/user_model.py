@@ -1,10 +1,11 @@
 from db import db
 from passlib.hash import pbkdf2_sha256
+from flask_login import UserMixin
 import hashlib
 import uuid
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -27,16 +28,17 @@ class User(db.Model):
 
     # Define a relationship with the Chat model
     chats = db.relationship('Chat', back_populates='user')
-    
-    def __init__(self,*args, **kwargs):
+
+    # I do not think this is needed, flask sqlalchemy handles the initialization with information from the models
+    def __init__(self, *args, **kwargs):
         """sumary_line
         
         Keyword arguments:
         argument -- description
         Return: return_description
         """
-        
-        for key,value in kwargs.items():
+
+        for key, value in kwargs.items():
             if key == "using_seller_id":
                 self = self.get_user_using_id(kwargs["unique_id"])
             if key == "create_new":
@@ -72,62 +74,63 @@ class User(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
-        
+
     def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
-    
-    def get_reset_user_using_email_or_phone(self,email,phone):
+
+    def get_reset_user_using_email_or_phone(self, email, phone):
         if email is not None:
             return db.session.query(User).filter(User.email == email).first()
         elif phone is not None:
             return db.session.query(User).filter(User.phone_number == phone).first()
         return None
-        
-    def get_user_using_email(self,email):
+
+    def get_user_using_email(self, email):
         user = db.session.query(User).filter(User.email == email).first()
         if user is not None:
             if self.check_password(user.password):
                 return user
             return None
         return None
-    
-    def get_user_using_phone(self,phone):
+
+    def get_user_using_phone(self, phone):
         user = db.session.query(User).filter(User.phone_number == phone).first()
         if user is not None:
             if self.check_password(user.password):
                 return user
             return None
         return None
-    
-    def get_user_using_id(self,unique_id):
+
+    def get_user_using_id(self, unique_id):
         return db.session.query(User).filter(User.unique_id == unique_id).first()
 
     def set_password(self, password):
         self.password = pbkdf2_sha256.hash(password)
-        
+
     def change_password(self, password):
         self.password = pbkdf2_sha256.hash(password)
         db.session.commit()
-        
-    def get_user_location_data(self,unique_id):
+
+    def get_user_location_data(self, unique_id):
         data = db.session.query(User).filter(User.unique_id == unique_id).first()
         return {
-            "city":data.city,
-            "country":data.country,
-            "longitude":data.longitude,
-            "latitude":data.latitude,
-            "house_number":data.house_number,
-            "state":data.state,
-            "street":data.street,
-            "postal_code":data.postal_code
-            }
+            "city": data.city,
+            "country": data.country,
+            "longitude": data.longitude,
+            "latitude": data.latitude,
+            "house_number": data.house_number,
+            "state": data.state,
+            "street": data.street,
+            "postal_code": data.postal_code
+        }
 
-    def check_password(self, password): 
+    def check_password(self, password):
         return pbkdf2_sha256.verify(password, self.password)
 
-    def change_status(self,status):
-        acceptable_status = ["active","offline","standby"] #standby could be a status for when user is online but not on present screen
+    def change_status(self, status):
+        acceptable_status = ["active", "offline",
+                             "standby"]  # standby could be a status for when user is online but not on present screen
         if status in acceptable_status:
             self.user_status = status
             db.session.commit()
