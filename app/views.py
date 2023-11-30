@@ -1,3 +1,7 @@
+#
+# +-- THIS WOULD BE WORKED ON, AS IT WAS TREATED WITH FULL RENDERING IN MIND --+
+# +-- IT COULD CONTRIBUTE TO TESTING IN THE FUTURE, NEVERTHELESS --+
+
 from flask import Blueprint, render_template, request, url_for, redirect, session, flash, jsonify
 from app.models import *
 from functools import wraps
