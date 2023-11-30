@@ -5,6 +5,7 @@ Flask-Migrate
 Flask-Socketio
 Flask-Cors
 Flask-Mail
+Flask-Login
 passlib
 marshmallow
 python-dotenv
