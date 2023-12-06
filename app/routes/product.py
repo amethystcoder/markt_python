@@ -1,7 +1,7 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort, request
-from app.utilis.image_resizer_and_uploader import ImageSaver
+from app.utils.image_resizer_and_uploader import ImageSaver
 from ..schemas import ProductSchema,CategorySchema
 from ..models.product_model import Product
 from ..models.categories_get import Categories
