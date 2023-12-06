@@ -9,6 +9,7 @@ class BaseConfig:
     OPENAPI_URL_PREFIX = "/"
     OPENAPI_SWAGGER_UI_PATH = "/swagger-ui"
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///data.db")
+    SESSION_TYPE = "filesystem"  # Flask-Login requires this for session management
     MAIL_SERVER = ''  # i.e smtp.gmail.com
     MAIL_PORT = 0  # i.e 8080
     MAIL_USERNAME = ''  # i.e yourId@gmail.com
