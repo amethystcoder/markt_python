@@ -9,6 +9,10 @@ class UserSchema(Schema):
     pass
 
 
+class UserProfileSchema(Schema):
+    pass
+
+
 class ProductSchema(Schema):
     id = fields.Int(strict=True)
     seller_id = fields.String()
