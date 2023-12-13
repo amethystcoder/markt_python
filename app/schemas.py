@@ -9,6 +9,7 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     email = fields.Str(required=True)
     phone_number = fields.Str()
+    profile_picture = fields.Str()
     password = fields.Str(required=True, load_only=True)
 
 

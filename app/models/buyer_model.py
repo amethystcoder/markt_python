@@ -10,6 +10,7 @@ class Buyer(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
 
     # Add Buyer-specific attributes here
+    shipping_address = db.Column(db.String(255), nullable=True)  # just for test
 
     @classmethod
     def find_by_unique_id(cls, unique_id):
