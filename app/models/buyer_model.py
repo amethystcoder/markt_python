@@ -7,6 +7,7 @@ class Buyer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     unique_id = db.Column(db.String(400), nullable=False, unique=True)  # we might discard this
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
 
     # Add Buyer-specific attributes here
 

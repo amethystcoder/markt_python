@@ -9,24 +9,14 @@ class User(UserMixin, db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone_number = db.Column(db.String(255), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     profile_picture = db.Column(db.String(200))
 
-    user_type = db.Column(db.String(255), nullable=False)
+    is_buyer = db.Column(db.Boolean, default=False)
+    is_seller = db.Column(db.Boolean, default=False)
     user_status = db.Column(db.String(255), default='active')
-
-    # user_address
-    longitude = db.Column(db.Float, nullable=False)
-    latitude = db.Column(db.Float, nullable=False)
-    house_number = db.Column(db.Integer, nullable=False)
-    street = db.Column(db.String(255), nullable=False)
-    city = db.Column(db.String(255), nullable=False)
-    state = db.Column(db.String(255), nullable=False)
-    country = db.Column(db.String(255), nullable=False)
-    postal_code = db.Column(db.Integer, nullable=False)
 
     # Add other common attributes here
 
@@ -65,7 +55,7 @@ class User(UserMixin, db.Model):
 
     @classmethod
     def get_user_location_data(cls, _id):
-        data = cls.query.filter_by(id=_id)
+        data = UserAddress.query.filter_by(id=_id)
         return {
             "city": data.city,
             "country": data.country,
@@ -76,3 +66,17 @@ class User(UserMixin, db.Model):
             "street": data.street,
             "postal_code": data.postal_code
         }
+
+
+class UserAddress(db.Model):
+    __tablename__ = "user_address"
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    house_number = db.Column(db.Integer, nullable=False)
+    street = db.Column(db.String(255), nullable=False)
+    city = db.Column(db.String(255), nullable=False)
+    state = db.Column(db.String(255), nullable=False)
+    country = db.Column(db.String(255), nullable=False)
+    postal_code = db.Column(db.Integer, nullable=False)

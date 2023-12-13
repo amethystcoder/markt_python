@@ -9,7 +9,7 @@ from .utils import ImageSaver
 from .models.imagename_store_model import ImageNameStore
 import tempfile
 
-auth_blp = Blueprint("Auth", "auth", description="Endpoint for all API calls related to user authentication",
+auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls related to user authentication",
                      url_prefix="/auth")
 
 

@@ -5,7 +5,7 @@ from flask_login import login_required
 from ..schemas import BuyerSchema, SellerSchema, UserSchema, UserProfileSchema
 from ..models import User
 
-user_blp = Blueprint("users", "user", description="Endpoint for all API calls related to users", url_prefix="/user")
+user_blp = Blueprint("users", __name__, description="Endpoint for all API calls related to users", url_prefix="/user")
 
 
 @user_blp.route("/<int:user_id>")
