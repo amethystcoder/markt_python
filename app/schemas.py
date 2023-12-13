@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate, post_load
 
 
 class ExampleSchema(Schema):
@@ -6,7 +6,47 @@ class ExampleSchema(Schema):
 
 
 class UserSchema(Schema):
-    pass
+    id = fields.Int(dump_only=True)
+    email = fields.Str(required=True)
+    phone_number = fields.Str()
+    password = fields.Str(required=True, load_only=True)
+
+
+class BuyerSchema(Schema):
+    shipping_address = fields.Str(required=True)  # We haven't thought of any buyer specific attr
+
+
+class SellerSchema(Schema):
+    shop_name = fields.Str(required=True)
+    description = fields.Str(required=True)
+    directions = fields.String(required=True)
+    category = fields.String(required=True)
+
+
+class AddressSchema(Schema):
+    longitude = fields.Float()
+    latitude = fields.Float()
+    house_number = fields.Int()
+    street = fields.String()
+    city = fields.String()
+    state = fields.String()
+    country = fields.String()
+    postal_code = fields.Int()
+
+
+class UserRegisterSchema(UserSchema):
+    username = fields.Str(required=True)
+    role = fields.Str(validate=validate.OneOf(["buyer", "seller"]), required=True)
+    address = fields.Nested(AddressSchema, required=False)
+
+    @post_load
+    def process_role(self, data, **kwargs):
+        role = data.get('role')
+        if role == 'buyer':
+            return BuyerSchema().load(data)
+        elif role == 'seller':
+            return SellerSchema().load(data)
+        return data
 
 
 class UserProfileSchema(Schema):
@@ -68,50 +108,6 @@ class OrderSchema:
     order_status = fields.String()
     order_date = fields.DateTime()
     delivery_address = fields.String()
-
-
-class BuyerSchema:
-    id = fields.Int(strict=True)
-    username = fields.String()
-    unique_id = fields.String()
-    email = fields.String()
-    password = fields.String()
-    profile_picture = fields.String()
-    phone_number = fields.String()
-    longitude = fields.Float()
-    latitude = fields.Float()
-    house_number = fields.Int()
-    street = fields.String()
-    city = fields.String()
-    state = fields.String()
-    country = fields.String()
-    postal_code = fields.Int()
-    user_type = fields.String()
-    user_status = fields.String()
-
-
-class SellerSchema:
-    id = fields.Int(strict=True)
-    shop_name = fields.String()
-    description = fields.String()
-    category = fields.String()
-    seller_rating = fields.Float()
-    directions = fields.String()
-    unique_id = fields.String()
-    email = fields.String()
-    password = fields.String()
-    profile_picture = fields.String()
-    phone_number = fields.String()
-    longitude = fields.Float()
-    latitude = fields.Float()
-    house_number = fields.Int()
-    street = fields.String()
-    city = fields.String()
-    state = fields.String()
-    country = fields.String()
-    postal_code = fields.Int(strict=True)
-    user_type = fields.String()
-    user_status = fields.String()
 
 
 class CommentSchema:
