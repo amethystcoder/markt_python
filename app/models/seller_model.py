@@ -15,7 +15,7 @@ class Seller(db.Model):
     category = db.Column(db.String(255), nullable=False)
     total_rating = db.Column(db.Integer)
     total_raters = db.Column(db.Integer)
-    directions = db.Column(db.String(400), nullable=False)
+    directions = db.Column(db.String(400), nullable=False)  # you think the constraint is needed ?
 
     # Define a one-to-many relationship between Seller and Product
     products = db.relationship('Product', back_populates='seller')

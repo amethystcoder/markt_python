@@ -80,3 +80,7 @@ class UserAddress(db.Model):
     state = db.Column(db.String(255))
     country = db.Column(db.String(255))
     postal_code = db.Column(db.Integer)
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
