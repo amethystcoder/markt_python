@@ -47,24 +47,26 @@ class UserRegister(MethodView):
             new_seller = Seller(
                 user_id=new_user.id,
                 username=user_data["username"],
-                store_name=user_data["store_name"],
-                # continue later
+                shop_name=user_data["shop_name"],
+                description=user_data["description"],
+                directions=user_data["directions"],
+                category=user_data["category"]
             )
-            new_user.save_to_db()
+            new_seller.save_to_db()
 
         else:
             abort(400, message="Invalid role")
 
         if 'address' in user_data:
             address_data = user_data['address']
-            shipping_address = UserAddress(
+            user_address = UserAddress(
                 house_number=address_data.get('house_number'),
                 street=address_data.get('street'),
                 city=address_data.get('city'),
                 state=address_data.get('state'),
                 postal_code=address_data.get('postal_code')
             )
-            new_user.shipping_address = shipping_address
+            user_address.save_to_db()
 
         return {"message": "User created successfully."}, 201
 
