@@ -2,7 +2,13 @@ from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from flask_login import login_user, logout_user, login_required, current_user
 
-from .schemas import BuyerSchema, SellerSchema, UserSchema, UserRegisterSchema
+from .schemas import (
+    BuyerSchema,
+    SellerSchema,
+    UserSchema,
+    UserRegisterSchema,
+    UserLoginResponseSchema,
+)
 from .models import User, Buyer, Seller, UserAddress
 
 from .utils import ImageSaver
@@ -90,14 +96,28 @@ class SellerRegistration(MethodView):
 @auth_blp.route("/login")
 class UserLogin(MethodView):
     @auth_blp.arguments(UserSchema(only=("username", "password")))
-    @auth_blp.response(200, description="User logged in successfully.")
+    @auth_blp.response(200, UserLoginResponseSchema)
     def post(self, user_data):
-        pass
+        email = user_data["email"]
+        password = user_data["password"]
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.check_password_hash(user.password, password):
+            login_user(user)
+            return {
+                "message": "Login successful",
+                "role": {"is_buyer": user.is_buyer,
+                         "is_seller": user.is_seller}
+            }, 200
+        else:
+            abort(401, message="Invalid credentials.")
 
 
 @auth_blp.route("/logout")
 class UserLogout(MethodView):
-    @login_required # Protect this route
+    @login_required  # Protect this route
     @auth_blp.response(200, description="Logged out successfully")
     def post(self):
-        pass
+        logout_user()
+        return {"message": "Logged out successful"}, 200

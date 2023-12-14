@@ -50,6 +50,16 @@ class UserRegisterSchema(UserSchema):
         return data
 
 
+class RoleSchema(Schema):
+    is_buyer = fields.Bool()
+    is_seller = fields.Bool()
+
+
+class UserLoginResponseSchema(Schema):
+    message = fields.Str()
+    role = fields.Nested(RoleSchema)
+
+
 class UserProfileSchema(Schema):
     pass
 
