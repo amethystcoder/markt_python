@@ -23,15 +23,19 @@ auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls r
 class UserRegister(MethodView):
     @auth_blp.arguments(UserRegisterSchema)
     def post(self, user_data):
-        existing_user = User.query.filter_by(email=user_data["email"]).first()
-        if existing_user:
+        existing_email = User.query.filter_by(email=user_data["email"]).first()
+        if existing_email:
             abort(409, message="A user with that email already exists.")
+
+        existing_phone = User.query.filter_by(phone_number=user_data["phone_number"]).first()
+        if existing_phone:
+            abort(409, message="A user with that phone number already exists.")
 
         new_user = User(
             email=user_data["email"],
-            phone_number=user_data.get("phone_number"),
+            phone_number=user_data["phone_number"],
             password=user_data["password"],
-            profile_picture=user_data.get("profile_picture")
+            profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl")
         )
 
         role = user_data['role']
