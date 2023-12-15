@@ -93,6 +93,31 @@ class SellerRegistration(MethodView):
         pass
 
 
+@auth_blp.route("/switch-role")
+class SwitchRole(MethodView):
+    @login_required
+    @auth_blp.response(200, description="User switched successfully.")
+    def post(self):
+        user = current_user
+        if user.is_buyer:
+            # Check if the user has an existing seller account before switching
+            if Seller.query.filter_by(user_id=user.id).first() is None:
+                abort(400, message="User does not have a seller account.")
+
+            user.is_seller = True
+            user.save_to_db()
+
+        elif user.is_seller:
+            # Check if the user has an existing buyer account before switching
+            if Buyer.query.filter_by(user_id=user.id).first() is None:
+                abort(400, message="User does not have a buyer account.")
+
+            user.is_seller = True
+            user.save_to_db()
+
+        return {"message": "User switched successfully."}, 400
+
+
 @auth_blp.route("/login")
 class UserLogin(MethodView):
     @auth_blp.arguments(UserSchema(only=("username", "password")))
