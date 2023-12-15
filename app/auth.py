@@ -1,6 +1,7 @@
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy import and_
 
 from .schemas import (
     BuyerSchema,
@@ -23,6 +24,24 @@ auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls r
 class UserRegister(MethodView):
     @auth_blp.arguments(UserRegisterSchema)
     def post(self, user_data):
+        # amethy, check if this would be needed.
+        # Let us say we notice a user is trying to register with the same email and p_number
+        # then we assume it is the actual user and owner of that information
+        # maybe the user does not know he/she can create a latter account while logged in
+        # I'm not sure if this logic is needed but check it out, I'll need feedback whether it stays or not
+        existing_user = User.query.filter(
+                and_(
+                    User.email == user_data["email"],
+                    User.phone_number == user_data["phone_number"],
+                )
+        ).first()
+        if existing_user:
+            has_buyer_account = Buyer.query.filter_by(user_id=existing_user.id).first()
+            has_seller_account = Seller.query.filter_by(user_id=existing_user.id).first()
+            # Check if the user already has the specified role
+            if (user_data["role"] == 'buyer' and has_buyer_account) or (user_data["role"] == 'seller' and has_seller_account):
+                abort(409, message=f"User already has a {user_data['role']} account.")
+
         existing_email = User.query.filter_by(email=user_data["email"]).first()
         if existing_email:
             abort(409, message="A user with that email already exists.")
