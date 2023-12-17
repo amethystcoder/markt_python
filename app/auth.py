@@ -24,11 +24,7 @@ auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls r
 class UserRegister(MethodView):
     @auth_blp.arguments(UserRegisterSchema)
     def post(self, user_data):
-        # amethy, check if this would be needed.
-        # Let us say we notice a user is trying to register with the same email and p_number
-        # then we assume it is the actual user and owner of that information
-        # maybe the user does not know he/she can create a latter account while logged in
-        # I'm not sure if this logic is needed but check it out, I'll need feedback whether it stays or not
+
         existing_user = User.query.filter(
                 and_(
                     User.email == user_data["email"],
@@ -39,22 +35,30 @@ class UserRegister(MethodView):
             has_buyer_account = Buyer.query.filter_by(user_id=existing_user.id).first()
             has_seller_account = Seller.query.filter_by(user_id=existing_user.id).first()
             # Check if the user already has the specified role
-            if (user_data["role"] == 'buyer' and has_buyer_account) or (user_data["role"] == 'seller' and has_seller_account):
+            if (
+                    (user_data["role"] == 'buyer' and has_buyer_account) or
+                    (user_data["role"] == 'seller' and has_seller_account)
+            ):
                 abort(409, message=f"User already has a {user_data['role']} account.")
+
+        existing_username = (
+                Buyer.query.filter_by(username=user_data["username"]).first() or
+                Seller.query.filter_by(username=user_data["username"]).first()
+        )
+        if existing_username:
+            abort(409, message="A user with that username already exists.")
 
         existing_email = User.query.filter_by(email=user_data["email"]).first()
         if existing_email:
             abort(409, message="A user with that email already exists.")
 
-        existing_phone = User.query.filter_by(phone_number=user_data["phone_number"]).first()
+        existing_phone = User.query.filter_by(phone_number=user_data["phone_number"]).first() if user_data["phone_number"] else None
         if existing_phone:
             abort(409, message="A user with that phone number already exists.")
 
         new_user = User(
             email=user_data["email"],
             phone_number=user_data["phone_number"],
-            password=user_data["password"],
-            profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl")
         )
 
         role = user_data['role']
@@ -64,7 +68,10 @@ class UserRegister(MethodView):
             new_user.save_to_db()
 
             new_buyer = Buyer(
-                user_id=new_user.id, username=user_data["username"],
+                user_id=new_user.id,
+                username=user_data["username"],
+                password=user_data["password"],
+                profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
                 shipping_address=user_data.get("shipping_address")
             )
             new_buyer.save_to_db()
@@ -76,6 +83,8 @@ class UserRegister(MethodView):
             new_seller = Seller(
                 user_id=new_user.id,
                 username=user_data["username"],
+                password=user_data["password"],
+                profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
                 shop_name=user_data["shop_name"],
                 description=user_data["description"],
                 directions=user_data["directions"],
