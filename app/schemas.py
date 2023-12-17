@@ -9,15 +9,17 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     email = fields.Str(required=True)
     phone_number = fields.Str()
-    profile_picture = fields.Str()
-    password = fields.Str(required=True, load_only=True)
 
 
 class BuyerSchema(Schema):
+    profile_picture = fields.Str()
+    password = fields.Str(required=True, load_only=True)
     shipping_address = fields.Str(required=True)  # We haven't thought of any buyer specific attr
 
 
 class SellerSchema(Schema):
+    profile_picture = fields.Str()
+    password = fields.Str(required=True, load_only=True)
     shop_name = fields.Str(required=True)
     description = fields.Str(required=True)
     directions = fields.String(required=True)
