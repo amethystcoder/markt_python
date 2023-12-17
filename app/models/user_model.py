@@ -10,13 +10,11 @@ class User(UserMixin, db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    phone_number = db.Column(db.String(255), nullable=False)
-    password = db.Column(db.String(128), nullable=False)
-    profile_picture = db.Column(db.String(200))
+    phone_number = db.Column(db.String(255))
+    created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
     is_buyer = db.Column(db.Boolean, default=False)
     is_seller = db.Column(db.Boolean, default=False)
-    user_status = db.Column(db.String(255), default='active')
 
     # Add other common attributes here
 
@@ -46,15 +44,8 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return pbkdf2_sha256.verify(password, self.password)
 
-    def change_status(self, status):
-        acceptable_status = ["active", "offline",
-                             "standby"]  # standby could be a status for when user is online but not on present screen
-        if status in acceptable_status:
-            self.user_status = status
-            db.session.commit()
-
-    @classmethod
-    def get_user_location_data(cls, _id):
+    @staticmethod
+    def get_user_location_data(_id):
         data = UserAddress.query.filter_by(id=_id)
         return {
             "city": data.city,

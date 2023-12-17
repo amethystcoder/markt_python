@@ -8,6 +8,10 @@ class Seller(db.Model):
     unique_id = db.Column(db.String(400), nullable=False, unique=True)  # we might discard this
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    profile_picture = db.Column(db.String(200))
+
+    user_status = db.Column(db.String(255), default='active')
 
     # Add Seller-specific attributes here
     shop_name = db.Column(db.String(255), nullable=False)
@@ -23,6 +27,13 @@ class Seller(db.Model):
     @classmethod
     def find_by_unique_id(cls, unique_id):
         return cls.query.filter_by(unique_id=unique_id).first()
+
+    def change_status(self, status):
+        acceptable_status = ["active", "offline",
+                             "standby"]  # standby could be a status for when user is online but not on present screen
+        if status in acceptable_status:
+            self.user_status = status
+            db.session.commit()
 
     def update_rating(self, rating):
         self.total_raters = self.total_raters + 1
