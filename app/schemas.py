@@ -7,18 +7,18 @@ class ExampleSchema(Schema):
 
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
+    username = fields.Str(required=True)
     email = fields.Str(required=True)
     phone_number = fields.Str()
-
-
-class BuyerSchema(Schema):
     profile_picture = fields.Str()
+
+
+class BuyerSchema(UserSchema):
     password = fields.Str(required=True, load_only=True)
     shipping_address = fields.Str(required=True)  # We haven't thought of any buyer specific attr
 
 
-class SellerSchema(Schema):
-    profile_picture = fields.Str()
+class SellerSchema(UserSchema):
     password = fields.Str(required=True, load_only=True)
     shop_name = fields.Str(required=True)
     description = fields.Str(required=True)
@@ -37,8 +37,7 @@ class AddressSchema(Schema):
     postal_code = fields.Int()
 
 
-class UserRegisterSchema(UserSchema):
-    username = fields.Str(required=True)
+class UserRegisterSchema(Schema):
     role = fields.Str(validate=validate.OneOf(["buyer", "seller"]), required=True)
     address = fields.Nested(AddressSchema, required=False)
 
@@ -55,6 +54,12 @@ class UserRegisterSchema(UserSchema):
 class RoleSchema(Schema):
     is_buyer = fields.Bool()
     is_seller = fields.Bool()
+
+
+class UserLoginSchema(Schema):
+    username = fields.Str(required=True)
+    password = fields.Str(required=True)
+    account_type = fields.Str(required=True)
 
 
 class UserLoginResponseSchema(Schema):
