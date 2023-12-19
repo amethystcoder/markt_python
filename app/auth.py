@@ -110,20 +110,61 @@ class UserRegister(MethodView):
         return {"message": "User created successfully."}, 201
 
 
-@auth_blp.route("/buyer/register")
+@auth_blp.route("/create-buyer")
 class BuyerRegistration(MethodView):
+    @login_required
     @auth_blp.arguments(BuyerSchema)
-    @auth_blp.response(201, description="User created successfully.")
-    def post(self, data):
-        pass
+    @auth_blp.response(201, description="Buyer account created successfully.")
+    def post(self, user_data):
+        user = current_user
+        existing_account = Buyer.query.filter_by(user_id=current_user.id).first()
+        if existing_account:
+            abort(409, message="User already has a buyer account")
+
+        user.is_buyer = True
+        user.save_to_db()
+
+        new_buyer = Buyer(
+            user_id=user.id,
+            username=user_data["username"],
+            password=user_data["password"],
+            profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
+            shipping_address=user_data.get("shipping_address")
+        )
+        new_buyer.set_password(user_data["password"])
+        new_buyer.save_to_db()
+
+        return {"message": "Buyer account created successfully."}, 201
 
 
-@auth_blp.route("/seller/register")
+@auth_blp.route("/create-seller")
 class SellerRegistration(MethodView):
+    @login_required
     @auth_blp.arguments(SellerSchema)
-    @auth_blp.response(201, description="User created successfully.")
-    def post(self, data):
-        pass
+    @auth_blp.response(201, description="Seller account created successfully.")
+    def post(self, user_data):
+        user = current_user
+        existing_account = Seller.query.filter_by(user_id=current_user.id).first()
+        if existing_account:
+            abort(409, message="User already has a seller account")
+
+        user.is_buyer = True
+        user.save_to_db()
+
+        new_seller = Seller(
+            user_id=user.id,
+            username=user_data["username"],
+            password=user_data["password"],
+            profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
+            shop_name=user_data["shop_name"],
+            description=user_data["description"],
+            directions=user_data["directions"],
+            category=user_data["category"]
+        )
+        new_seller.set_password(user_data["password"])
+        new_seller.save_to_db()
+
+        return {"message": "Seller account created successfully."}, 201
 
 
 @auth_blp.route("/switch-role")
