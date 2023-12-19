@@ -75,6 +75,7 @@ class UserRegister(MethodView):
                 profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
                 shipping_address=user_data.get("shipping_address")
             )
+            new_buyer.set_password(user_data["password"])
             new_buyer.save_to_db()
 
         elif role == 'seller':
@@ -91,6 +92,7 @@ class UserRegister(MethodView):
                 directions=user_data["directions"],
                 category=user_data["category"]
             )
+            new_seller.set_password(user_data["password"])
             new_seller.save_to_db()
 
         else:
