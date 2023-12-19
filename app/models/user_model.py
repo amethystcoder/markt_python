@@ -1,5 +1,4 @@
 from db import db
-from passlib.hash import pbkdf2_sha256
 from flask_login import UserMixin
 import hashlib
 import uuid
@@ -33,16 +32,6 @@ class User(UserMixin, db.Model):
     def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
-
-    def set_password(self, password):
-        self.password = pbkdf2_sha256.hash(password)
-
-    def change_password(self, password):
-        self.password = pbkdf2_sha256.hash(password)
-        db.session.commit()
-
-    def check_password(self, password):
-        return pbkdf2_sha256.verify(password, self.password)
 
     @staticmethod
     def get_user_location_data(_id):

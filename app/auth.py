@@ -8,6 +8,7 @@ from .schemas import (
     SellerSchema,
     UserSchema,
     UserRegisterSchema,
+    UserLoginSchema,
     UserLoginResponseSchema,
 )
 from .models import User, Buyer, Seller, UserAddress
@@ -152,23 +153,38 @@ class SwitchRole(MethodView):
 
 @auth_blp.route("/login")
 class UserLogin(MethodView):
-    @auth_blp.arguments(UserSchema(only=("username", "password")))
+    @auth_blp.arguments(UserLoginSchema)
     @auth_blp.response(200, UserLoginResponseSchema)
     def post(self, user_data):
         email = user_data["email"]
         password = user_data["password"]
+        account_type = user_data["account_type"]
 
         user = User.query.filter_by(email=email).first()
+        buyer_account = Buyer.query.filter_by(user_id=user.id).first()
+        seller_account = Seller.query.filter_by(user_id=user.id).first()
 
-        if user and user.check_password_hash(user.password, password):
-            login_user(user)
-            return {
-                "message": "Login successful",
-                "role": {"is_buyer": user.is_buyer,
-                         "is_seller": user.is_seller}
-            }, 200
-        else:
-            abort(401, message="Invalid credentials.")
+        if user and account_type == 'buyer' and buyer_account:
+            if buyer_account.check_password(buyer_account.password, password):
+                login_user(user)
+                return {
+                    "message": "Login successful",
+                    "role": {
+                        "is_buyer": user.is_buyer,
+                        "is_seller": user.is_seller}
+                }, 200
+
+        elif user and account_type == 'seller' and seller_account:
+            if seller_account.check_password(seller_account.password, password):
+                login_user(user)
+                return {
+                    "message": "Login successful",
+                    "role": {
+                        "is_buyer": user.is_buyer,
+                        "is_seller": user.is_seller}
+                }, 200
+
+        abort(401, message="Invalid credentials.")
 
 
 @auth_blp.route("/logout")

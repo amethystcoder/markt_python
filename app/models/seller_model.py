@@ -1,4 +1,5 @@
 from db import db
+from passlib.hash import pbkdf2_sha256
 
 
 class Seller(db.Model):
@@ -27,6 +28,16 @@ class Seller(db.Model):
     @classmethod
     def find_by_unique_id(cls, unique_id):
         return cls.query.filter_by(unique_id=unique_id).first()
+
+    def set_password(self, password):
+        self.password = pbkdf2_sha256.hash(password)
+
+    def change_password(self, password):
+        self.password = pbkdf2_sha256.hash(password)
+        db.session.commit()
+
+    def check_password(self, password):
+        return pbkdf2_sha256.verify(password, self.password)
 
     def change_status(self, status):
         acceptable_status = ["active", "offline",
