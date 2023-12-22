@@ -82,7 +82,39 @@ class UserLoginResponseSchema(Schema):
 
 
 class UserProfileSchema(Schema):
-    pass
+    username = fields.Str(required=True)
+    email = fields.Str(required=True)
+    profile_picture = fields.Str()
+    phone_number = fields.Str()
+    shipping_address = fields.Str()
+    shop_name = fields.Str()
+    description = fields.Str()
+    category = fields.Str()
+    total_rating = fields.Int()
+    total_raters = fields.Int()
+
+    @classmethod
+    def dump_buyer_info(cls, buyer_info):
+        return cls().dump({
+            "username": buyer_info.username,
+            "email": buyer_info.user.email,
+            "profile_picture": buyer_info.profile_picture,
+            "phone_number": buyer_info.user.phone_number,
+            "shipping_address": buyer_info.shipping_address,
+        })
+
+    @classmethod
+    def dump_seller_info(cls, seller_info):
+        return cls().dump({
+            "username": seller_info.username,
+            "email": seller_info.user.email,
+            "profile_picture": seller_info.profile_picture,
+            "shop_name": seller_info.shop_name,
+            "description": seller_info.description,
+            "category": seller_info.category,
+            "total_rating": seller_info.total_rating,
+            "total_raters": seller_info.total_raters,
+        })
 
 
 class RoleArgSchema(Schema):
