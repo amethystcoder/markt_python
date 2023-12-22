@@ -1,6 +1,7 @@
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
 
 from ..schemas import (
     BuyerSchema,
@@ -10,7 +11,8 @@ from ..schemas import (
     UserSchema,
     UserProfileSchema,
     RoleArgSchema,
-    UserProfileUpdateSchema
+    UserProfileUpdateSchema,
+    UpdateProfilePictureSchema
 )
 from ..models import User, Buyer, Seller
 
@@ -147,7 +149,7 @@ class UserProfile(MethodView):
                 return UserProfileSchema.dump_seller_info(seller_info), 200
             else:
                 abort(404, message="Seller not found")
-                
+
         else:
             # Return user information based on the current role
             if current_user.is_buyer:
@@ -210,3 +212,36 @@ class UserProfile(MethodView):
 
         # Return a response as needed
         return {"message": "Profile updated successfully"}, 200
+
+
+# TODO: Add configuration for file storage (e.g., AWS S3, local file system)
+# TODO: Implement image compression and thumbnail generation
+
+class ProfilePictureResource(MethodView):
+    @login_required
+    @user_blp.arguments(UpdateProfilePictureSchema)
+    @user_blp.response(200, description="Profile picture updated successfully")
+    def patch(self, user_data):
+        # TODO: Handle file upload and storage
+        uploaded_file = user_data.get("profile_picture")
+
+        if not uploaded_file:
+            return abort(400, message="No file provided")
+
+        # TODO: Validate file type and size
+        allowed_extensions = {"png", "jpg", "jpeg", "gif"}
+        if "." not in uploaded_file.filename or \
+                uploaded_file.filename.split(".")[-1].lower() not in allowed_extensions:
+            return abort(400, message="Invalid file type")
+
+        # TODO: Securely generate file name and save to storage
+        filename = secure_filename(uploaded_file.filename)
+        # storage_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # uploaded_file.save(storage_path)
+
+        # TODO: Update user's profile picture URL in the database
+        current_user.profile_picture = f"/uploads/{filename}"
+        current_user.save_to_db()
+
+        # TODO: Return profile picture URL or thumbnail URL in the response
+        return {"message": "Profile picture updated successfully"}, 200

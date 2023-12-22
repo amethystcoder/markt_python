@@ -146,6 +146,10 @@ class UserProfileUpdateSchema(Schema):
         return data
 
 
+class UpdateProfilePictureSchema(Schema):
+    profile_picture = fields.Raw(required=True, validate=validate.Length(max=10 * 1024 * 1024))  # Assuming a maximum size of 10 MB
+
+
 class ProductSchema(Schema):
     id = fields.Int(strict=True)
     seller_id = fields.String()
