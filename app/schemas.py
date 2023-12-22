@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, validate, post_load
+from marshmallow import Schema, fields, validate, post_load, pre_load
 
 
 class ExampleSchema(Schema):
@@ -18,12 +18,26 @@ class BuyerSchema(UserSchema):
     shipping_address = fields.Str(required=True)  # We haven't thought of any buyer specific attr
 
 
+class BuyerUpdateSchema(UserSchema):
+    # We need to fill with info a buyer can update
+    username = fields.Str()
+    shipping_address = fields.Str()
+
+
 class SellerSchema(UserSchema):
     password = fields.Str(required=True, load_only=True)
     shop_name = fields.Str(required=True)
     description = fields.Str(required=True)
     directions = fields.String(required=True)
     category = fields.String(required=True)
+    total_rating = fields.Int(dump_only=True)
+    total_raters = fields.Int(dump_only=True)
+
+
+class SellerUpdateSchema(UserSchema):
+    # We need to fill with info a seller can update
+    username = fields.Str()
+    shop_name = fields.Str()
 
 
 class AddressSchema(Schema):
@@ -69,6 +83,35 @@ class UserLoginResponseSchema(Schema):
 
 class UserProfileSchema(Schema):
     pass
+
+
+class RoleArgSchema(Schema):
+    role = fields.Str()  # optional - buyer or seller
+
+
+class UserProfileUpdateSchema(Schema):
+    # Common fields
+    id = fields.Int(dump_only=True)
+    email = fields.Str(required=True)
+    phone_number = fields.Str()
+
+    # Buyer-specific fields
+    buyer_info = fields.Nested(BuyerUpdateSchema, allow_none=True)
+
+    # Seller-specific fields
+    seller_info = fields.Nested(SellerUpdateSchema, allow_none=True)
+
+    # Additional fields if needed
+
+    @pre_load
+    def process_input(self, data, **kwargs):
+        # Remove buyer_info or seller_info based on the user's current role
+        current_user = kwargs.get('user', None)  # Assuming you pass the user to the schema
+        if current_user and current_user.is_buyer:
+            data.pop('seller_info', None)
+        elif current_user and current_user.is_seller:
+            data.pop('buyer_info', None)
+        return data
 
 
 class ProductSchema(Schema):
