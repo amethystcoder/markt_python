@@ -28,8 +28,8 @@ class SellerSchema(UserSchema):
     password = fields.Str(required=True, load_only=True)
     shop_name = fields.Str(required=True)
     description = fields.Str(required=True)
-    directions = fields.String(required=True)
-    category = fields.String(required=True)
+    directions = fields.Str(required=True)
+    category = fields.Str(required=True)
     total_rating = fields.Int(dump_only=True)
     total_raters = fields.Int(dump_only=True)
 
@@ -44,10 +44,10 @@ class AddressSchema(Schema):
     longitude = fields.Float()
     latitude = fields.Float()
     house_number = fields.Int()
-    street = fields.String()
-    city = fields.String()
-    state = fields.String()
-    country = fields.String()
+    street = fields.Str()
+    city = fields.Str()
+    state = fields.Str()
+    country = fields.Str()
     postal_code = fields.Int()
 
 

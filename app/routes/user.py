@@ -179,7 +179,7 @@ class UserProfile(MethodView):
                     }
                     return UserProfileSchema.dump_seller_info(seller_info), 200
 
-        return abort(404, message="User profile not found")
+        abort(404, message="User profile not found")
 
     @login_required
     @user_blp.arguments(UserProfileUpdateSchema, user=current_user)
@@ -226,13 +226,13 @@ class ProfilePictureResource(MethodView):
         uploaded_file = user_data.get("profile_picture")
 
         if not uploaded_file:
-            return abort(400, message="No file provided")
+            abort(400, message="No file provided")
 
         # TODO: Validate file type and size
         allowed_extensions = {"png", "jpg", "jpeg", "gif"}
         if "." not in uploaded_file.filename or \
                 uploaded_file.filename.split(".")[-1].lower() not in allowed_extensions:
-            return abort(400, message="Invalid file type")
+            abort(400, message="Invalid file type")
 
         # TODO: Securely generate file name and save to storage
         filename = secure_filename(uploaded_file.filename)
