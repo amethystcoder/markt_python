@@ -13,9 +13,9 @@ from .schemas import (
 )
 from .models import User, Buyer, Seller, UserAddress
 
-from .utils import ImageSaver
+"""from .utils import ImageSaver
 from .models.imagename_store_model import ImageNameStore
-import tempfile
+import tempfile"""
 
 auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls related to user authentication",
                      url_prefix="/auth")
@@ -24,6 +24,28 @@ auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls r
 @auth_blp.route("/register")
 class UserRegister(MethodView):
     @auth_blp.arguments(UserRegisterSchema)
+    @auth_blp.response(201, description="User created successfully.")
+    @auth_blp.doc(description="""
+       Register a new user.
+
+       Fields:
+       - `username` (string): User's username.
+       - `email` (string): User's email address.
+       - `phone_number` (string): User's phone number.
+       - `password` (string): User's password.
+       - `role` (string, optional): User's role (buyer or seller, default is buyer).
+       - `address` (object, optional): User's address details.
+
+       Additional fields based on role:
+       - If role is buyer:
+         - `shipping_address` (string, optional): Buyer's shipping address.
+
+       - If role is seller:
+         - `shop_name` (string, required): Seller's shop name.
+         - `description` (string, required): Seller's description.
+         - `directions` (string, required): Seller's directions.
+         - `category` (string, required): Seller's category.
+       """)
     def post(self, user_data):
 
         existing_user = User.query.filter(
