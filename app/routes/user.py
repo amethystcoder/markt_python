@@ -113,7 +113,7 @@ class SellerResource(MethodView):
 @user_blp.route("/profile")
 class UserProfile(MethodView):
     @login_required
-    @user_blp.arguments(RoleArgSchema)
+    @user_blp.arguments(RoleArgSchema, required=False)
     @user_blp.response(200, UserProfileSchema)
     def get(self, user_data):
         role = user_data.get('role', None)  # 'buyer', 'seller', or None for current role
@@ -182,13 +182,13 @@ class UserProfile(MethodView):
         abort(404, message="User profile not found")
 
     @login_required
-    @user_blp.arguments(UserProfileUpdateSchema, user=current_user)
+    @user_blp.arguments(UserProfileUpdateSchema)
     @user_blp.response(200, description="Profile updated successfully")
-    def put(self, user_data, user):
+    def put(self, user_data):
         # Validate user_data based on user's role, and update the profile accordingly
-        if user.is_buyer:
+        if current_user.is_buyer:
             # Update buyer-related info
-            buyer = Buyer.query.filter_by(user_id=user.id).first()
+            buyer = Buyer.query.filter_by(user_id=current_user.id).first()
             buyer_info = user_data.get('buyer_info', {})
 
             if buyer_info:
@@ -197,9 +197,9 @@ class UserProfile(MethodView):
                 buyer.shipping_address = buyer_info.get("shipping_address", buyer.shipping_address)
                 buyer.save_to_db()
 
-        elif user.is_seller:
+        elif current_user.is_seller:
             # Update seller-related info
-            seller = Seller.query.filter_by(user_id=user.id).first()
+            seller = Seller.query.filter_by(user_id=current_user.id).first()
             seller_info = user_data.get('seller_info', {})
 
             if seller_info:
@@ -217,6 +217,7 @@ class UserProfile(MethodView):
 # TODO: Add configuration for file storage (e.g., AWS S3, local file system)
 # TODO: Implement image compression and thumbnail generation
 
+@user_blp.route("/update-profile-picture")
 class ProfilePictureResource(MethodView):
     @login_required
     @user_blp.arguments(UpdateProfilePictureSchema)
