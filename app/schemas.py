@@ -1,4 +1,5 @@
 from marshmallow import Schema, fields, validate, post_load, pre_load
+from flask_login import current_user
 
 
 class ExampleSchema(Schema):
@@ -57,7 +58,7 @@ class UserRegisterSchema(Schema):
 
     @post_load
     def process_role(self, data, **kwargs):
-        role = data.get('role')
+        role = data.get('role', 'buyer')  # Set default role if not provided
         if role == 'buyer':
             return BuyerSchema().load(data)
         elif role == 'seller':
@@ -138,10 +139,9 @@ class UserProfileUpdateSchema(Schema):
     @pre_load
     def process_input(self, data, **kwargs):
         # Remove buyer_info or seller_info based on the user's current role
-        current_user = kwargs.get('user', None)  # Assuming you pass the user to the schema
-        if current_user and current_user.is_buyer:
+        if current_user.is_buyer:
             data.pop('seller_info', None)
-        elif current_user and current_user.is_seller:
+        elif current_user.is_seller:
             data.pop('buyer_info', None)
         return data
 

@@ -51,6 +51,7 @@ class User(UserMixin, db.Model):
 class UserAddress(db.Model):
     __tablename__ = "user_address"
 
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     longitude = db.Column(db.Float)
     latitude = db.Column(db.Float)
