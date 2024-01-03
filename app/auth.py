@@ -197,23 +197,17 @@ class SwitchRole(MethodView):
     @auth_blp.response(200, description="User switched successfully.")
     def post(self):
         user = current_user
-        if user.is_buyer:
-            # Check if the user has an existing seller account before switching
-            if Seller.query.filter_by(user_id=user.id).first() is None:
-                abort(400, message="User does not have a seller account.")
 
-            user.is_seller = True
-            user.save_to_db()
-
-        elif user.is_seller:
-            # Check if the user has an existing buyer account before switching
-            if Buyer.query.filter_by(user_id=user.id).first() is None:
-                abort(400, message="User does not have a buyer account.")
-
-            user.is_seller = True
-            user.save_to_db()
-
-        return {"message": "User switched successfully."}, 400
+        if user.is_buyer or user.is_seller:
+            # Check if the user has both roles before switching
+            if user.is_buyer and user.is_seller:
+                user.current_role = 'seller' if user.current_role == 'buyer' else 'buyer'
+                user.save_to_db()
+                return {"message": "User switched successfully."}, 200
+            else:
+                abort(400, message="User must have both buyer and seller accounts to switch roles.")
+        else:
+            abort(400, message="User must have at least one account type to switch roles.")
 
 
 @auth_blp.route("/login")
