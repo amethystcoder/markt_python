@@ -14,6 +14,7 @@ class User(UserMixin, db.Model):
 
     is_buyer = db.Column(db.Boolean, default=False)
     is_seller = db.Column(db.Boolean, default=False)
+    current_role = db.Column(db.String(10), default='none')  
 
     # Add other common attributes here
 
