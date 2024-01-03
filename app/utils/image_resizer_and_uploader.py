@@ -18,7 +18,7 @@ class ImageSaver:
     max_file_size = 5 * 1024 * 1024
 
     """
-    This file contains functions for reducing image file sizes, storing the images in
+    This class contains functions for reducing image file sizes, storing the images in
     the upload folder or storage bucket, and also unlinking(deleting) image files from
     the upload folder or storage bucket. It also contains functions to change the image 
     from one format to another, rasterize and change the image structure and a whole lot of
