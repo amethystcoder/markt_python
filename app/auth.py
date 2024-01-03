@@ -21,107 +21,45 @@ auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls r
                      url_prefix="/auth")
 
 
-@auth_blp.route("/register")
-class UserRegister(MethodView):
-    @auth_blp.arguments(UserRegisterSchema)
-    @auth_blp.response(201, description="User created successfully.")
-    @auth_blp.doc(description="""
-       Register a new user.
-
-       Fields:
-       - `username` (string): User's username.
-       - `email` (string): User's email address.
-       - `phone_number` (string): User's phone number.
-       - `password` (string): User's password.
-       - `role` (string, optional): User's role (buyer or seller, default is buyer).
-       - `address` (object, optional): User's address details.
-
-       Additional fields based on role:
-       - If role is buyer:
-         - `shipping_address` (string, optional): Buyer's shipping address.
-
-       - If role is seller:
-         - `shop_name` (string, required): Seller's shop name.
-         - `description` (string, required): Seller's description.
-         - `directions` (string, required): Seller's directions.
-         - `category` (string, required): Seller's category.
-       """)
-    def post(self, user_data):
-
+@auth_blp.route("/register/buyer")
+class BuyerRegister(MethodView):
+    @auth_blp.arguments(BuyerSchema)
+    @auth_blp.response(201, description="Buyer created successfully.")
+    def post(self, buyer_data):
         existing_user = User.query.filter(
-                and_(
-                    User.email == user_data["email"],
-                    User.phone_number == user_data["phone_number"],
-                )
+            and_(
+                User.email == buyer_data["email"],
+                User.is_buyer.is_(True),
+            )
         ).first()
-        if existing_user:
-            has_buyer_account = Buyer.query.filter_by(user_id=existing_user.id).first()
-            has_seller_account = Seller.query.filter_by(user_id=existing_user.id).first()
-            # Check if the user already has the specified role
-            if (
-                    (user_data["role"] == 'buyer' and has_buyer_account) or
-                    (user_data["role"] == 'seller' and has_seller_account)
-            ):
-                abort(409, message=f"User already has a {user_data['role']} account.")
 
-        existing_username = (
-                Buyer.query.filter_by(username=user_data["username"]).first() or
-                Seller.query.filter_by(username=user_data["username"]).first()
-        )
+        if existing_user:
+            abort(409, message="A buyer account with that email already exists.")
+
+        existing_username = Buyer.query.filter_by(username=buyer_data["username"]).first()
         if existing_username:
             abort(409, message="A user with that username already exists.")
 
-        existing_email = User.query.filter_by(email=user_data["email"]).first()
-        if existing_email:
-            abort(409, message="A user with that email already exists.")
-
-        existing_phone = User.query.filter_by(phone_number=user_data["phone_number"]).first() if user_data["phone_number"] else None
-        if existing_phone:
-            abort(409, message="A user with that phone number already exists.")
-
         new_user = User(
-            email=user_data["email"],
-            phone_number=user_data["phone_number"],
+            email=buyer_data["email"],
+            phone_number=buyer_data["phone_number"],
+            is_buyer=True,
+            current_role="buyer"
         )
+        new_user.save_to_db()
 
-        role = user_data['role']
+        new_buyer = Buyer(
+            user_id=new_user.id,
+            username=buyer_data["username"],
+            password=buyer_data["password"],
+            profile_picture=buyer_data.get("profile_picture", "defaultThumbnailImageUrl"),
+            shipping_address=buyer_data.get("shipping_address")
+        )
+        new_buyer.set_password(buyer_data["password"])
+        new_buyer.save_to_db()
 
-        if role == 'buyer':
-            new_user.is_buyer = True
-            new_user.save_to_db()
-
-            new_buyer = Buyer(
-                user_id=new_user.id,
-                username=user_data["username"],
-                password=user_data["password"],
-                profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
-                shipping_address=user_data.get("shipping_address")
-            )
-            new_buyer.set_password(user_data["password"])
-            new_buyer.save_to_db()
-
-        elif role == 'seller':
-            new_user.is_seller = True
-            new_user.save_to_db()
-
-            new_seller = Seller(
-                user_id=new_user.id,
-                username=user_data["username"],
-                password=user_data["password"],
-                profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
-                shop_name=user_data["shop_name"],
-                description=user_data["description"],
-                directions=user_data["directions"],
-                category=user_data["category"]
-            )
-            new_seller.set_password(user_data["password"])
-            new_seller.save_to_db()
-
-        else:
-            abort(400, message="Invalid role")
-
-        if 'address' in user_data:
-            address_data = user_data['address']
+        if 'address' in buyer_data:
+            address_data = buyer_data['address']
             user_address = UserAddress(
                 house_number=address_data.get('house_number'),
                 street=address_data.get('street'),
@@ -131,7 +69,61 @@ class UserRegister(MethodView):
             )
             user_address.save_to_db()
 
-        return {"message": "User created successfully."}, 201
+        return {"message": "Buyer created successfully."}, 201
+
+
+@auth_blp.route("/register/seller")
+class SellerRegister(MethodView):
+    @auth_blp.arguments(SellerSchema)
+    @auth_blp.response(201, description="Seller created successfully.")
+    def post(self, seller_data):
+        existing_user = User.query.filter(
+            and_(
+                User.email == seller_data["email"],
+                User.is_seller.is_(True),
+            )
+        ).first()
+
+        if existing_user:
+            abort(409, message="A seller account with that email already exists.")
+
+        existing_username = Seller.query.filter_by(username=seller_data["username"]).first()
+        if existing_username:
+            abort(409, message="A user with that username already exists.")
+
+        new_user = User(
+            email=seller_data["email"],
+            phone_number=seller_data["phone_number"],
+            is_seller=True,
+            current_role="seller"
+        )
+        new_user.save_to_db()
+
+        new_seller = Seller(
+            user_id=new_user.id,
+            username=seller_data["username"],
+            password=seller_data["password"],
+            profile_picture=seller_data.get("profile_picture", "defaultThumbnailImageUrl"),
+            shop_name=seller_data["shop_name"],
+            description=seller_data["description"],
+            directions=seller_data["directions"],
+            category=seller_data["category"]
+        )
+        new_seller.set_password(seller_data["password"])
+        new_seller.save_to_db()
+
+        if 'address' in seller_data:
+            address_data = seller_data['address']
+            user_address = UserAddress(
+                house_number=address_data.get('house_number'),
+                street=address_data.get('street'),
+                city=address_data.get('city'),
+                state=address_data.get('state'),
+                postal_code=address_data.get('postal_code')
+            )
+            user_address.save_to_db()
+
+        return {"message": "Seller created successfully."}, 201
 
 
 @auth_blp.route("/create-buyer")
