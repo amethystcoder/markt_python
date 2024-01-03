@@ -135,7 +135,7 @@ class UserRegister(MethodView):
 
 
 @auth_blp.route("/create-buyer")
-class BuyerRegistration(MethodView):
+class CreateBuyer(MethodView):
     @login_required
     @auth_blp.arguments(BuyerSchema)
     @auth_blp.response(201, description="Buyer account created successfully.")
@@ -162,7 +162,7 @@ class BuyerRegistration(MethodView):
 
 
 @auth_blp.route("/create-seller")
-class SellerRegistration(MethodView):
+class CreateSeller(MethodView):
     @login_required
     @auth_blp.arguments(SellerSchema)
     @auth_blp.response(201, description="Seller account created successfully.")
