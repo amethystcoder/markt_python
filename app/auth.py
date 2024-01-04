@@ -133,7 +133,7 @@ class CreateBuyer(MethodView):
     @auth_blp.response(201, description="Buyer account created successfully.")
     def post(self, user_data):
         user = current_user
-        existing_account = Buyer.query.filter_by(user_id=current_user.id).first()
+        existing_account = user.is_buyer
         if existing_account:
             abort(409, message="User already has a buyer account")
 
@@ -212,27 +212,23 @@ class UserLogin(MethodView):
         account_type = user_data["account_type"]
 
         user = User.query.filter_by(email=email).first()
-        buyer_account = Buyer.query.filter_by(user_id=user.id).first()
-        seller_account = Seller.query.filter_by(user_id=user.id).first()
 
-        if user and account_type == 'buyer' and buyer_account:
-            if buyer_account.check_password(buyer_account.password, password):
+        if user and account_type == 'buyer' and user.is_buyer:
+            buyer_account = Buyer.query.filter_by(user_id=user.id).first()
+            if buyer_account and buyer_account.check_password(buyer_account.password, password):
                 login_user(user)
                 return {
                     "message": "Login successful",
-                    "role": {
-                        "is_buyer": user.is_buyer,
-                        "is_seller": user.is_seller}
+                    "current_role": "buyer"
                 }, 200
 
-        elif user and account_type == 'seller' and seller_account:
-            if seller_account.check_password(seller_account.password, password):
+        elif user and account_type == 'seller' and user.is_seller:
+            seller_account = Seller.query.filter_by(user_id=user.id).first()
+            if seller_account and seller_account.check_password(seller_account.password, password):
                 login_user(user)
                 return {
                     "message": "Login successful",
-                    "role": {
-                        "is_buyer": user.is_buyer,
-                        "is_seller": user.is_seller}
+                    "current_role": "seller"
                 }, 200
 
         abort(401, message="Invalid credentials.")

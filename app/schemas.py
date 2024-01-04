@@ -79,7 +79,7 @@ class UserLoginSchema(Schema):
 
 class UserLoginResponseSchema(Schema):
     message = fields.Str()
-    role = fields.Nested(RoleSchema)
+    current_role = fields.Str()
 
 
 class UserProfileSchema(Schema):
