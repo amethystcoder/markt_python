@@ -52,20 +52,6 @@ class AddressSchema(Schema):
     postal_code = fields.Int()
 
 
-class UserRegisterSchema(Schema):
-    role = fields.Str(validate=validate.OneOf(["buyer", "seller"]), required=True)
-    address = fields.Nested(AddressSchema, required=False)
-
-    @post_load
-    def process_role(self, data, **kwargs):
-        role = data.get('role', 'buyer')  # Set default role if not provided
-        if role == 'buyer':
-            return BuyerSchema().load(data)
-        elif role == 'seller':
-            return SellerSchema().load(data)
-        return data
-
-
 class RoleSchema(Schema):
     is_buyer = fields.Bool()
     is_seller = fields.Bool()
