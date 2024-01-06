@@ -134,11 +134,11 @@ class CreateBuyer(MethodView):
     @auth_blp.response(201, description="Buyer account created successfully.")
     def post(self, user_data):
         user = current_user
-        existing_account = user.is_buyer
-        if existing_account:
-            abort(409, message="User already has a buyer account")
+        if user.is_buyer:
+            abort(409, message="User already has a buyer account.")
 
         user.is_buyer = True
+        user.current_role = "buyer"
         user.save_to_db()
 
         new_buyer = Buyer(
@@ -161,11 +161,11 @@ class CreateSeller(MethodView):
     @auth_blp.response(201, description="Seller account created successfully.")
     def post(self, user_data):
         user = current_user
-        existing_account = Seller.query.filter_by(user_id=current_user.id).first()
-        if existing_account:
+        if user.is_seller:
             abort(409, message="User already has a seller account")
 
-        user.is_buyer = True
+        user.is_seller = True
+        user.current_role = "seller"
         user.save_to_db()
 
         new_seller = Seller(

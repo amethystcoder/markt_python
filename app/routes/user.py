@@ -118,38 +118,21 @@ class UserProfile(MethodView):
     def get(self, user_data):
         role = user_data.get('role', None)  # 'buyer', 'seller', or None for current role
 
-        if role == 'buyer' and current_user.is_buyer:
-            buyer = Buyer.query.filter_by(user_id=current_user.id).first()
-            if buyer:
-                buyer_info = {
-                    "username": buyer.username,
-                    "email": current_user.email,
-                    "phone_number": current_user.phone_number or None,
-                    "profile_picture": buyer.profile_picture,
-                    "shipping_address": buyer.shipping_address
-                }
-                return UserProfileSchema.dump_buyer_info(buyer_info), 200
-            else:
-                abort(404, message="Buyer not found")
+        if role and current_user.current_role != role:
+            abort(400, message=f"User does not have a {role} account.")
 
-        elif role == 'seller' and current_user.is_seller:
-            seller = Seller.query.filter_by(user_id=current_user.id).first()
-            if seller:
-                seller_info = {
-                    "username": seller.username,
-                    "email": current_user.email,
-                    "profile_picture": seller.profile_picture,
-                    "shop_name": seller.shop_name,
-                    "description": seller.description,
-                    "directions": seller.directions,
-                    "category": seller.category,
-                    "total_rating": seller.total_rating,
-                    "total_raters": seller.total_raters,
-                }
-                return UserProfileSchema.dump_seller_info(seller_info), 200
+        if role:
+            # Return user information based on the requested role
+            if role == 'buyer':
+                buyer_info = Buyer.query.filter_by(user_id=current_user.id).first()
+                if buyer_info:
+                    return UserProfileSchema.dump_buyer_info(buyer_info), 200
+            elif role == 'seller':
+                seller_info = Seller.query.filter_by(user_id=current_user.id).first()
+                if seller_info:
+                    return UserProfileSchema.dump_seller_info(seller_info), 200
             else:
-                abort(404, message="Seller not found")
-
+                abort(400, message=f"Invalid role: {role}")
         else:
             # Return user information based on the current role
             if current_user.is_buyer:
@@ -186,7 +169,8 @@ class UserProfile(MethodView):
     @user_blp.response(200, description="Profile updated successfully")
     def put(self, user_data):
         # Validate user_data based on user's role, and update the profile accordingly
-        if current_user.is_buyer:
+
+        if current_user.current_role == "buyer":
             # Update buyer-related info
             buyer = Buyer.query.filter_by(user_id=current_user.id).first()
             buyer_info = user_data.get('buyer_info', {})
@@ -197,18 +181,23 @@ class UserProfile(MethodView):
                 buyer.shipping_address = buyer_info.get("shipping_address", buyer.shipping_address)
                 buyer.save_to_db()
 
-        elif current_user.is_seller:
+        elif current_user.current_role == "seller":
             # Update seller-related info
             seller = Seller.query.filter_by(user_id=current_user.id).first()
             seller_info = user_data.get('seller_info', {})
 
             if seller_info:
                 # Update seller information based on the data received
-                seller.username = user_data.get("username", seller.username)
-                seller.shop_name = user_data.get("shop_name", seller.shop_name)
+                seller.username = seller_info.get("username", seller.username)
+                seller.shop_name = seller_info.get("shop_name", seller.shop_name)
                 seller.save_to_db()
 
-        # We can do logic for updating common user info
+        else:
+            # Update common user info
+            # For example, updating email or phone_number
+            current_user.email = user_data.get('email', current_user.email)
+            current_user.phone_number = user_data.get('phone_number', current_user.phone_number)
+            current_user.save_to_db()
 
         # Return a response as needed
         return {"message": "Profile updated successfully"}, 200
