@@ -62,6 +62,7 @@ class BuyerRegister(MethodView):
         if 'address' in buyer_data:
             address_data = buyer_data['address']
             user_address = UserAddress(
+                user_id=new_user.id,
                 house_number=address_data.get('house_number'),
                 street=address_data.get('street'),
                 city=address_data.get('city'),
@@ -116,6 +117,7 @@ class SellerRegister(MethodView):
         if 'address' in seller_data:
             address_data = seller_data['address']
             user_address = UserAddress(
+                user_id=new_user.id,
                 house_number=address_data.get('house_number'),
                 street=address_data.get('street'),
                 city=address_data.get('city'),
@@ -216,7 +218,7 @@ class UserLogin(MethodView):
 
         if user and account_type == 'buyer' and user.is_buyer:
             buyer_account = Buyer.query.filter_by(user_id=user.id).first()
-            if buyer_account and buyer_account.check_password(buyer_account.password, password):
+            if buyer_account and buyer_account.check_password(password):
                 login_user(user)
                 return {
                     "message": "Login successful",
@@ -225,7 +227,7 @@ class UserLogin(MethodView):
 
         elif user and account_type == 'seller' and user.is_seller:
             seller_account = Seller.query.filter_by(user_id=user.id).first()
-            if seller_account and seller_account.check_password(seller_account.password, password):
+            if seller_account and seller_account.check_password(password):
                 login_user(user)
                 return {
                     "message": "Login successful",

@@ -66,6 +66,7 @@ class RoleSchema(Schema):
 
 
 class UserLoginSchema(Schema):
+    email = fields.Str(required=True)
     username = fields.Str(required=True)
     password = fields.Str(required=True)
     account_type = fields.Str(required=True)
