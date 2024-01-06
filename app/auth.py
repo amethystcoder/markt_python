@@ -7,7 +7,8 @@ from .schemas import (
     BuyerSchema,
     SellerSchema,
     UserSchema,
-    UserRegisterSchema,
+    BuyerRegisterSchema,
+    SellerRegisterSchema,
     UserLoginSchema,
     UserLoginResponseSchema,
 )
@@ -23,7 +24,7 @@ auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls r
 
 @auth_blp.route("/register/buyer")
 class BuyerRegister(MethodView):
-    @auth_blp.arguments(BuyerSchema)
+    @auth_blp.arguments(BuyerRegisterSchema)
     @auth_blp.response(201, description="Buyer created successfully.")
     def post(self, buyer_data):
         existing_user = User.query.filter(
@@ -74,7 +75,7 @@ class BuyerRegister(MethodView):
 
 @auth_blp.route("/register/seller")
 class SellerRegister(MethodView):
-    @auth_blp.arguments(SellerSchema)
+    @auth_blp.arguments(SellerRegisterSchema)
     @auth_blp.response(201, description="Seller created successfully.")
     def post(self, seller_data):
         existing_user = User.query.filter(

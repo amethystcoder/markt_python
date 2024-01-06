@@ -52,6 +52,14 @@ class AddressSchema(Schema):
     postal_code = fields.Int()
 
 
+class BuyerRegisterSchema(BuyerSchema):
+    address = fields.Nested(AddressSchema, required=False)
+
+
+class SellerRegisterSchema(SellerSchema):
+    address = fields.Nested(AddressSchema, required=False)
+
+
 class RoleSchema(Schema):
     is_buyer = fields.Bool()
     is_seller = fields.Bool()
