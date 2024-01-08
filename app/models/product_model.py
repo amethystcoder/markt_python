@@ -18,6 +18,8 @@ class Product(db.Model):
     # Define a many-to-one relationship between Product and Seller
     seller = db.relationship('Seller', back_populates='products')
     
+    imagenamestore = db.relationship('ImageNameStore', back_populates='products')
+    
     def __init__(self,seller_id,name,description,price,stock_quantity,category,product_id):
         if product_id:
             self = self.get_product_using_id(product_id)
@@ -38,9 +40,12 @@ class Product(db.Model):
         '''
         gets random products in a particular bundle based on the bundle size
         '''
-        num_of_products = db.session.query(Product).count()
-        random_ids = random.sample(range(1,num_of_products),bundle_size)
-        return db.session.query(Product).filter(Product.id.in_(random_ids)).all()
+        try:
+            num_of_products = db.session.query(Product).count()
+            random_ids = random.sample(range(1,num_of_products),int(bundle_size))
+            return db.session.query(Product).filter(Product.id.in_(random_ids)).all()
+        except ValueError:
+            return []
     
     def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()

@@ -16,6 +16,11 @@ class Buyer(db.Model):
 
     # Add Buyer-specific attributes here
     shipping_address = db.Column(db.String(255), nullable=True)  # just for test
+    
+    cart = db.relationship("Cart", back_populates="buyers")
+    requests = db.relationship("BuyerRequest", back_populates="buyers")
+    favorites = db.relationship("Favorite", back_populates="buyers")
+    orders = db.relationship("Order", back_populates="buyers")
 
     @classmethod
     def find_by_unique_id(cls, unique_id):

@@ -4,7 +4,7 @@ from flask import abort, request
 from app.utils.image_resizer_and_uploader import ImageSaver
 from ..schemas import ProductSchema,CategorySchema
 from ..models.product_model import Product
-from ..models.categories_get import Categories
+from ..models.categories_get import get_all_categories_and_tags,get_all_tags,get_category_names
 from ..models.imagename_store_model import ImageNameStore
 import tempfile
 
@@ -82,16 +82,15 @@ class Categories(MethodView):
       gets a particular product using its id, along with its images
       seller description, e.t.c
       """
-      category_tags = Categories()
       match type:
         case "tags":
-          return category_tags.get_all_tags()
+          return get_all_tags()
         case "categorynames":
-          return category_tags.get_category_names()
+          return get_category_names()
         case "all":
-          return category_tags.get_all_categories_and_tags()
+          return get_all_categories_and_tags()
         case _:
-          return category_tags.get_all_categories_and_tags()
+          return get_all_categories_and_tags()
 
 
 @product_bp.route("/random/<amount>")

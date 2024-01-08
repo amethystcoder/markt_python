@@ -15,8 +15,7 @@ class BuyerRequest(db.Model):
     created_at = db.Column(db.TIMESTAMP, default=time.time(), nullable=False)
     status = db.Column(db.String(255), default="open")
 
-    # Define relationship
-    buyer = db.relationship("Buyer", back_populates="requests")
+    buyer = db.relationship("Buyer", back_populates="buyer_request")
 
     def __init__(self, buyer_id, product_description, category, unique_id):
         if unique_id is not None:

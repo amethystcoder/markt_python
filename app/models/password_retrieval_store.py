@@ -1,8 +1,8 @@
 import time
 from db import db
 
-class PasswordRetrievalData(db.model):
-    __tablename__ = "buyers"
+class PasswordRetrievalData(db.Model):
+    __tablename__ = "retrieve_password"
 
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     recovery_code = db.Column(db.Integer, nullable=False)

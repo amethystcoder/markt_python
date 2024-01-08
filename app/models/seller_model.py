@@ -20,10 +20,12 @@ class Seller(db.Model):
     category = db.Column(db.String(255), nullable=False)
     total_rating = db.Column(db.Integer)
     total_raters = db.Column(db.Integer)
-    directions = db.Column(db.String(400), nullable=False)  # you think the constraint is needed ?
+    directions = db.Column(db.String(400)) 
 
     # Define a one-to-many relationship between Seller and Product
-    products = db.relationship('Product', back_populates='seller')
+    products = db.relationship('Product', back_populates='sellers')
+    
+    orders = db.relationship("Order", back_populates="sellers")
 
     @classmethod
     def find_by_unique_id(cls, unique_id):
