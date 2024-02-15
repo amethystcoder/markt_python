@@ -13,35 +13,39 @@ class Favorite(db.Model):
 
     # Define relationships
     buyer = db.relationship("Buyer", back_populates="favorites")
-    
+
+    """
     def __init__(self,buyer_id,product_id,id):
         if id is not None:
             self = self.get_favorite_using_id(id)
         else:
             self.buyer_id = buyer_id
             self.product_id = product_id
+            
+    """
     
     @classmethod
-    def get_favorite_using_id(self,id):
-        return db.session.query(Favorite).filter(Favorite.id == id).first()
+    def get_favorite_using_id(cls, _id):
+        return cls.query.filter_by(id == _id).first()
     
     @classmethod
-    def delete_all_buyer_favorites(self,buyer_id):
-        return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).delete()
+    def delete_all_buyer_favorites(cls, buyer_id):
+        return cls.filter_by(buyer_id == buyer_id).delete()
+
+    @classmethod
+    def get_all_buyer_favorites(cls, buyer_id):
+        return cls.query.filter_by(buyer_id == buyer_id).all()
     
     @classmethod
-    def get_all_buyer_favorites(self,buyer_id):
-        return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).all()
+    def get_all_buyer_favorites_that_are_sellers(cls, buyer_id):
+        return cls.query.filter_by(buyer_id == buyer_id).filter(Favorite.favorite_type == "seller").all()
     
     @classmethod
-    def get_all_buyer_favorites_that_are_sellers(self,buyer_id):
-        return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).filter(Favorite.favorite_type == "seller").all()
-    
-    @classmethod
-    def get_all_buyer_favorites_that_are_products(self,buyer_id):
-        return db.session.query(Favorite).filter(Favorite.buyer_id == buyer_id).filter(Favorite.favorite_type == "product").all()
-    
-    def generate_unique_id(self):
+    def get_all_buyer_favorites_that_are_products(cls, buyer_id):
+        return cls.query.filter(buyer_id == buyer_id).filter(Favorite.favorite_type == "product").all()
+
+    @staticmethod
+    def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
     
