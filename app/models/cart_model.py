@@ -37,6 +37,18 @@ class Cart(db.Model):
         return cls.query.filter_by(buyer_id=buyer_id).delete()
 
     @staticmethod
+    def parse_cart(cart_item, image):
+        return {
+            "buyer_id": cart_item.buyer_id,
+            "product_id": cart_item.product_id,
+            "quantity": cart_item.quantity,
+            "has_discount": cart_item.has_discount,
+            "discount_price": cart_item.discount_price,
+            "discount_percent": cart_item.discount_percent,
+            "product_image": image.image_name
+        }
+
+    @staticmethod
     def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()

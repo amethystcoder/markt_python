@@ -14,8 +14,8 @@ cart_bp = Blueprint("cart", "cart", description="Endpoint for all API calls rela
 class BuyerCart(MethodView):
     @cart_bp.response(200, CartSchema)
     def get(self, buyer_id):
-        return [parse_cart(cart_item=cart_item, image=ImageNameStore.getproductthumbnail(cart_item.product_id)) for cart_item
-                in Cart.get_buyer_cart_items(buyer_id=buyer_id)]
+        return [Cart.parse_cart(cart_item=cart_item, image=ImageNameStore.get_product_thumbnail(cart_item.product_id))
+                for cart_item in Cart.get_buyer_cart_items(buyer_id=buyer_id)]
 
 
 @cart_bp.route("/<cart_id>")
@@ -23,9 +23,9 @@ class CartItem(MethodView):
     @cart_bp.response(201, CartSchema)
     def post(self, cart_data):  # /cart_id shouldn't be used to create a cart, id is yet tbc
         try:
-            cart = Cart(buyer_id=cart_data["buyer_id"], product_id=cart_data["product_id"], quantity=cart_data["quantity"],
-                        has_discount=cart_data["has_discount"], discount_price=cart_data["discount_price"],
-                        discount_percent=cart_data["discount_percent"])
+            cart = Cart(buyer_id=cart_data["buyer_id"], product_id=cart_data["product_id"],
+                        quantity=cart_data["quantity"], has_discount=cart_data["has_discount"],
+                        discount_price=cart_data["discount_price"], discount_percent=cart_data["discount_percent"])
             cart.save_to_db()
         except Exception as e:
             abort(500, "Could not save")
@@ -73,15 +73,3 @@ class CheckoutCart(MethodView):
                 Cart.delete_all_buyer_cart_items(buyer_id=cart_data["buyer_id"])
         except Exception as e:
             abort(500, "Could not save")
-
-
-def parse_cart(cart_item, image):
-    return {
-        "buyer_id": cart_item.buyer_id,
-        "product_id": cart_item.product_id,
-        "quantity": cart_item.quantity,
-        "has_discount": cart_item.has_discount,
-        "discount_price": cart_item.discount_price,
-        "discount_percent": cart_item.discount_percent,
-        "product_image": image.image_name
-    }
