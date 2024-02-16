@@ -44,9 +44,9 @@ class Product(db.Model):
         gets random products in a particular bundle based on the bundle size
         """
         try:
-            num_of_products = db.session.query(Product).count()
+            num_of_products = cls.query.count()
             random_ids = random.sample(range(1, num_of_products), int(bundle_size))
-            return db.session.query(Product).filter(Product.id.in_(random_ids)).all()
+            return cls.query.filter_by(id=random_ids).all()
         except ValueError:
             return []
 
@@ -57,19 +57,19 @@ class Product(db.Model):
 
     @classmethod
     def get_product_using_id(cls, product_id):
-        return db.session.query(Product).filter(Product.product_id == product_id).first()
+        return cls.query.filter_by(id=product_id).first()
 
     @classmethod
     def get_products_using_seller_id(cls, seller_id):
-        return db.session.query(Product).filter(Product.seller_id == seller_id).all()
+        return cls.query.filter_by(seller_id=seller_id).all()
 
     @classmethod
     def search_product_using_name(cls, product_name):
-        return db.session.query(Product).filter(Product.name.like("%" + product_name + "%")).all()
+        return cls.query.filter_by(cls.name.like(f"%{product_name}%")).all()
 
     @classmethod
     def search_product_using_category(cls, category_name):
-        return db.session.query(Product).filter(Product.category.like("%" + category_name + "%")).all()
+        return cls.query.filter_by(cls.name.like(f"%{category_name}%")).all()
 
     def set_product_id(self):
         self.product_id = self.generate_unique_id()

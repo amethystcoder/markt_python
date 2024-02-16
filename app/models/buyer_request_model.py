@@ -17,6 +17,7 @@ class BuyerRequest(db.Model):
 
     buyer = db.relationship("Buyer", back_populates="buyer_request")
 
+    """
     def __init__(self, buyer_id, product_description, category, unique_id):
         if unique_id is not None:
             self = self.get_requests_through_id(unique_id)
@@ -25,26 +26,28 @@ class BuyerRequest(db.Model):
             self.buyer_id = buyer_id
             self.product_description = product_description
             self.category = category
+    """
 
+    @staticmethod
     def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
 
     @classmethod
-    def get_requests_through_id(id):
-        return db.session.query(BuyerRequest).filter(BuyerRequest.unique_id == id).all()
+    def get_requests_through_id(cls, _id):
+        return cls.query.filter_by(unique_id=_id).all()
 
     @classmethod
-    def get_requests_through_buyer_id(buyer_id):
-        return db.session.query(BuyerRequest).filter(BuyerRequest.buyer_id == buyer_id).all()
+    def get_requests_through_buyer_id(cls, buyer_id):
+        return cls.query.filter_by(buyer_id=buyer_id).all()
 
     @classmethod
-    def get_requests_using_category(*args):
-        return db.session.query(BuyerRequest).filter(BuyerRequest.category._in(list(args))).all()
+    def get_requests_using_category(cls, *args):
+        return cls.query.filter_by(cls._in(list(args))).all()
 
     @classmethod
-    def delete_all_buyer_requests(buyer_id):
-        return db.session.query(BuyerRequest).filter(BuyerRequest.buyer_id == buyer_id).delete()
+    def delete_all_buyer_requests(cls, buyer_id):
+        return cls.query.filter_by(buyer_id=buyer_id).delete()
 
     def save_to_db(self):
         db.session.add(self)

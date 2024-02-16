@@ -13,7 +13,7 @@ class ImageNameStore(db.Model):
                                     nullable=False)  # id of the place (chat,product) where the image is found
 
     # Define a many-to-one relationship between ImageNameStore and Product
-    product = db.relationship('Product', back_populates='imagenamestore')
+    product = db.relationship('Product', back_populates='image_name_store')
 
     """
     def __init__(self, image_name, found_under, image_use_origin_id):
