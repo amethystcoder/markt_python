@@ -21,20 +21,20 @@ class Cart(db.Model):
     product = db.relationship("Product", back_populates="cart")
 
     @classmethod
-    def get_buyer_cart_items(self, buyer_id):
-        return db.session.query(Cart).filter(Cart.buyer_id == buyer_id).all()
+    def get_buyer_cart_items(cls, buyer_id):
+        return cls.query.filter_by(buyer_id=buyer_id).all()
 
     @classmethod
-    def get_buyer_cart_item(self, cart_id):
-        return db.session.query(Cart).filter(Cart.cart_id == cart_id).first()
+    def get_buyer_cart_item(cls, cart_id):
+        return cls.query.filter_by(cart_id=cart_id).first()
 
     def update_cart_quantity(self, new_quantity):
         self.quantity = new_quantity
         db.session.commit()
 
     @classmethod
-    def delete_all_buyer_cart_items(self, buyer_id):
-        return db.session.query(Cart).filter(Cart.buyer_id == buyer_id).delete()
+    def delete_all_buyer_cart_items(cls, buyer_id):
+        return cls.query.filter_by(buyer_id=buyer_id).delete()
 
     @staticmethod
     def generate_unique_id():

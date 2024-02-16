@@ -29,6 +29,7 @@ class Order(db.Model):
         return self
      '''
 
+    """
     def __init__(self, buyer_id, seller_id, product_id, quantity, total_price, delivery_address, order_id):
         if order_id is None:
             self.buyer_id = buyer_id
@@ -40,26 +41,28 @@ class Order(db.Model):
             self.delivery_address = delivery_address
         else:
             self = self.get_order_using_id(order_id)
+    """
 
     ''' def __eq__(self, __value: object) -> bool:
         return super().__eq__(__value) '''
 
     @classmethod
-    def get_order_using_id(order_id):
-        return db.session.query(Order).filter(Order.order_id == order_id).first()
+    def get_order_using_id(cls, order_id):
+        return cls.query.filter_by(order_id=order_id).first()
 
     @classmethod
-    def get_seller_pending_orders(self, seller_id):
-        return db.session.query(Order).filter(Order.seller_id == seller_id and Order.order_status == 'pending').all()
+    def get_seller_pending_orders(cls, seller_id):
+        return cls.query.filter_by(seller_id=seller_id, order_status='pending').all()
 
     @classmethod
-    def get_seller_accepted_orders(self, seller_id):
-        return db.session.query(Order).filter(Order.seller_id == seller_id and Order.order_status == 'accepted').all()
+    def get_seller_accepted_orders(cls, seller_id):
+        return cls.query.filter_by(seller_id=seller_id, order_status='accepted').all()
 
     @classmethod
-    def get_buyer_orders(self, buyer_id):
-        return db.session.query(Order).filter(Order.buyer_id == buyer_id).all()
-    
+    def get_buyer_orders(cls, buyer_id):
+        return cls.query.filter_by(buyer_id=buyer_id).all()
+
+    @staticmethod
     def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()

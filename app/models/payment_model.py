@@ -13,8 +13,8 @@ class Payment(db.Model):
     payment_date = db.Column(db.DateTime, nullable=False)
 
     # Define relationship
-    #order = db.relationship("Order", back_populates="payments")
-    
+    # order = db.relationship("Order", back_populates="payments")
+
     def __init__(self):
         pass
 

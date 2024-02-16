@@ -15,22 +15,24 @@ class ImageNameStore(db.Model):
     # Define a many-to-one relationship between ImageNameStore and Product
     product = db.relationship('Product', back_populates='imagenamestore')
 
+    """
     def __init__(self, image_name, found_under, image_use_origin_id):
         self.image_name = image_name
         self.found_under = found_under
         self.image_use_origin_id = image_use_origin_id
+    """
 
     @classmethod
-    def getproductthumbnail(self,product_id):
-        return [db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).first()]
+    def get_product_thumbnail(cls, product_id):
+        return cls.query.filter_by(image_use_origin_id=product_id).first()
 
     @classmethod
-    def getproductimages(self,product_id):
-        return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == product_id).all()
+    def get_product_images(cls, product_id):
+        return cls.query.filter_by(image_use_origin_id=product_id).all()
 
     @classmethod
-    def getchatimages(self,chat_id):
-        return db.session.query(ImageNameStore).filter(ImageNameStore.image_use_origin_id == chat_id).all()
+    def get_chat_images(cls, chat_id):
+        return cls.query.filter_by(image_use_origin_id=chat_id).all()
 
     def save_to_db(self):
         db.session.add(self)

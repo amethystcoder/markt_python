@@ -27,19 +27,19 @@ class Comments(db.Model):
 
     @classmethod
     def get_comment_using_id(cls, comment_id):
-        return cls.query.filter_by(comment_id == comment_id).first()
+        return cls.query.filter_by(comment_id=comment_id).first()
 
     @classmethod
     def get_product_comments(cls, product_id):
-        return cls.query.filter_by(comment_place_id == product_id).all()
+        return cls.query.filter_by(comment_place_id=product_id).all()
 
     @classmethod
     def get_buyer_comments(cls, buyer_id):
-        return cls.query.filter_by(Comments.buyer_id == buyer_id).all()
+        return cls.query.filter_by(buyer_id=buyer_id).all()
 
     @classmethod
     def get_seller_comments(cls, seller_id):
-        return cls.query.filter_by(comment_place_id == seller_id).all()
+        return cls.query.filter_by(comment_place_id=seller_id).all()
 
     def save_to_db(self):
         db.session.add(self)

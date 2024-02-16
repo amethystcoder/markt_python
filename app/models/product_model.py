@@ -3,6 +3,7 @@ import random
 import hashlib
 import uuid
 
+
 class Product(db.Model):
     __tablename__ = "products"
 
@@ -17,10 +18,11 @@ class Product(db.Model):
 
     # Define a many-to-one relationship between Product and Seller
     seller = db.relationship('Seller', back_populates='products')
-    
-    imagenamestore = db.relationship('ImageNameStore', back_populates='products')
-    
-    def __init__(self,seller_id,name,description,price,stock_quantity,category,product_id):
+
+    image_name_store = db.relationship('ImageNameStore', back_populates='products')
+
+    """
+    def __init__(self, seller_id, name, description, price, stock_quantity, category, product_id):
         if product_id:
             self = self.get_product_using_id(product_id)
         else:
@@ -30,47 +32,49 @@ class Product(db.Model):
             self.price = price
             self.stock_quantity = stock_quantity
             self.category = category
-        
+    """
+
     def save_to_db(self):
         db.session.add(self)
-        db.session.commit()    
-    
+        db.session.commit()
+
     @classmethod
-    def get_random_products(self,bundle_size):
-        '''
+    def get_random_products(cls, bundle_size):
+        """
         gets random products in a particular bundle based on the bundle size
-        '''
+        """
         try:
             num_of_products = db.session.query(Product).count()
-            random_ids = random.sample(range(1,num_of_products),int(bundle_size))
+            random_ids = random.sample(range(1, num_of_products), int(bundle_size))
             return db.session.query(Product).filter(Product.id.in_(random_ids)).all()
         except ValueError:
             return []
-    
+
+    @staticmethod
     def generate_unique_id():
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
-    
+
     @classmethod
-    def get_product_using_id(self,product_id):
+    def get_product_using_id(cls, product_id):
         return db.session.query(Product).filter(Product.product_id == product_id).first()
-    
+
     @classmethod
-    def get_products_using_sellerid(self,seller_id):
+    def get_products_using_seller_id(cls, seller_id):
         return db.session.query(Product).filter(Product.seller_id == seller_id).all()
-    
+
     @classmethod
-    def search_product_using_name(self,product_name):
-        return db.session.query(Product).filter(Product.name.like("%"+product_name+"%")).all()
-    
+    def search_product_using_name(cls, product_name):
+        return db.session.query(Product).filter(Product.name.like("%" + product_name + "%")).all()
+
     @classmethod
-    def search_product_using_category(self,category_name):
-        return db.session.query(Product).filter(Product.category.like("%"+category_name+"%")).all()
-    
-    def setproductid(self):
+    def search_product_using_category(cls, category_name):
+        return db.session.query(Product).filter(Product.category.like("%" + category_name + "%")).all()
+
+    def set_product_id(self):
         self.product_id = self.generate_unique_id()
-    
-    def update_product(self,product_data):
+
+    def update_product(self, product_data):
         """updates part or all of the current map/session of self(present class)
     
             only name,description,price,stock_quantity and category can be updated
@@ -91,7 +95,7 @@ class Product(db.Model):
         except Exception as e:
             db.session.rollback()
             return False
-    
+
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
