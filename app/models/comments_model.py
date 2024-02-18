@@ -25,6 +25,17 @@ class Comments(db.Model):
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
 
+    def parse_comment(self):
+        return {
+            "id": self.id,
+            "comment_id": self.comment_id,
+            "comment_title": self.comment_title,
+            "buyer_id": self.buyer_id,
+            "buyer_name": self.buyer_name,
+            "comment_place_id": self.comment_place_id,
+            "comment_date": self.comment_date
+        }
+
     @classmethod
     def get_comment_using_id(cls, comment_id):
         return cls.query.filter_by(comment_id=comment_id).first()
