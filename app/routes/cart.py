@@ -6,6 +6,7 @@ from ..models.cart_model import Cart
 from ..models.order_model import Order
 from ..models.product_model import Product
 from ..models.imagename_store_model import ImageNameStore
+from ..utils import parse_cart
 
 cart_bp = Blueprint("cart", "cart", description="Endpoint for all API calls related to cart", url_prefix="/cart")
 
@@ -14,7 +15,7 @@ cart_bp = Blueprint("cart", "cart", description="Endpoint for all API calls rela
 class BuyerCart(MethodView):
     @cart_bp.response(200, CartSchema)
     def get(self, buyer_id):
-        return [Cart.parse_cart(cart_item=cart_item, image=ImageNameStore.get_product_thumbnail(cart_item.product_id))
+        return [parse_cart(cart_item=cart_item, image=ImageNameStore.get_product_thumbnail(cart_item.product_id))
                 for cart_item in Cart.get_buyer_cart_items(buyer_id=buyer_id)]
 
 

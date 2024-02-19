@@ -1,11 +1,13 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort, request
+
 from app.utils.image_resizer_and_uploader import ImageSaver
 from ..schemas import ProductSchema, CategorySchema
 from ..models.product_model import Product
 from ..models.categories_get import get_all_categories_and_tags, get_all_tags, get_category_names
 from ..models.imagename_store_model import ImageNameStore
+from ..utils import parse_dict
 import tempfile
 
 product_bp = Blueprint("products", "product", description="Endpoint for all API calls related to products",
@@ -40,7 +42,7 @@ class Products(MethodView):
                         new_image = ImageNameStore(savedimagename, 'products', product.product_id)
                         new_image.save_to_db()
             product.save_to_db()
-            return parsedict(product=product)
+            return parse_dict(product=product)
         except Exception as e:
             abort(500, message="Could not save Successfully")
 
@@ -55,7 +57,7 @@ class Products(MethodView):
       """
         product = Product.get_product_using_id(product_id)
 
-        return parsedict(product=product, images=ImageNameStore.getproductimages(product_id=product_id))
+        return parse_dict(product=product, images=ImageNameStore.getproductimages(product_id=product_id))
 
     # edit product
     @product_bp.response(201, ProductSchema)
@@ -102,7 +104,7 @@ class Categories(MethodView):
 class RandomProducts(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, amount):
-        return [parsedict(product=product, images=[ImageNameStore.getproductthumbnail(product.product_id)]) for product
+        return [parse_dict(product=product, images=[ImageNameStore.getproductthumbnail(product.product_id)]) for product
                 in Product.get_random_products(amount)]
 
 
@@ -110,7 +112,7 @@ class RandomProducts(MethodView):
 class SellerProducts(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, seller_id):
-        return [parsedict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
+        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
                 Product.get_products_using_sellerid(seller_id)]
 
 
@@ -118,7 +120,7 @@ class SellerProducts(MethodView):
 class ProductSearch(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, name):
-        return [parsedict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
+        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
                 Product.search_product_using_name(name)]
 
 
@@ -126,20 +128,8 @@ class ProductSearch(MethodView):
 class ProductSearch(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, category_name):
-        return [parsedict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
+        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
                 Product.search_product_using_category(category_name)]
 
-
-def parsedict(product, images):
-    return {
-        "seller_id": product.seller_id,
-        "product_name": product.name,
-        "description": product.description,
-        "product_price": product.price,
-        "quantity": product.stock_quantity,
-        "category": product.category,
-        "product_id": product.product_id,
-        "product_images": [image.image_name for image in images]
-    }
 
 # TODO: searchproductwithcategory

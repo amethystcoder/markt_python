@@ -1,10 +1,12 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort, request
+
 from ..schemas import FavoriteSchema
 from ..models.favorites_model import Favorite
 from ..models.imagename_store_model import ImageNameStore
 from ..models.user_model import User
+from ..utils import parse_favorite
 
 favorite_bp = Blueprint("favorites", "favorite", description="Endpoint for all API calls related to buyer favorites",
                         url_prefix="/favorites")
@@ -58,13 +60,3 @@ class Favorite(MethodView):
             favorite.delete_from_db()
         except Exception as e:
             abort(404, "not found")
-
-
-def parse_favorite(favorite: Favorite, image):
-    return {
-        "id": favorite.id,
-        "buyer_id": favorite.buyer_id,
-        "favorite_item_id": favorite.favorite_item_id,
-        "favorite_type": favorite.favorite_type,
-        "thumbnail": image
-    }
