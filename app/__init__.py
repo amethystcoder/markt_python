@@ -1,6 +1,8 @@
 from flask import Flask
+from flask_smorest import Api
 from flask_migrate import Migrate
 from flask_login import LoginManager
+
 import app.models
 from db import db
 from flask_mail import Mail
@@ -8,7 +10,6 @@ from flask_cors import CORS
 
 from .chat_websocket import socketio
 
-migrate = Migrate()
 cors = CORS()
 mail = Mail()
 
@@ -27,10 +28,12 @@ def create_app(config_name="development"):
     '''
 
     # Initialize extensions
+    db.init_app(app)
 
     mail.init_app(app)
-    db.init_app(app)
-    migrate.init_app(app, db)
+
+    migrate = Migrate(app, db)
+    api = Api(app)
 
     # Flask Login for Session based auth
     login_manager = LoginManager(app)
@@ -50,11 +53,11 @@ def create_app(config_name="development"):
             productrequest
 
         # Resources(endpoints) partially/completely implemented
-        app.register_blueprint(user.user_blp)
-        app.register_blueprint(product.product_bp)
-        app.register_blueprint(forgot_password_handler.pswd_retrvl_bp)
-        app.register_blueprint(cart.cart_bp)
-        app.register_blueprint(order.order_bp)
+        api.register_blueprint(user.user_blp)
+        api.register_blueprint(product.product_bp)
+        api.register_blueprint(forgot_password_handler.pswd_retrvl_bp)
+        api.register_blueprint(cart.cart_bp)
+        api.register_blueprint(order.order_bp)
 
         """
         app.register_blueprint(example.example_blp)
