@@ -7,12 +7,12 @@ from app.models.seller_model import Seller
 from app.models.buyer_model import Buyer
 from app.models.user_model import User
 
-productrequest_bp = Blueprint("Product Request", "request", description="Api calls to buyer product request apis")
+product_request_bp = Blueprint("Product Request", "request", description="Api calls to buyer product request apis")
 
 
-@productrequest_bp.route("/new")
+@product_request_bp.route("/new")
 class NewProductRequest(MethodView):
-    @productrequest_bp.response(200, ProductRequestSchema)
+    @product_request_bp.response(200, ProductRequestSchema)
     def post(self, product_request_data):
         try:
             request = BuyerRequest(product_request_data["buyer_id"], product_request_data["product_description"],
@@ -22,9 +22,9 @@ class NewProductRequest(MethodView):
             abort(500, "could not create request")
 
 
-@productrequest_bp.route("/<unique_id>")
+@product_request_bp.route("/<unique_id>")
 class ProductRequest(MethodView):
-    @productrequest_bp.response(200, ProductRequestSchema)
+    @product_request_bp.response(200, ProductRequestSchema)
     def get(self, unique_id):
 
         return parse_requests(BuyerRequest.get_requests_through_id(unique_id))
@@ -37,17 +37,17 @@ class ProductRequest(MethodView):
             abort(500, "Could not delete product request")
 
 
-@productrequest_bp.route("/<buyer_id>")
+@product_request_bp.route("/<buyer_id>")
 class BuyerProductRequest(MethodView):
-    @productrequest_bp.response(200, ProductRequestSchema)
+    @product_request_bp.response(200, ProductRequestSchema)
     def get(self, buyer_id):
         return [parse_requests(request=request, buyer=Buyer(request.buyer_id), user_details=User(request.buyer_id)) for
                 request in BuyerRequest.get_requests_through_buyer_id(buyer_id=buyer_id)]
 
 
-@productrequest_bp.route("/<seller_id>")
+@product_request_bp.route("/<seller_id>")
 class SellerProductRequest(MethodView):
-    @productrequest_bp.response(200, ProductRequestSchema)
+    @product_request_bp.response(200, ProductRequestSchema)
     def get(self, seller_id):
         seller = Seller(seller_id)
         seller_category = Seller.category
@@ -55,9 +55,9 @@ class SellerProductRequest(MethodView):
                 request in BuyerRequest.get_requests_using_category(seller_category)]
 
 
-@productrequest_bp.route("/category/<name>")
+@product_request_bp.route("/category/<name>")
 class ProductRequestFromCategory(MethodView):
-    @productrequest_bp.response(200, ProductRequestSchema)
+    @product_request_bp.response(200, ProductRequestSchema)
     def get(self, name):
         return [parse_requests(request=request, buyer=Buyer(request.buyer_id), user_details=User(request.buyer_id)) for
                 request in BuyerRequest.get_requests_using_category(name)]

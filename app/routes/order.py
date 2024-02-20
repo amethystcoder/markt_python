@@ -1,13 +1,8 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort
-from app.models.order_model import Order
-from app.models.user_model import User
-from app.models.seller_model import Seller
-from app.models.buyer_model import Buyer
-from app.models.product_model import Product
 
-from app.models.imagename_store_model import ImageNameStore
+from ..models import User, Order, Seller, Buyer, Product, ImageNameStore
 from ..utils import (
     parse_orders,
     parse_buyer_orders,

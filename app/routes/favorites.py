@@ -3,9 +3,7 @@ from flask.views import MethodView
 from flask import abort, request
 
 from ..schemas import FavoriteSchema
-from ..models.favorites_model import Favorite
-from ..models.imagename_store_model import ImageNameStore
-from ..models.user_model import User
+from ..models import Favorite, ImageNameStore, User
 from ..utils import parse_favorite
 
 favorite_bp = Blueprint("favorites", "favorite", description="Endpoint for all API calls related to buyer favorites",

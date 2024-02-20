@@ -2,12 +2,11 @@ from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort, request
 
-from app.utils.image_resizer_and_uploader import ImageSaver
 from ..schemas import ProductSchema, CategorySchema
-from ..models.product_model import Product
 from ..models.categories_get import get_all_categories_and_tags, get_all_tags, get_category_names
-from ..models.imagename_store_model import ImageNameStore
-from ..utils import parse_dict
+
+from ..models import Product, ImageNameStore
+from ..utils import parse_dict, ImageSaver
 import tempfile
 
 product_bp = Blueprint("products", "product", description="Endpoint for all API calls related to products",
