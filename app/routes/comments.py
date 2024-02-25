@@ -2,8 +2,10 @@ from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort, request
 from ..schemas import CommentSchema
-from ..models.comments_model import Comments
-from ..models.seller_model import Seller
+from ..models import (
+    Comments,
+    Seller
+)
 
 comment_bp = Blueprint("comments", "comment", description="Endpoint for all API calls related to comments",
                        url_prefix="/comments")
@@ -43,7 +45,7 @@ class ProductComment(MethodView):
     @comment_bp.response(200, CommentSchema)
     def get(self, product_id):
         try:
-            return [parse_comment(comments) for comments in Comments.get_product_comments(product_id)]
+            return [comments.parse_comment() for comments in Comments.get_product_comments(product_id)]
         except Exception as e:
             abort(404, "not found")
 
