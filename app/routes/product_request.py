@@ -2,10 +2,13 @@ from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort
 from app.schemas import ProductRequestSchema
-from app.models.buyer_request_model import BuyerRequest
-from app.models.seller_model import Seller
-from app.models.buyer_model import Buyer
-from app.models.user_model import User
+from ..models import (
+    BuyerRequest,
+    Seller,
+    Buyer,
+    User
+)
+from ..utils import parse_requests
 
 product_request_bp = Blueprint("Product Request", "request", description="Api calls to buyer product request apis")
 
@@ -61,17 +64,3 @@ class ProductRequestFromCategory(MethodView):
     def get(self, name):
         return [parse_requests(request=request, buyer=Buyer(request.buyer_id), user_details=User(request.buyer_id)) for
                 request in BuyerRequest.get_requests_using_category(name)]
-
-
-def parse_requests(request, buyer, user_details):
-    return {
-        "buyer_name": buyer.username,
-        "city": user_details.city,
-        "state": user_details.state,
-        "profile_image": user_details.profile_image,
-        "query_id": request.unique_id,
-        "message": request.product_description,
-        "buyer_id": request.buyer_id,
-        "category": request.category,
-        "stale_time": request.created_at
-    }

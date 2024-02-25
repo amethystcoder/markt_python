@@ -8,3 +8,4 @@ from .order import (
 )
 from .product import parse_dict
 from .favorites import parse_favorite
+from .product_request import parse_requests
