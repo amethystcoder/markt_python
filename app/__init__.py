@@ -10,17 +10,6 @@ import app.models
 from db import db
 from .chat_websocket import socketio
 
-from .auth import auth_blp
-from routes.cart import cart_bp
-from routes.comments import comment_bp
-from routes.favorites import favorite_bp
-from routes.forgot_password_handler import pswd_retrvl_bp
-from routes.order import order_bp
-# from routes.payment import payment_bp
-from routes.product import product_bp
-from routes.product_request import product_request_bp
-from routes.user import user_blp
-
 cors = CORS()
 mail = Mail()
 
@@ -59,7 +48,17 @@ def create_app(config_name="development"):
     with app.app_context():
         db.create_all()
 
-        # Register blueprints here
+        # Import and register blueprints here
+        from .auth import auth_blp
+        from .routes.cart import cart_bp
+        from .routes.comments import comment_bp
+        from .routes.favorites import favorite_bp
+        from .routes.forgot_password_handler import pswd_retrvl_bp
+        from .routes.order import order_bp
+        # from routes.payment import payment_bp
+        from .routes.product import product_bp
+        from .routes.product_request import product_request_bp
+        from .routes.user import user_blp
 
         # Resources(endpoints) partially/completely implemented
         api.register_blueprint(auth_blp)
@@ -70,7 +69,7 @@ def create_app(config_name="development"):
         api.register_blueprint(order_bp)
         api.register_blueprint(favorite_bp)
         api.register_blueprint(comment_bp)
-        api.register_blueprint(product_bp)
+        api.register_blueprint(product_request_bp)
 
         """
         app.register_blueprint(example.example_blp)

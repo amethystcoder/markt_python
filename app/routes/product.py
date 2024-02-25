@@ -1,6 +1,6 @@
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask.views import MethodView
-from flask import abort, request
+from flask import request
 
 from ..schemas import ProductSchema, CategorySchema
 from ..models.categories_get import get_all_categories_and_tags, get_all_tags, get_category_names
