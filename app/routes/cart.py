@@ -22,7 +22,7 @@ class BuyerCart(MethodView):
 @cart_bp.route("/<cart_id>")
 class CartItem(MethodView):
     @cart_bp.response(201, CartSchema)
-    def post(self, cart_data):  # /cart_id shouldn't be used to create a cart, id is yet tbc
+    def post(self, cart_data):  # TODO: TBD
         try:
             cart = Cart(buyer_id=cart_data["buyer_id"], product_id=cart_data["product_id"],
                         quantity=cart_data["quantity"], has_discount=cart_data["has_discount"],

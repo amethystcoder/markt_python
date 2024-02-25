@@ -30,7 +30,7 @@ class BuyerFavorites(MethodView):
             buyer_favorite_list = []
             for favorites in Favorite.get_all_buyer_favorites(buyer_id):
                 if favorites.favorite_type == "seller":
-                    seller = User(using_seller_id=True, unique_id=favorites.favorite_item_id)
+                    seller = User(using_seller_id=True, unique_id=favorites.favorite_item_id)  # TODO: TBD
                     buyer_favorite_list.append(parse_favorite(favorite=favorites, image=seller.profile_picture))
                 elif favorites.favorite_type == "product":
                     buyer_favorite_list.append(parse_favorite(favorite=favorites,

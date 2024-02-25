@@ -39,7 +39,7 @@ class PasswordCodeCheck(MethodView):
             if password_retrieval_to_check.is_expired():
                 abort()
             elif password_retrieval_to_check.is_code_right(code=data["code"]):
-                user_to_update = User(email=data["email"], password_change_reset=True)
+                user_to_update = User(email=data["email"], password_change_reset=True)  # TODO: TBD
                 user_to_update.change_password(password=data["password"])
                 password_retrieval_to_check.delete_all_other_recovery_attempts(email=data["email"])
         except Exception as e:

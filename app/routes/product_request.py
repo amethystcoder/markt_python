@@ -45,7 +45,7 @@ class BuyerProductRequest(MethodView):
     @product_request_bp.response(200, ProductRequestSchema)
     def get(self, buyer_id):
         return [parse_requests(request=request, buyer=Buyer(request.buyer_id), user_details=User(request.buyer_id)) for
-                request in BuyerRequest.get_requests_through_buyer_id(buyer_id=buyer_id)]
+                request in BuyerRequest.get_requests_through_buyer_id(buyer_id=buyer_id)]  # TODO: TBD
 
 
 @product_request_bp.route("/<seller_id>")
@@ -55,7 +55,7 @@ class SellerProductRequest(MethodView):
         seller = Seller(seller_id)
         seller_category = Seller.category
         return [parse_requests(request=request, buyer=Buyer(request.buyer_id), user_details=User(request.buyer_id)) for
-                request in BuyerRequest.get_requests_using_category(seller_category)]
+                request in BuyerRequest.get_requests_using_category(seller_category)]  # TODO: TBD
 
 
 @product_request_bp.route("/category/<name>")
@@ -63,4 +63,4 @@ class ProductRequestFromCategory(MethodView):
     @product_request_bp.response(200, ProductRequestSchema)
     def get(self, name):
         return [parse_requests(request=request, buyer=Buyer(request.buyer_id), user_details=User(request.buyer_id)) for
-                request in BuyerRequest.get_requests_using_category(name)]
+                request in BuyerRequest.get_requests_using_category(name)]  # TODO: TBD
