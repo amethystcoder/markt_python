@@ -2,13 +2,24 @@ from flask import Flask
 from flask_smorest import Api
 from flask_migrate import Migrate
 from flask_login import LoginManager
-
-import app.models
-from db import db
 from flask_mail import Mail
 from flask_cors import CORS
 
+import app.models
+
+from db import db
 from .chat_websocket import socketio
+
+from .auth import auth_blp
+from routes.cart import cart_bp
+from routes.comments import comment_bp
+from routes.favorites import favorite_bp
+from routes.forgot_password_handler import pswd_retrvl_bp
+from routes.order import order_bp
+# from routes.payment import payment_bp
+from routes.product import product_bp
+from routes.product_request import product_request_bp
+from routes.user import user_blp
 
 cors = CORS()
 mail = Mail()
@@ -48,16 +59,18 @@ def create_app(config_name="development"):
     with app.app_context():
         db.create_all()
 
-        # Import and register blueprints here
-        from .routes import cart, order, payment, user, websocket, product, example, forgot_password_handler, \
-            productrequest
+        # Register blueprints here
 
         # Resources(endpoints) partially/completely implemented
-        api.register_blueprint(user.user_blp)
-        api.register_blueprint(product.product_bp)
-        api.register_blueprint(forgot_password_handler.pswd_retrvl_bp)
-        api.register_blueprint(cart.cart_bp)
-        api.register_blueprint(order.order_bp)
+        api.register_blueprint(auth_blp)
+        api.register_blueprint(user_blp)
+        api.register_blueprint(product_bp)
+        api.register_blueprint(pswd_retrvl_bp)
+        api.register_blueprint(cart_bp)
+        api.register_blueprint(order_bp)
+        api.register_blueprint(favorite_bp)
+        api.register_blueprint(comment_bp)
+        api.register_blueprint(product_bp)
 
         """
         app.register_blueprint(example.example_blp)
@@ -65,9 +78,11 @@ def create_app(config_name="development"):
         app.register_blueprint(websocket.websocket_bp)
         """
 
+        """
         # Register chat test blueprints
         from .views import views
         app.register_blueprint(views)
+        """
 
         # Include other configurations and setup as needed
 
