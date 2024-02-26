@@ -36,12 +36,12 @@ class Products(MethodView):
                     # compress image and remove image background
                     # would add an optional parameter incase a seller does not want his image removed
                     location = tempfile.gettempdir() + '/' + file.filename
-                    savedimagename = ImageSaver.compress_image_and_remove_background(location)
-                    if savedimagename is not False and type(savedimagename) == str:
-                        new_image = ImageNameStore(savedimagename, 'products', product.product_id)
+                    saved_image_name = ImageSaver.compress_image_and_remove_background(location)
+                    if saved_image_name is not False and type(saved_image_name) == str:
+                        new_image = ImageNameStore(saved_image_name, 'products', product.product_id)
                         new_image.save_to_db()
             product.save_to_db()
-            return parse_dict(product=product)
+            return parse_dict(product=product, images=[])
         except Exception as e:
             abort(500, message="Could not save Successfully")
 

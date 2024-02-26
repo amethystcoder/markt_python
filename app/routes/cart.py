@@ -2,13 +2,28 @@ from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort
 from ..schemas import CartSchema
-from ..models.cart_model import Cart
-from ..models.order_model import Order
-from ..models.product_model import Product
-from ..models.imagename_store_model import ImageNameStore
+from ..models import (
+    Cart,
+    Order,
+    Product,
+    ImageNameStore,
+)
 from ..utils import parse_cart
 
 cart_bp = Blueprint("cart", "cart", description="Endpoint for all API calls related to cart", url_prefix="/cart")
+
+
+@cart_bp.route("/")
+class CreateCart(MethodView):
+    @cart_bp.response(201, CartSchema)
+    def post(self, cart_data):
+        try:
+            cart = Cart(buyer_id=cart_data["buyer_id"], product_id=cart_data["product_id"],
+                        quantity=cart_data["quantity"], has_discount=cart_data["has_discount"],
+                        discount_price=cart_data["discount_price"], discount_percent=cart_data["discount_percent"])
+            cart.save_to_db()
+        except Exception as e:
+            abort(500, "Could not save")
 
 
 @cart_bp.route("/<buyer_id>")
@@ -21,16 +36,6 @@ class BuyerCart(MethodView):
 
 @cart_bp.route("/<cart_id>")
 class CartItem(MethodView):
-    @cart_bp.response(201, CartSchema)
-    def post(self, cart_data):  # TODO: TBD
-        try:
-            cart = Cart(buyer_id=cart_data["buyer_id"], product_id=cart_data["product_id"],
-                        quantity=cart_data["quantity"], has_discount=cart_data["has_discount"],
-                        discount_price=cart_data["discount_price"], discount_percent=cart_data["discount_percent"])
-            cart.save_to_db()
-        except Exception as e:
-            abort(500, "Could not save")
-
     @cart_bp.response(201, CartSchema)
     def put(self, cart_id, new_quantity):
         try:
