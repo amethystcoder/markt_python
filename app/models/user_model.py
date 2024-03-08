@@ -18,8 +18,10 @@ class User(UserMixin, db.Model):
 
     # Add other common attributes here
 
+    """
     # Define a relationship with the Chat model
     chats = db.relationship('Chat', back_populates='users')
+    """
 
     def save_to_db(self):
         db.session.add(self)

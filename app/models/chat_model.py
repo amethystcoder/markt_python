@@ -12,8 +12,10 @@ class Chat(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     chat_list = db.Column(db.JSON, nullable=False, default=list)
 
+    """
     # Define the relationship with the User model
     user = db.relationship('User', backref=db.backref('chats', lazy=True))
+    """
 
     @staticmethod
     def generate_unique_id():

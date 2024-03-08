@@ -17,8 +17,8 @@ class Cart(db.Model):
     # order_status = db.Column(db.String(255), default='pending')
 
     # Define relationships
-    buyer = db.relationship("Buyer", back_populates="cart")
-    product = db.relationship("Product", back_populates="cart")
+    buyers = db.relationship("Buyer", back_populates="cart")
+    products = db.relationship("Product", back_populates="cart")
 
     @classmethod
     def get_buyer_cart_items(cls, buyer_id):

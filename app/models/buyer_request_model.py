@@ -15,7 +15,7 @@ class BuyerRequest(db.Model):
     created_at = db.Column(db.TIMESTAMP, default=time.time(), nullable=False)
     status = db.Column(db.String(255), default="open")
 
-    buyer = db.relationship("Buyer", back_populates="buyer_request")
+    buyer = db.relationship("Buyer", back_populates="requests")
 
     """
     def __init__(self, buyer_id, product_description, category, unique_id):

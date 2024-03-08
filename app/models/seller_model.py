@@ -23,9 +23,10 @@ class Seller(db.Model):
     directions = db.Column(db.String(400)) 
 
     # Define a one-to-many relationship between Seller and Product
-    products = db.relationship('Product', back_populates='sellers')
-    
-    orders = db.relationship("Order", back_populates="sellers")
+    products = db.relationship('Product', back_populates='seller')
+
+    orders = db.relationship("Order", back_populates="seller")
+    comments = db.relationship("Seller", back_populates="seller")
 
     @classmethod
     def find_by_unique_id(cls, unique_id):

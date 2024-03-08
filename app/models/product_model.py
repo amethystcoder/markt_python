@@ -19,6 +19,8 @@ class Product(db.Model):
     # Define a many-to-one relationship between Product and Seller
     seller = db.relationship('Seller', back_populates='products')
 
+    cart = db.relationship("Product", back_populates="products")
+    comments = db.relationship("Product", back_populates="product")
     image_name_store = db.relationship('ImageNameStore', back_populates='products')
 
     """
