@@ -11,7 +11,7 @@ class Product(db.Model):
     product_id = db.Column(db.String(255), nullable=False)
     # seller_id = db.Column(db.String(255), db.ForeignKey('sellers.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(400), nullablebuyer=False)
+    description = db.Column(db.String(400), nullable=False)
     price = db.Column(db.Float, nullable=False)
     stock_quantity = db.Column(db.Integer, nullable=False)
     category = db.Column(db.String(255), nullable=False)
@@ -23,7 +23,7 @@ class Product(db.Model):
     # Define relationships (one-many)
     cart = db.relationship("Cart", back_populates="product")
     comments = db.relationship("Comments", back_populates="product")
-    image_name_store = db.relationship('ImageNameStore', back_populates='products')
+    image_name_store = db.relationship('ImageNameStore', back_populates='product')
 
     # Define relationships (many-to-many)
     favorites = db.relationship('Favorite', secondary='favorites_seller_product', back_populates='products')
