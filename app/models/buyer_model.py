@@ -16,10 +16,11 @@ class Buyer(db.Model):
 
     # Add Buyer-specific attributes here
     shipping_address = db.Column(db.String(255), nullable=True)  # just for test
-    
-    cart = db.relationship("Cart", back_populates="buyers")
-    requests = db.relationship("BuyerRequest", back_populates="buyer")
-    favorites = db.relationship("Favorite", back_populates="buyer")
+
+    # Define one-many relationship
+    carts = db.relationship('Cart', back_populates='buyer')
+    favorites = db.relationship('Favorite', back_populates='buyer')
+    buyer_requests = db.relationship('BuyerRequest', back_populates="buyer")
     orders = db.relationship("Order", back_populates="buyer")
 
     @classmethod

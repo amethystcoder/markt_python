@@ -8,17 +8,20 @@ class Cart(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     cart_id = db.Column(db.String(400), nullable=False)
-    buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
-    product_id = db.Column(db.String(400), db.ForeignKey('products.id'), nullable=False)
+    # buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     has_discount = db.Column(db.Boolean, nullable=False)
     discount_price = db.Column(db.Float, nullable=False)
     discount_percent = db.Column(db.Float, nullable=False)
     # order_status = db.Column(db.String(255), default='pending')
 
-    # Define relationships
-    buyers = db.relationship("Buyer", back_populates="cart")
-    products = db.relationship("Product", back_populates="cart")
+    # Define buyer relationship
+    buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
+    buyer = db.relationship('Buyer', back_populates='carts')
+
+    # Define product relationship
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    product = db.relationship("Product", back_populates="carts")
 
     @classmethod
     def get_buyer_cart_items(cls, buyer_id):

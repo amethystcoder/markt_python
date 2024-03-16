@@ -13,6 +13,7 @@ class ImageNameStore(db.Model):
                                     nullable=False)  # id of the place (chat,product) where the image is found
 
     # Define a many-to-one relationship between ImageNameStore and Product
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     product = db.relationship('Product', back_populates='image_name_store')
 
     """

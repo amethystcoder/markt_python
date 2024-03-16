@@ -9,19 +9,25 @@ class Product(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     product_id = db.Column(db.String(255), nullable=False)
-    seller_id = db.Column(db.String(255), db.ForeignKey('sellers.id'), nullable=False)
+    # seller_id = db.Column(db.String(255), db.ForeignKey('sellers.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(400), nullable=False)
+    description = db.Column(db.String(400), nullablebuyer=False)
     price = db.Column(db.Float, nullable=False)
     stock_quantity = db.Column(db.Integer, nullable=False)
     category = db.Column(db.String(255), nullable=False)
 
-    # Define a many-to-one relationship between Product and Seller
+    # Define seller relationship
+    seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'), nullable=False)
     seller = db.relationship('Seller', back_populates='products')
 
-    cart = db.relationship("Product", back_populates="products")
-    comments = db.relationship("Product", back_populates="product")
+    # Define relationships (one-many)
+    cart = db.relationship("Cart", back_populates="product")
+    comments = db.relationship("Comments", back_populates="product")
     image_name_store = db.relationship('ImageNameStore', back_populates='products')
+
+    # Define relationships (many-to-many)
+    favorites = db.relationship('Favorite', secondary='favorites_seller_product', back_populates='products')
+    orders = db.relationship('Order', secondary='products_orders', back_populates='products')
 
     """
     def __init__(self, seller_id, name, description, price, stock_quantity, category, product_id):

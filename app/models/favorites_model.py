@@ -1,4 +1,6 @@
 from db import db
+
+
 import hashlib
 import uuid
 
@@ -7,11 +9,16 @@ class Favorite(db.Model):
     __tablename__ = "favorites"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
+    # buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
     favorite_item_id = db.Column(db.String(400), nullable=False)  # the id of the buyer favorite (seller or product)
     favorite_type = db.Column(db.String(400), nullable=False)  # seller or product
 
-    # Define relationships
+    # Define relationships (many-many)
+    sellers = db.relationship('Seller', secondary='favorites_seller_product', back_populates='favorites')
+    products = db.relationship('Product', secondary='favorites_seller_product', back_populates='favorites')
+
+    # Define buyer relationship
+    buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
     buyer = db.relationship("Buyer", back_populates="favorites")
 
     """

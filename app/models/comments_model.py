@@ -7,17 +7,22 @@ import uuid
 class Comments(db.Model):
     __tablename__ = "comments"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     comment_id = db.Column(db.String(400), nullable=False)
     comment_title = db.Column(db.String(400), nullable=False)
-    buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
+    # buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
     buyer_name = db.Column(db.String(400), nullable=False)
     comment_place_id = db.Column(db.String(400), nullable=False)  # the id of the place the comment is created
     comment_date = db.Column(db.TIMESTAMP, nullable=False)
 
     # Define relationships
+    buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
     buyer = db.relationship("Buyer", back_populates="comments")
+
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     product = db.relationship("Product", back_populates="comments")
+
+    seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'), nullable=False)
     seller = db.relationship("Seller", back_populates="comments")
 
     @staticmethod

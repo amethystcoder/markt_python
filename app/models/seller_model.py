@@ -24,9 +24,14 @@ class Seller(db.Model):
 
     # Define a one-to-many relationship between Seller and Product
     products = db.relationship('Product', back_populates='seller')
-
     orders = db.relationship("Order", back_populates="seller")
-    comments = db.relationship("Seller", back_populates="seller")
+    comments = db.relationship("Comments", back_populates="seller")
+
+    # Define favorites relationship (many-to-many)
+    favorites = db.relationship('Favorite', secondary='favorites_seller_product', back_populates='sellers')
+
+    # Define buyer_request relationship (many-to-many)
+    buyer_requests = db.relationship('BuyerRequest', secondary='seller_buyer_query', back_populates='sellers')
 
     @classmethod
     def find_by_unique_id(cls, unique_id):

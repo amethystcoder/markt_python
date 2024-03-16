@@ -9,13 +9,18 @@ class BuyerRequest(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     unique_id = db.Column(db.String(400), nullable=False)
-    buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
+    # buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
     product_description = db.Column(db.String(400), nullable=False)
     category = db.Column(db.String(255))
     created_at = db.Column(db.TIMESTAMP, default=time.time(), nullable=False)
     status = db.Column(db.String(255), default="open")
 
-    buyer = db.relationship("Buyer", back_populates="requests")
+    # Define buyer relationship
+    buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
+    buyer = db.relationship('Buyer', back_populates='buyer_requests')
+
+    # Define seller relationship (many-many)
+    sellers = db.relationship('Seller', secondary='seller_buyer_query', back_populates='buyer_requests')
 
     """
     def __init__(self, buyer_id, product_description, category, unique_id):
