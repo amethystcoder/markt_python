@@ -1,3 +1,4 @@
+'''
 from flask import session
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
 from app.models import User, Chat, Message, ChatMessage
@@ -203,7 +204,7 @@ def on_connection_established(reg):
     clients_cache.append({"client_id": reg})
     join_room(reg)
     emit('connect', {'message': 'conected'})
-    
+
     @socketio.on("close")
     def close_connection(user_id):
         socketio.close_room(user_id)
@@ -214,3 +215,4 @@ def on_connection_established(reg):
 
 """if __name__ == '__main__':
     socketio.run(app, debug=True, allow_unsafe_werkzeug=True)"""
+'''

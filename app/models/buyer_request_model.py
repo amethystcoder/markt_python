@@ -55,6 +55,7 @@ class BuyerRequest(db.Model):
         return cls.query.filter_by(buyer_id=buyer_id).delete()
 
     def save_to_db(self):
+        self.unique_id = self.generate_unique_id()
         db.session.add(self)
         db.session.commit()
 

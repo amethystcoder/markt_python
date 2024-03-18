@@ -1,3 +1,4 @@
+'''
 from db import db
 from datetime import date
 
@@ -53,3 +54,4 @@ class ChatMessage(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+'''

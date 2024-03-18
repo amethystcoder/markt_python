@@ -21,7 +21,7 @@ class Product(db.Model):
     seller = db.relationship('Seller', back_populates='products')
 
     # Define relationships (one-many)
-    cart = db.relationship("Cart", back_populates="product")
+    carts = db.relationship("Cart", back_populates="product")
     comments = db.relationship("Comments", back_populates="product")
     image_name_store = db.relationship('ImageNameStore', back_populates='product')
 
@@ -43,6 +43,7 @@ class Product(db.Model):
     """
 
     def save_to_db(self):
+        self.product_id = self.generate_unique_id()
         db.session.add(self)
         db.session.commit()
 

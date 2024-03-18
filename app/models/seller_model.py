@@ -60,6 +60,7 @@ class Seller(db.Model):
         db.session.commit()
 
     def save_to_db(self):
+        self.unique_id = self.generate_unique_id()
         db.session.add(self)
         db.session.commit()
 

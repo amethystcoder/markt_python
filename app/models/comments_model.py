@@ -58,6 +58,7 @@ class Comments(db.Model):
         return cls.query.filter_by(comment_place_id=seller_id).all()
 
     def save_to_db(self):
+        self.comment_id = self.generate_unique_id()
         db.session.add(self)
         db.session.commit()
 

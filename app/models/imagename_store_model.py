@@ -6,7 +6,7 @@ class ImageNameStore(db.Model):
     __tablename__ = "imagenamestore"
 
     # you are also free to change these variable names
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     image_name = db.Column(db.String(255), nullable=False)  # name of the image
     found_under = db.Column(db.String(255), nullable=False)  # the place the image is found i.e products,chat,e.t.c
     image_use_origin_id = db.Column(db.String(255),

@@ -22,6 +22,7 @@ class Buyer(db.Model):
     favorites = db.relationship('Favorite', back_populates='buyer')
     buyer_requests = db.relationship('BuyerRequest', back_populates="buyer")
     orders = db.relationship("Order", back_populates="buyer")
+    comments = db.relationship("Comments", back_populates="buyer")
 
     @classmethod
     def find_by_unique_id(cls, unique_id):
@@ -45,6 +46,7 @@ class Buyer(db.Model):
             db.session.commit()
 
     def save_to_db(self):
+        self.unique_id = self.generate_unique_id()
         db.session.add(self)
         db.session.commit()
 

@@ -8,7 +8,7 @@ import uuid
 class Favorite(db.Model):
     __tablename__ = "favorites"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     # buyer_id = db.Column(db.String(400), db.ForeignKey('buyers.unique_id'), nullable=False)
     favorite_item_id = db.Column(db.String(400), nullable=False)  # the id of the buyer favorite (seller or product)
     favorite_type = db.Column(db.String(400), nullable=False)  # seller or product

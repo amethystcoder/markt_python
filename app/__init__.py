@@ -8,7 +8,9 @@ from flask_cors import CORS
 import app.models
 
 from db import db
-from .chat_websocket import socketio
+# from .chat_websocket import socketio
+from flask_socketio import SocketIO
+socketio = SocketIO()
 
 cors = CORS()
 mail = Mail()
