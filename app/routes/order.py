@@ -1,6 +1,7 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort
+from flask_login import login_required
 from app.models.order_model import Order
 from app.models.user_model import User
 from app.models.seller_model import Seller
@@ -43,8 +44,10 @@ class AcceptedOrders(MethodView):
     except Exception as e:
       abort(500,"could not create")
       
+
 @order_bp.route("/sellers/update/accept/<order_id>")
 class AcceptOrders(MethodView):
+  @login_required
   @order_bp.response(200, OrderSchema)
   #authentication would be needed
   def put(self,order_id):
@@ -56,6 +59,7 @@ class AcceptOrders(MethodView):
 
 @order_bp.route("/sellers/update/decline")
 class DeclineOrders(MethodView):
+  @login_required
   @order_bp.response(200, OrderSchema)
   #authentication would be needed
   def put(self,order_id):
