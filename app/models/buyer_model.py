@@ -1,5 +1,7 @@
 from db import db
 from passlib.hash import pbkdf2_sha256
+import hashlib
+import uuid
 
 
 class Buyer(db.Model):
@@ -23,6 +25,11 @@ class Buyer(db.Model):
     buyer_requests = db.relationship('BuyerRequest', back_populates="buyer")
     orders = db.relationship("Order", back_populates="buyer")
     comments = db.relationship("Comments", back_populates="buyer")
+
+    @staticmethod
+    def generate_unique_id():
+        unique_id = str(uuid.uuid4()).encode()
+        return hashlib.sha256(unique_id).hexdigest()
 
     @classmethod
     def find_by_unique_id(cls, unique_id):

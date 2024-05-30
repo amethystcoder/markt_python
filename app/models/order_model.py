@@ -8,6 +8,7 @@ class Order(db.Model):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    unique_id = db.Column(db.String(400), nullable=False, unique=True)
     order_id = db.Column(db.String(255), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
