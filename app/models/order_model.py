@@ -1,6 +1,5 @@
 from db import db
-import time
-import hashlib
+from sqlalchemy.sql import func
 import uuid
 
 
@@ -8,8 +7,7 @@ class Order(db.Model):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    unique_id = db.Column(db.String(400), nullable=False, unique=True)
-    order_id = db.Column(db.String(255), nullable=False)
+    order_id = db.Column(db.String(400), nullable=False, unique=True)
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     order_status = db.Column(db.String(255), default='pending', nullable=False)
@@ -66,8 +64,7 @@ class Order(db.Model):
 
     @staticmethod
     def generate_unique_id():
-        unique_id = str(uuid.uuid4()).encode()
-        return hashlib.sha256(unique_id).hexdigest()
+        return str(uuid.uuid4())
 
     def accept_order(self):
         self.order_status = "accepted"
@@ -78,10 +75,19 @@ class Order(db.Model):
         db.session.commit()
 
     def save_to_db(self):
-        self.order_id = self.generate_unique_id()
+        if not self.order_id:
+            self.order_id = self.generate_unique_id()
         db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
     def delete_from_db(self):
         db.session.delete(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
