@@ -10,13 +10,17 @@ class Comments(db.Model):
     comment_id = db.Column(db.String(400), nullable=False, unique=True)
     buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    comment_place_id = db.Column(db.String(400), nullable=False)  # the id of the place the comment is created
     created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     # Define buyer relationship
     buyer = db.relationship('Buyer', back_populates='comments')
     # Define product relationship
     product = db.relationship('Product', back_populates='comments')
+    # define seller relationship
+    seller = db.relationship("Seller", back_populates="comments")
 
     @staticmethod
     def generate_unique_id():
@@ -29,6 +33,14 @@ class Comments(db.Model):
     @classmethod
     def get_comments_by_buyer_id(cls, buyer_id):
         return cls.query.filter_by(buyer_id=buyer_id).all()
+
+    @classmethod
+    def get_product_comments(cls, product_id):
+        return cls.query.filter_by(comment_place_id=product_id).all()
+
+    @classmethod
+    def get_seller_comments(cls, seller_id):
+        return cls.query.filter_by(comment_place_id=seller_id).all()
 
     def save_to_db(self):
         if not self.comment_id:
