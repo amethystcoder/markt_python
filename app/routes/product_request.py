@@ -31,7 +31,7 @@ class ProductRequest(MethodView):
     @product_request_bp.response(200, ProductRequestSchema)
     def get(self, unique_id):
 
-        buyer = Buyer.query.filter_by(id=unique_id)
+        buyer = Buyer.query.filter_by(unique_id=unique_id)
         user_details = UserAddress.query.filter_by(user_id=buyer.user_id)
         return parse_requests(BuyerRequest.get_requests_through_id(unique_id), buyer, user_details)
 
