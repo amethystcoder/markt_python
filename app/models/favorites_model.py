@@ -7,13 +7,15 @@ class Favorite(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     favorite_id = db.Column(db.String(400), nullable=False, unique=True)
+    favorite_item_id = db.Column(db.String(400), nullable=False)  # the id of the buyer favorite (seller or product)
+    favorite_type = db.Column(db.String(400), nullable=False)  # seller or product
     buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
 
     # Define buyer relationship
     buyer = db.relationship('Buyer', back_populates='favorites')
-    # Define product relationship
-    product = db.relationship('Product', back_populates='favorites')
+    # Define relationships (many-many)
+    sellers = db.relationship('Seller', secondary='favorites_seller_product', back_populates='favorites')
+    products = db.relationship('Product', secondary='favorites_seller_product', back_populates='favorites')
 
     @staticmethod
     def generate_unique_id():
@@ -26,6 +28,18 @@ class Favorite(db.Model):
     @classmethod
     def get_favorites_by_buyer_id(cls, buyer_id):
         return cls.query.filter_by(buyer_id=buyer_id).all()
+
+    @classmethod
+    def delete_all_buyer_favorites(cls, buyer_id):
+        return cls.filter_by(buyer_id=buyer_id).delete()
+
+    @classmethod
+    def get_all_buyer_favorites_that_are_sellers(cls, buyer_id):
+        return cls.query.filter_by(buyer_id=buyer_id).filter(favorite_type="seller").all()
+
+    @classmethod
+    def get_all_buyer_favorites_that_are_products(cls, buyer_id):
+        return cls.query.filter_by(buyer_id=buyer_id, favorite_type="product").all()
 
     def save_to_db(self):
         if not self.favorite_id:

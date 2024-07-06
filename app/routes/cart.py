@@ -2,6 +2,7 @@ from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort
 from ..schemas import CartSchema
+from sqlalchemy.exc import IntegrityError
 from ..models import (
     Cart,
     Order,
@@ -22,8 +23,13 @@ class CreateCart(MethodView):
                         quantity=cart_data["quantity"], has_discount=cart_data["has_discount"],
                         discount_price=cart_data["discount_price"], discount_percent=cart_data["discount_percent"])
             cart.save_to_db()
+            return cart, 201
+        except ValueError as e:
+            abort(400, str(e))
+        except IntegrityError:
+            abort(409, "Cart item already exists")
         except Exception as e:
-            abort(500, "Could not save")
+            abort(500, f"An error occurred while creating the cart: {str(e)}")
 
 
 @cart_bp.route("/<buyer_id>")

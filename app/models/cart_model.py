@@ -11,6 +11,9 @@ class Cart(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, default=1, nullable=False)
     status = db.Column(db.String(255), default="pending")
+    has_discount = db.Column(db.Boolean, nullable=False)
+    discount_price = db.Column(db.Float, nullable=False)
+    discount_percent = db.Column(db.Float, nullable=False)
 
     # Define buyer relationship
     buyer = db.relationship('Buyer', back_populates='carts')
@@ -28,6 +31,18 @@ class Cart(db.Model):
     @classmethod
     def get_cart_by_buyer_id(cls, buyer_id):
         return cls.query.filter_by(buyer_id=buyer_id).all()
+
+    @classmethod
+    def get_cart_by_cid(cls, cart_id):
+        return cls.query.filter_by(cart_id=cart_id).first()
+
+    def update_cart_quantity(self, new_quantity):
+        self.quantity = new_quantity
+        db.session.commit()
+
+    @classmethod
+    def delete_all_buyer_cart_items(cls, buyer_id):
+        return cls.query.filter_by(buyer_id=buyer_id).delete()
 
     def save_to_db(self):
         if not self.cart_id:
