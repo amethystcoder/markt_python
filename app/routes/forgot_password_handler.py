@@ -8,7 +8,7 @@ from flask_mail import Message
 from ..models import PasswordRetrievalData, User
 from app.schemas import PasswordRetrievalSchema
 
-pswd_retrvl_bp = Blueprint("Retrieve Password", "retrieve password", description="Endpoint for password retrieval")
+pswd_retrvl_bp = Blueprint("Retrieve Password", "retrieve password", description="Endpoint for password retrieval",url_prefix="/psw_ret")
 
 
 @pswd_retrvl_bp.route("/create")

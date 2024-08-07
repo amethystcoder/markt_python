@@ -12,7 +12,7 @@ from ..utils import (
 
 from app.schemas import OrderSchema
 
-order_bp = Blueprint("Orders", "orders", description="Endpoints and routes for everything related to orders")
+order_bp = Blueprint("Orders", "orders", description="Endpoints and routes for everything related to orders",url_prefix="/orders")
 
 
 @order_bp.route("/new")

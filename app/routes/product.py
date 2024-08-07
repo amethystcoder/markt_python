@@ -85,8 +85,7 @@ class Categories(MethodView):
     @product_bp.response(200, CategorySchema)
     def get(self, type):
         """
-      gets a particular product using its id, along with its images
-      seller description, e.t.c
+      gets a 
       """
         match type:
             case "tags":

@@ -11,7 +11,7 @@ from ..models import (
 )
 from ..utils import parse_requests
 
-product_request_bp = Blueprint("Product Request", "request", description="Api calls to buyer product request apis")
+product_request_bp = Blueprint("Product Request", "request", description="Api calls to buyer product request apis",url_prefix="/product_request")
 
 
 @product_request_bp.route("/new")
