@@ -3,9 +3,8 @@ from flask.views import MethodView
 from flask import request
 
 from ..schemas import ProductSchema, CategorySchema
-from ..models.categories_get import get_all_categories_and_tags, get_all_tags, get_category_names
 
-from ..models import Product, ImageNameStore
+from ..models import Product, ImageNameStore, get_all_categories_and_tags,get_all_tags,get_all_tags_in_category,get_category_names
 from ..utils import parse_dict, ImageSaver
 import tempfile
 
@@ -87,6 +86,9 @@ class Categories(MethodView):
         """
       gets a 
       """
+        #Response.headers.add("Access-Control-Allow-Origin", "*")
+        #Response.headers.add("Access-Control-Allow-Headers", "*")
+        #Response.headers.add("Access-Control-Allow-Methods", "*")
         match type:
             case "tags":
                 return get_all_tags()

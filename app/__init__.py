@@ -10,8 +10,8 @@ import app.models
 from db import db
 # from .chat_websocket import socketio
 from flask_socketio import SocketIO
-socketio = SocketIO()
 
+socketio = SocketIO()
 cors = CORS()
 mail = Mail()
 
@@ -43,8 +43,8 @@ def create_app(config_name="development"):
     login_manager.init_app(app)
 
     # Initialize Flask-SocketIO with CORS
-    cors.init_app(app, resources={r"/socket.io/*": {"origins": "http://127.0.0.1:5000"}})
-    socketio.init_app(app, cors_allowed_origins="http://127.0.0.1:5000")  # Would be replaced with the actual domain
+    cors.init_app(app, resources={r"/*": {"origins": "*"}})
+    socketio.init_app(app, cors_allowed_origins="http://127.0.0.1")  # Would be replaced with the actual domain
     # of the frontend during prod test.
 
     with app.app_context():

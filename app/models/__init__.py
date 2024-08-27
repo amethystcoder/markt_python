@@ -20,3 +20,4 @@ from .favorites_seller_product import favorites_seller_product
 from .seller_buyer_query import seller_buyer_query
 from .sellers_orders import sellers_orders
 from .products_orders import products_orders
+from .categories_get import *
