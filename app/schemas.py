@@ -42,7 +42,7 @@ class SellerUpdateSchema(UserSchema):
 
 
 class AddressSchema(Schema):
-    longitude = fields.Float()
+    longtitude = fields.Float()
     latitude = fields.Float()
     house_number = fields.Int()
     street = fields.Str()
