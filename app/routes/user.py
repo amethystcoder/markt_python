@@ -43,7 +43,7 @@ class BuyerResource(MethodView):
         buyer_info = Buyer.query.filter_by(user_id=current_user.id).first()
         if buyer_info:
             return {
-                "username": buyer_info.username,
+                "buyername": buyer_info.buyername,
                 "email": current_user.email,
                 "phone_number": current_user.phone_number or None,
                 "profile_picture": buyer_info.profile_picture,
@@ -58,7 +58,7 @@ class BuyerResource(MethodView):
         buyer_info = Buyer.query.filter_by(user_id=current_user.id).first()
         if buyer_info:
             # Update buyer information based on the data received
-            buyer_info.username = user_data.get("username", buyer_info.username)
+            buyer_info.buyername = user_data.get("buyername", buyer_info.buyername)
             buyer_info.shipping_address = user_data.get("shipping_address", buyer_info.shipping_address)
             buyer_info.save_to_db()
             return {"message": "Buyer profile updated successfully."}, 200
@@ -78,7 +78,6 @@ class SellerResource(MethodView):
         seller_info = Seller.query.filter_by(user_id=current_user.id).first()
         if seller_info:
             return {
-                "username": seller_info.username,
                 "email": current_user.email,
                 "profile_picture": seller_info.profile_picture,
                 "shop_name": seller_info.shop_name,
@@ -98,7 +97,7 @@ class SellerResource(MethodView):
         seller_info = Seller.query.filter_by(user_id=current_user.id).first()
         if seller_info:
             # Update seller information based on the data received
-            seller_info.username = user_data.get("username", seller_info.username)
+            #seller_info.username = user_data.get("username", seller_info.username)
             seller_info.shop_name = user_data.get("shop_name", seller_info.shop_name)
             seller_info.save_to_db()
             return {"message": "Seller profile updated successfully."}, 200
@@ -150,7 +149,7 @@ class UserProfile(MethodView):
                 seller = Seller.query.filter_by(user_id=current_user.id).first()
                 if seller:
                     seller_info = {
-                        "username": seller.username,
+                        #"username": seller.username,
                         "email": current_user.email,
                         "profile_picture": seller.profile_picture,
                         "shop_name": seller.shop_name,
@@ -177,7 +176,7 @@ class UserProfile(MethodView):
 
             if buyer_info:
                 # Update buyer information based on the data received
-                buyer.username = buyer_info.get("username", buyer.username)
+                buyer.buyername = buyer_info.get("buyername", buyer.buyername)
                 buyer.shipping_address = buyer_info.get("shipping_address", buyer.shipping_address)
                 buyer.save_to_db()
 
