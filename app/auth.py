@@ -249,3 +249,10 @@ class UserLogout(MethodView):
     def post(self):
         logout_user()
         return {"message": "Logged out successful"}, 200
+    
+@auth_blp.route("/existinguser/<user_name>")
+class UserNameCheck(MethodView):
+    @auth_blp.response(200, description="Username checked successfully")
+    def get(self,user_name):
+        user_amount = User.query.filter_by(username=user_name).count() #count ?
+        return {"message": user_amount}, 200
