@@ -63,6 +63,8 @@ class BuyerRegister(MethodView):
             address_data = buyer_data['address']
             user_address = UserAddress(
                 user_id=new_user.id,
+                longtitude=address_data.get('longtitude'),
+                latitude=address_data.get('latitude'),
                 house_number=address_data.get('house_number'),
                 street=address_data.get('street'),
                 city=address_data.get('city'),
@@ -118,6 +120,8 @@ class SellerRegister(MethodView):
             address_data = seller_data['address']
             user_address = UserAddress(
                 user_id=new_user.id,
+                longitude=address_data.get('longitude'),
+                latitude=address_data.get('latitude'),
                 house_number=address_data.get('house_number'),
                 street=address_data.get('street'),
                 city=address_data.get('city'),
@@ -210,6 +214,7 @@ class UserLogin(MethodView):
     @auth_blp.arguments(UserLoginSchema)
     @auth_blp.response(200, UserLoginResponseSchema)
     def post(self, user_data):
+        print(user_data)
         email = user_data["email"]
         password = user_data["password"]
         account_type = user_data["account_type"]
@@ -244,3 +249,10 @@ class UserLogout(MethodView):
     def post(self):
         logout_user()
         return {"message": "Logged out successful"}, 200
+    
+@auth_blp.route("/existinguser/<user_name>")
+class UserNameCheck(MethodView):
+    @auth_blp.response(200, description="Username checked successfully")
+    def get(self,user_name):
+        user_amount = User.query.filter_by(username=user_name).count() #count ?
+        return {"message": user_amount}, 200

@@ -1,14 +1,17 @@
 from flask import Flask
+from flask_smorest import Api
 from flask_migrate import Migrate
 from flask_login import LoginManager
-import app.models
-from db import db
 from flask_mail import Mail
 from flask_cors import CORS
 
-from .chat_websocket import socketio
+import app.models
 
-migrate = Migrate()
+from db import db
+# from .chat_websocket import socketio
+from flask_socketio import SocketIO
+
+socketio = SocketIO()
 cors = CORS()
 mail = Mail()
 
@@ -27,10 +30,12 @@ def create_app(config_name="development"):
     '''
 
     # Initialize extensions
+    db.init_app(app)
 
     mail.init_app(app)
-    db.init_app(app)
-    migrate.init_app(app, db)
+
+    migrate = Migrate(app, db)
+    api = Api(app)
 
     # Flask Login for Session based auth
     login_manager = LoginManager(app)
@@ -38,23 +43,35 @@ def create_app(config_name="development"):
     login_manager.init_app(app)
 
     # Initialize Flask-SocketIO with CORS
-    cors.init_app(app, resources={r"/socket.io/*": {"origins": "http://127.0.0.1:5000"}})
-    socketio.init_app(app, cors_allowed_origins="http://127.0.0.1:5000")  # Would be replaced with the actual domain
+    cors.init_app(app, resources={r"/*": {"origins": "*"}})
+    socketio.init_app(app, cors_allowed_origins="http://127.0.0.1")  # Would be replaced with the actual domain
     # of the frontend during prod test.
 
     with app.app_context():
         db.create_all()
 
         # Import and register blueprints here
-        from .routes import cart, order, payment, user, websocket, product, example, forgot_password_handler, \
-            productrequest
+        from .auth import auth_blp
+        from .routes.cart import cart_bp
+        from .routes.comments import comment_bp
+        from .routes.favorites import favorite_bp
+        from .routes.forgot_password_handler import pswd_retrvl_bp
+        from .routes.order import order_bp
+        # from routes.payment import payment_bp
+        from .routes.product import product_bp
+        from .routes.product_request import product_request_bp
+        from .routes.user import user_blp
 
         # Resources(endpoints) partially/completely implemented
-        app.register_blueprint(user.user_blp)
-        app.register_blueprint(product.product_bp)
-        app.register_blueprint(forgot_password_handler.pswd_retrvl_bp)
-        app.register_blueprint(cart.cart_bp)
-        app.register_blueprint(order.order_bp)
+        api.register_blueprint(auth_blp)
+        api.register_blueprint(user_blp)
+        api.register_blueprint(product_bp)
+        api.register_blueprint(pswd_retrvl_bp)
+        api.register_blueprint(cart_bp)
+        api.register_blueprint(order_bp)
+        api.register_blueprint(favorite_bp)
+        api.register_blueprint(comment_bp)
+        api.register_blueprint(product_request_bp)
 
         """
         app.register_blueprint(example.example_blp)
@@ -62,9 +79,11 @@ def create_app(config_name="development"):
         app.register_blueprint(websocket.websocket_bp)
         """
 
+        """
         # Register chat test blueprints
         from .views import views
         app.register_blueprint(views)
+        """
 
         # Include other configurations and setup as needed
 

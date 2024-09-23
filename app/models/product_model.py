@@ -1,78 +1,72 @@
 from db import db
-import random
-import hashlib
+from sqlalchemy.sql import func
 import uuid
+import random
+
 
 class Product(db.Model):
     __tablename__ = "products"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product_id = db.Column(db.String(255), nullable=False)
-    seller_id = db.Column(db.String(255), db.ForeignKey('sellers.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.String(400), nullable=False, unique=True)
     name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(400), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    stock_quantity = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    stock_quantity = db.Column(db.Integer, default=0, nullable=False)
     category = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
 
-    # Define a many-to-one relationship between Product and Seller
+    # Define seller relationship
+    seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'), nullable=False)
     seller = db.relationship('Seller', back_populates='products')
-    
-    imagenamestore = db.relationship('ImageNameStore', back_populates='products')
-    
-    def __init__(self,seller_id,name,description,price,stock_quantity,category,product_id):
-        if product_id:
-            self = self.get_product_using_id(product_id)
-        else:
-            self.seller_id = seller_id
-            self.name = name
-            self.description = description
-            self.price = price
-            self.stock_quantity = stock_quantity
-            self.category = category
-        
-    def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()    
-    
+
+    # Define relationships (one-many)
+    carts = db.relationship("Cart", back_populates="product")
+    comments = db.relationship("Comments", back_populates="product")
+    image_name_store = db.relationship('ImageNameStore', back_populates='product')
+
+    # Define relationships (many-to-many)
+    favorites = db.relationship('Favorite', secondary='favorites_seller_product', back_populates='products')
+    orders = db.relationship('Order', secondary='products_orders', back_populates='products')
+
+    @staticmethod
+    def generate_unique_id():
+        return str(uuid.uuid4())
+
     @classmethod
-    def get_random_products(self,bundle_size):
-        '''
+    def get_product_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def get_products_by_seller_id(cls, seller_id):
+        return cls.query.filter_by(seller_id=seller_id).all()
+
+    @classmethod
+    def get_random_products(cls, bundle_size):
+        """
         gets random products in a particular bundle based on the bundle size
-        '''
+        """
         try:
-            num_of_products = db.session.query(Product).count()
-            random_ids = random.sample(range(1,num_of_products),int(bundle_size))
-            return db.session.query(Product).filter(Product.id.in_(random_ids)).all()
+            num_of_products = cls.query.count()
+            random_ids = random.sample(range(1, num_of_products), int(bundle_size))
+            return cls.query.filter_by(id=random_ids).all()
         except ValueError:
             return []
-    
-    def generate_unique_id():
-        unique_id = str(uuid.uuid4()).encode()
-        return hashlib.sha256(unique_id).hexdigest()
-    
+
     @classmethod
-    def get_product_using_id(self,product_id):
-        return db.session.query(Product).filter(Product.product_id == product_id).first()
-    
+    def search_product_using_name(cls, product_name):
+        return cls.query.filter_by(cls.name.like(f"%{product_name}%")).all()
+
     @classmethod
-    def get_products_using_sellerid(self,seller_id):
-        return db.session.query(Product).filter(Product.seller_id == seller_id).all()
-    
-    @classmethod
-    def search_product_using_name(self,product_name):
-        return db.session.query(Product).filter(Product.name.like("%"+product_name+"%")).all()
-    
-    @classmethod
-    def search_product_using_category(self,category_name):
-        return db.session.query(Product).filter(Product.category.like("%"+category_name+"%")).all()
-    
-    def setproductid(self):
+    def search_product_using_category(cls, category_name):
+        return cls.query.filter_by(cls.name.like(f"%{category_name}%")).all()
+
+    def set_product_id(self):
         self.product_id = self.generate_unique_id()
-    
-    def update_product(self,product_data):
+
+    def update_product(self, product_data):
         """updates part or all of the current map/session of self(present class)
-    
+
             only name,description,price,stock_quantity and category can be updated
         """
         try:
@@ -91,7 +85,21 @@ class Product(db.Model):
         except Exception as e:
             db.session.rollback()
             return False
-    
+
+    def save_to_db(self):
+        if not self.product_id:
+            self.product_id = self.generate_unique_id()
+        db.session.add(self)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
     def delete_from_db(self):
         db.session.delete(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e

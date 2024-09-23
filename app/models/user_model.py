@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone_number = db.Column(db.String(255))
+    username = db.Column(db.String(50), unique=True, nullable=False)
     created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), nullable=False)
 
     is_buyer = db.Column(db.Boolean, default=False)
@@ -18,8 +19,10 @@ class User(UserMixin, db.Model):
 
     # Add other common attributes here
 
+    """
     # Define a relationship with the Chat model
     chats = db.relationship('Chat', back_populates='users')
+    """
 
     def save_to_db(self):
         db.session.add(self)
@@ -40,7 +43,7 @@ class User(UserMixin, db.Model):
         return {
             "city": data.city,
             "country": data.country,
-            "longitude": data.longitude,
+            "longtitude": data.longitude,
             "latitude": data.latitude,
             "house_number": data.house_number,
             "state": data.state,
@@ -54,7 +57,7 @@ class UserAddress(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
-    longitude = db.Column(db.Float)
+    longtitude = db.Column(db.Float)
     latitude = db.Column(db.Float)
     house_number = db.Column(db.Integer)
     street = db.Column(db.String(255))

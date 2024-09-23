@@ -42,7 +42,7 @@ class SellerUpdateSchema(UserSchema):
 
 
 class AddressSchema(Schema):
-    longitude = fields.Float()
+    longtitude = fields.Float()
     latitude = fields.Float()
     house_number = fields.Int()
     street = fields.Str()
@@ -96,7 +96,7 @@ class UserProfileSchema(Schema):
             "email": buyer_info.user.email,
             "profile_picture": buyer_info.profile_picture,
             "phone_number": buyer_info.user.phone_number,
-            "shipping_address": buyer_info.shipping_address,
+            "shipping_address": buyer_info.shipping_address
         })
 
     @classmethod
@@ -156,14 +156,11 @@ class ProductSchema(Schema):
     # product_image = fields.String()
 
 
-class CategorySchema:
-    name = fields.String()
-    tags = fields.List(
-        fields.Dict(keys=fields.String(), values=fields.String() or fields.List(fields.String()))
-    )
+class CategorySchema(Schema):
+    categories = fields.List(fields.Raw(required=True))
 
 
-class CartSchema:
+class CartSchema(Schema):
     cart_id = fields.String()
     buyer_id = fields.String()
     product_id = fields.String()
@@ -174,7 +171,7 @@ class CartSchema:
     # order_status = db.Column(db.String(255), default='pending')
 
 
-class ProductRequestSchema:
+class ProductRequestSchema(Schema):
     buyer_id = fields.String()
     product_description = fields.String()
     category = fields.String()
@@ -182,7 +179,7 @@ class ProductRequestSchema:
     status = fields.String()
 
 
-class PasswordRetrievalSchema:
+class PasswordRetrievalSchema(Schema):
     id = fields.Int(strict=True)
     recovery_code = fields.Int(strict=True)
     user_id = fields.String()
@@ -190,7 +187,7 @@ class PasswordRetrievalSchema:
     expiration_time = fields.Int(strict=True)
 
 
-class OrderSchema:
+class OrderSchema(Schema):
     id = fields.Int(strict=True)
     buyer_id = fields.String()
     seller_id = fields.String()
@@ -202,7 +199,7 @@ class OrderSchema:
     delivery_address = fields.String()
 
 
-class CommentSchema:
+class CommentSchema(Schema):
     id = fields.Int(strict=True)
     comment_id = fields.String()
     comment_title = fields.String()
@@ -212,7 +209,7 @@ class CommentSchema:
     comment_date = fields.DateTime()
 
 
-class FavoriteSchema:
+class FavoriteSchema(Schema):
     id = fields.Int(strict=True)
     buyer_id = fields.String()
     favorite_item_id = fields.String()  # the id of the buyer favorite (seller or product)
