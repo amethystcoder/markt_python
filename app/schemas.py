@@ -142,7 +142,8 @@ class UserProfileUpdateSchema(Schema):
 
 
 class UpdateProfilePictureSchema(Schema):
-    profile_picture = fields.Raw(required=True, validate=validate.Length(max=10 * 1024 * 1024))  # Assuming a maximum size of 10 MB
+    profile_picture = fields.Raw(required=True,
+                                 validate=validate.Length(max=10 * 1024 * 1024))  # Assuming a maximum size of 10 MB
 
 
 class ProductSchema(Schema):
@@ -214,3 +215,20 @@ class FavoriteSchema(Schema):
     buyer_id = fields.String()
     favorite_item_id = fields.String()  # the id of the buyer favorite (seller or product)
     favorite_type = fields.String()  # seller or product
+
+
+class ChatMessageSchema(Schema):
+    id = fields.Int(dump_only=True)
+    room_id = fields.Int(required=True)
+    sender_id = fields.Int(required=True)
+    content = fields.Str(required=True)
+    timestamp = fields.DateTime(dump_only=True)
+    is_product_share = fields.Bool(default=False)
+    product_id = fields.Int(allow_none=True)
+
+
+class ChatRoomSchema(Schema):
+    id = fields.Int(dump_only=True)
+    buyer_id = fields.Int(required=True)
+    seller_id = fields.Int(required=True)
+    created_at = fields.DateTime(dump_only=True)
