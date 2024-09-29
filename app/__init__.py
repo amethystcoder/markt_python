@@ -68,4 +68,3 @@ def create_app(config_name="development"):
             return User.query.get(int(user_id))
 
         return app, socketio
-    
