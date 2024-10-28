@@ -43,6 +43,7 @@ class BuyerRegister(MethodView):
 
         new_user = User(
             email=buyer_data["email"],
+            username=buyer_data["username"],
             phone_number=buyer_data["phone_number"],
             is_buyer=True,
             current_role="buyer"
@@ -51,7 +52,6 @@ class BuyerRegister(MethodView):
 
         new_buyer = Buyer(
             user_id=new_user.id,
-            username=buyer_data["username"],
             password=buyer_data["password"],
             profile_picture=buyer_data.get("profile_picture", "defaultThumbnailImageUrl"),
             shipping_address=buyer_data.get("shipping_address")
@@ -84,19 +84,20 @@ class SellerRegister(MethodView):
         existing_user = User.query.filter(
             and_(
                 User.email == seller_data["email"],
-                User.is_seller.is_(True),
+                User.is_seller.is_(True)
             )
         ).first()
 
         if existing_user:
             abort(409, message="A seller account with that email already exists.")
 
-        existing_username = Seller.query.filter_by(username=seller_data["username"]).first()
+        existing_username = User.query.filter_by(username=seller_data["username"]).first()
         if existing_username:
             abort(409, message="A user with that username already exists.")
 
         new_user = User(
             email=seller_data["email"],
+            username=seller_data["username"],
             phone_number=seller_data["phone_number"],
             is_seller=True,
             current_role="seller"
@@ -105,7 +106,6 @@ class SellerRegister(MethodView):
 
         new_seller = Seller(
             user_id=new_user.id,
-            username=seller_data["username"],
             password=seller_data["password"],
             profile_picture=seller_data.get("profile_picture", "defaultThumbnailImageUrl"),
             shop_name=seller_data["shop_name"],
