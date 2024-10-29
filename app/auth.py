@@ -120,7 +120,7 @@ class SellerRegister(MethodView):
             address_data = seller_data['address']
             user_address = UserAddress(
                 user_id=new_user.id,
-                longitude=address_data.get('longitude'),
+                longtitude=address_data.get('longitude'),
                 latitude=address_data.get('latitude'),
                 house_number=address_data.get('house_number'),
                 street=address_data.get('street'),
