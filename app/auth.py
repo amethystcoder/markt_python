@@ -254,5 +254,8 @@ class UserLogout(MethodView):
 class UserNameCheck(MethodView):
     @auth_blp.response(200, description="Username checked successfully")
     def get(self,user_name):
-        user_amount = User.query.filter_by(username=user_name).count() #count ?
-        return {"message": user_amount}, 200
+        user_amount = User.query.filter_by(username=user_name).first() #count ?
+        if user_amount:
+            return {"message": "not found"}, 404
+        else:
+            return {"message": user_amount}, 200
