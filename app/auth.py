@@ -37,7 +37,7 @@ class BuyerRegister(MethodView):
         if existing_user:
             abort(409, message="A buyer account with that email already exists.")
 
-        existing_username = Buyer.query.filter_by(username=buyer_data["username"]).first()
+        existing_username = User.query.filter_by(username=buyer_data["username"]).first()
         if existing_username:
             abort(409, message="A user with that username already exists.")
 
