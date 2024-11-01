@@ -23,9 +23,7 @@ class Products(MethodView):
       Returns:_dict_ | bool: the product
       """
         try:
-            product = Product(product_data["seller_id"], product_data["product_name"],
-                              product_data["description"], product_data["product_price"],
-                              product_data["quantity"], product_data["category"])
+            product = Product(product_data["seller_id"], product_data["name"], product_data["description"], product_data["price"],product_data["stock_quantity"], product_data["category"])
             product.setproductid()
             product_images = request.files
             for key, file in product_images.items():
@@ -40,9 +38,9 @@ class Products(MethodView):
                         new_image = ImageNameStore(saved_image_name, 'products', product.product_id)
                         new_image.save_to_db()
             product.save_to_db()
-            return parse_dict(product=product, images=[])
+            return 200, parse_dict(product=Product, images=[])
         except Exception as e:
-            abort(500, message="Could not save Successfully")
+            abort(500, message="An error occured processing your request")
 
 
 @product_bp.route("/<product_id>")

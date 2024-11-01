@@ -53,6 +53,7 @@ class BuyerRegister(MethodView):
         new_buyer = Buyer(
             user_id=new_user.id,
             password=buyer_data["password"],
+            buyername=buyer_data["buyername"],
             profile_picture=buyer_data.get("profile_picture", "defaultThumbnailImageUrl"),
             shipping_address=buyer_data.get("shipping_address")
         )

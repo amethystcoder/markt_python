@@ -15,6 +15,7 @@ class UserSchema(Schema):
 
 
 class BuyerSchema(UserSchema):
+    buyername = fields.Str(required=True)
     password = fields.Str(required=True, load_only=True)
     shipping_address = fields.Str(required=True)  # We haven't thought of any buyer specific attr
 
