@@ -15,7 +15,7 @@ product_bp = Blueprint("products", "product", description="Endpoint for all API 
 @product_bp.route("/new")
 class Products(MethodView):
     @product_bp.arguments(ProductSchema)
-    @product_bp.response(201, ProductSchema)
+    @product_bp.response(201, description="product created successfully")
     def post(self, product_data):
         """
       Creates a new product
@@ -23,8 +23,8 @@ class Products(MethodView):
       Returns:_dict_ | bool: the product
       """
         try:
-            product = Product(product_data["seller_id"], product_data["name"], product_data["description"], product_data["price"],product_data["stock_quantity"], product_data["category"])
-            product.setproductid()
+            product = Product(seller_id=product_data["seller_id"], name=product_data["name"], description=product_data["description"], price=product_data["price"],stock_quantity=product_data["stock_quantity"], category=product_data["category"])
+            product.set_product_id()
             product_images = request.files
             for key, file in product_images.items():
                 # Product images would be added to uploads folder and database
@@ -38,9 +38,10 @@ class Products(MethodView):
                         new_image = ImageNameStore(saved_image_name, 'products', product.product_id)
                         new_image.save_to_db()
             product.save_to_db()
-            return 200, parse_dict(product=Product, images=[])
+            return parse_dict(product=product,images=product_images), 200
+            
         except Exception as e:
-            abort(500, message="An error occured processing your request")
+            abort(500, message="An error occured processing your request "+str(e))
 
 
 @product_bp.route("/<product_id>")
