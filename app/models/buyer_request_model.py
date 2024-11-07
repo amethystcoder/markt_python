@@ -6,7 +6,7 @@ import uuid
 class BuyerRequest(db.Model):
     __tablename__ = "buyer_request"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     unique_id = db.Column(db.String(400), nullable=False, unique=True)
     product_description = db.Column(db.String(400), nullable=False)
     category = db.Column(db.String(255))

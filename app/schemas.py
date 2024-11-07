@@ -202,17 +202,14 @@ class OrderSchema(Schema):
 
 
 class CommentSchema(Schema):
-    id = fields.Int(strict=True)
-    comment_id = fields.String()
     comment_title = fields.String()
     buyer_id = fields.String()
-    buyer_name = fields.String()
-    comment_place_id = fields.String()  # the id of the place the comment is created
-    comment_date = fields.DateTime()
+    product_id = fields.String()
+    seller_id = fields.String()
+    content = fields.String()
 
 
 class FavoriteSchema(Schema):
-    id = fields.Int(strict=True)
     buyer_id = fields.String()
     favorite_item_id = fields.String()  # the id of the buyer favorite (seller or product)
     favorite_type = fields.String()  # seller or product
