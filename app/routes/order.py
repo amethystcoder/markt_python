@@ -22,14 +22,16 @@ order_bp = Blueprint("Orders", "orders", description="Endpoints and routes for e
 
 
 @order_bp.route("/new")
-class Order(MethodView):
-    @order_bp.response(201, OrderSchema)
+class Orders(MethodView):
+    @order_bp.arguments(OrderSchema)
+    @order_bp.response(201, description="order created successfully")
     def post(self, data):
         try:
             order = Order(buyer_id=data["buyer_id"], seller_id=data["seller_id"], product_id=data["product_id"],
                           quantity=data["quantity"], total_price=data["total_price"],
                           delivery_address=data["delivery_address"])
             order.save_to_db()
+            return {"message": "order created successfully."}, 201
         except Exception as e:
             abort(500, "could not create")
 

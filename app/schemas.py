@@ -190,7 +190,6 @@ class PasswordRetrievalSchema(Schema):
 
 
 class OrderSchema(Schema):
-    id = fields.Int(strict=True)
     buyer_id = fields.String()
     seller_id = fields.String()
     product_id = fields.String()

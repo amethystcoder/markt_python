@@ -20,8 +20,7 @@ class NewProductRequest(MethodView):
     @product_request_bp.response(200, description="product request created successfully.")
     def post(self, product_request_data):
         try:
-            request = BuyerRequest(product_request_data["buyer_id"], product_request_data["product_description"],
-                                   product_request_data["category"])
+            request = BuyerRequest(buyer_id=product_request_data["buyer_id"],product_description= product_request_data["product_description"],category=product_request_data["category"])
             request.save_to_db()
             return {"message": "product request created successfully."}, 201
         except Exception as e:
