@@ -13,13 +13,15 @@ favorite_bp = Blueprint("favorites", "favorite", description="Endpoint for all A
 @favorite_bp.route("/new")
 class AddFavorite(MethodView):
     @favorite_bp.arguments(FavoriteSchema)
-    @favorite_bp.response(201, FavoriteSchema)
+    @favorite_bp.response(201, description="favorite created successfully")
     def post(self, favorite_data):
         try:
             favorite = Favorite(buyer_id=favorite_data["buyer_id"], favorite_item_id=favorite_data["favorite_item_id"],
                                 favorite_type=favorite_data["favorite_type"])
             favorite.save_to_db()
+            return {"message": "favorite created successfully."}, 201
         except Exception as e:
+            print(e)
             abort(500, "could not save favorite")
 
 
@@ -50,7 +52,7 @@ class BuyerFavorites(MethodView):
 
 
 @favorite_bp.route("/<favorite_id>")
-class Favorite(MethodView):
+class GetFavorite(MethodView):
     @favorite_bp.arguments(FavoriteSchema)
     @favorite_bp.response(201, FavoriteSchema)
     def delete(self, favorite_id):

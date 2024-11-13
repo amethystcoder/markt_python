@@ -180,13 +180,12 @@ class ProductRequestSchema(Schema):
     created_at = fields.DateTime()
     status = fields.String()
 
-
-class PasswordRetrievalSchema(Schema):
-    id = fields.Int(strict=True)
-    recovery_code = fields.Int(strict=True)
+class CodeForPasswordRetrievalSchema(Schema):
     user_id = fields.String()
     email = fields.String()
-    expiration_time = fields.Int(strict=True)
+
+class PasswordRetrievalSchema(CodeForPasswordRetrievalSchema):
+    recovery_code = fields.Int(strict=True)
 
 
 class OrderSchema(Schema):
@@ -206,6 +205,9 @@ class CommentSchema(Schema):
     product_id = fields.String()
     seller_id = fields.String()
     content = fields.String()
+
+class CommentRateSchema(CommentSchema):
+    rating = fields.Int()
 
 
 class FavoriteSchema(Schema):

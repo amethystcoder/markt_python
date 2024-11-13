@@ -53,6 +53,11 @@ class Seller(db.Model):
             self.user_status = status
             db.session.commit()
 
+    def update_rating(self, rating):
+        self.total_rating += rating
+        self.total_raters += 1
+        db.session.commit()
+
     def save_to_db(self):
         if not self.unique_id:
             self.unique_id = self.generate_unique_id()

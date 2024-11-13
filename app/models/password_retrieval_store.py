@@ -5,11 +5,11 @@ from db import db
 class PasswordRetrievalData(db.Model):
     __tablename__ = "retrieve_password"
 
-    id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     recovery_code = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.String(400), nullable=False, unique=True)
     email = db.Column(db.String(400), nullable=False, unique=True)
-    expiration_time = db.Column(db.TIMESTAMP, default=time.time() + (60 * 10), nullable=False)
+    expiration_time = db.Column(db.Integer, default=time.time() + (60 * 10), nullable=False)
 
     """
     def __init__(self, user_id, email, recovery_code):
@@ -23,7 +23,7 @@ class PasswordRetrievalData(db.Model):
     """
 
     def is_expired(self):
-        if self.recovery_code < time.time():
+        if self.expiration_time < time.time():
             self.delete_from_db()
             return True
         return False
