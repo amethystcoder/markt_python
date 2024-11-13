@@ -103,7 +103,7 @@ class Categories(MethodView):
 class RandomProducts(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, amount):
-        return [parse_dict(product=product, images=[ImageNameStore.getproductthumbnail(product.product_id)]) for product
+        return [parse_dict(product=product, images=[ImageNameStore.get_product_thumbnail(product.product_id)]) for product
                 in Product.get_random_products(amount)]
 
 
@@ -111,7 +111,7 @@ class RandomProducts(MethodView):
 class SellerProducts(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, seller_id):
-        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
+        return [parse_dict(product=product, images=ImageNameStore.get_product_thumbnail(product.product_id)) for product in
                 Product.get_products_using_sellerid(seller_id)]
 
 
@@ -119,16 +119,16 @@ class SellerProducts(MethodView):
 class ProductSearch(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, name):
-        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
+        return [parse_dict(product=product, images=ImageNameStore.get_product_thumbnail(product.product_id)) for product in
                 Product.search_product_using_name(name)]
 
 
 @product_bp.route("/category/search/<name>")
 class ProductSearch(MethodView):
     @product_bp.response(200, ProductSchema)
-    def get(self, category_name):
-        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
-                Product.search_product_using_category(category_name)]
+    def get(self, name):
+        return [parse_dict(product=product, images=ImageNameStore.get_product_thumbnail(product.product_id)) for product in
+                Product.search_product_using_category(name)]
 
 
 # TODO: searchproductwithcategory

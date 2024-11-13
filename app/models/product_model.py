@@ -55,11 +55,11 @@ class Product(db.Model):
 
     @classmethod
     def search_product_using_name(cls, product_name):
-        return cls.query.filter_by(cls.name.like(f"%{product_name}%")).all()
+        return cls.query.filter(cls.name.like(f"%{product_name}%")).all()
 
     @classmethod
     def search_product_using_category(cls, category_name):
-        return cls.query.filter_by(cls.name.like(f"%{category_name}%")).all()
+        return cls.query.filter(cls.name.like(f"%{category_name}%")).all()
 
     def set_product_id(self):
         self.product_id = self.generate_unique_id()

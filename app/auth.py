@@ -140,25 +140,28 @@ class CreateBuyer(MethodView):
     @auth_blp.arguments(BuyerSchema)
     @auth_blp.response(201, description="Buyer account created successfully.")
     def post(self, user_data):
-        user = current_user
-        if user.is_buyer:
-            abort(409, message="User already has a buyer account.")
+        try:
+            user = current_user
+            if user.is_buyer:
+                abort(409, message="User already has a buyer account.")
 
-        user.is_buyer = True
-        user.current_role = "buyer"
-        user.save_to_db()
+            user.is_buyer = True
+            user.current_role = "buyer"
+            user.save_to_db()
 
-        new_buyer = Buyer(
-            user_id=user.id,
-            username=user_data["username"],
-            password=user_data["password"],
-            profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
-            shipping_address=user_data.get("shipping_address")
-        )
-        new_buyer.set_password(user_data["password"])
-        new_buyer.save_to_db()
+            new_buyer = Buyer(
+                user_id=user.id,
+                username=user_data["username"],
+                password=user_data["password"],
+                profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
+                shipping_address=user_data.get("shipping_address")
+            )
+            new_buyer.set_password(user_data["password"])
+            new_buyer.save_to_db()
 
-        return {"message": "Buyer account created successfully."}, 201
+            return {"message": "Buyer account created successfully."}, 201
+        except Exception as e:
+            abort(500, "An error occured "+str(e))
 
 
 @auth_blp.route("/create-seller")
@@ -255,8 +258,8 @@ class UserLogout(MethodView):
 class UserNameCheck(MethodView):
     @auth_blp.response(200, description="Username checked successfully")
     def get(self,user_name):
-        user_amount = User.query.filter_by(username=user_name).first() #count ?
-        if user_amount:
+        user = User.query.filter_by(username=user_name).first()
+        if not user:
             return {"message": "not found"}, 404
         else:
-            return {"message": user_amount}, 200
+            return {"message": "User With this username exists"}, 200
