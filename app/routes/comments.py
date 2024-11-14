@@ -1,7 +1,7 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort, request
-from ..schemas import CommentSchema
+from ..schemas import(CommentSchema,CommentRateSchema)
 from ..models import (
     Comments,
     Seller
@@ -14,28 +14,32 @@ comment_bp = Blueprint("comments", "comment", description="Endpoint for all API 
 @comment_bp.route("/new")
 class CreateComment(MethodView):
     @comment_bp.arguments(CommentSchema)
-    @comment_bp.response(201, CommentSchema)
+    @comment_bp.response(201, description="Comment created successfully.")
     def post(self, comment_data):
         try:
             comment = Comments(comment_title=comment_data["comment_title"], buyer_id=comment_data["buyer_id"],
-                               buyer_name=comment_data["buyer_name"], comment_place_id=comment_data["comment_place_id"])
+                                content=comment_data["content"],seller_id=comment_data["seller_id"],product_id=comment_data["product_id"])
             comment.save_to_db()
+            return {"message": "comment created successfully."}, 201
         except Exception as e:
             abort(500, "could not create comment")
 
 
 @comment_bp.route("/rate_and_comment")
 class RateAndComment(MethodView):
-    @comment_bp.arguments(CommentSchema)
-    @comment_bp.response(201, CommentSchema)
+    @comment_bp.arguments(CommentRateSchema)
+    @comment_bp.response(201, description="Comment created successfully.")
     def post(self, comment_data):
         try:
             comment = Comments(comment_title=comment_data["comment_title"], buyer_id=comment_data["buyer_id"],
-                               buyer_name=comment_data["buyer_name"], comment_place_id=comment_data["comment_place_id"])
-            seller = Seller(unique_id=comment_data["comment_place_id"])
-            seller.update_rating(comment_data["rating"])
+                                content=comment_data["content"],seller_id=comment_data["seller_id"],product_id=comment_data["product_id"])
+            seller = Seller.query.filter_by(unique_id=comment_data["seller_id"]).first()
+            if seller is not None:
+                seller.update_rating(comment_data["rating"])
             comment.save_to_db()
+            return {"message": "comment created successfully."}, 201
         except Exception as e:
+            print(e)
             abort(500, "could not create comment")
 
 

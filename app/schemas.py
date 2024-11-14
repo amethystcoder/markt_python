@@ -15,6 +15,7 @@ class UserSchema(Schema):
 
 
 class BuyerSchema(UserSchema):
+    buyername = fields.Str(required=True)
     password = fields.Str(required=True, load_only=True)
     shipping_address = fields.Str(required=True)  # We haven't thought of any buyer specific attr
 
@@ -142,7 +143,8 @@ class UserProfileUpdateSchema(Schema):
 
 
 class UpdateProfilePictureSchema(Schema):
-    profile_picture = fields.Raw(required=True, validate=validate.Length(max=10 * 1024 * 1024))  # Assuming a maximum size of 10 MB
+    profile_picture = fields.Raw(required=True,
+                                 validate=validate.Length(max=10 * 1024 * 1024))  # Assuming a maximum size of 10 MB
 
 
 class ProductSchema(Schema):
@@ -178,17 +180,15 @@ class ProductRequestSchema(Schema):
     created_at = fields.DateTime()
     status = fields.String()
 
-
-class PasswordRetrievalSchema(Schema):
-    id = fields.Int(strict=True)
-    recovery_code = fields.Int(strict=True)
+class CodeForPasswordRetrievalSchema(Schema):
     user_id = fields.String()
     email = fields.String()
-    expiration_time = fields.Int(strict=True)
+
+class PasswordRetrievalSchema(CodeForPasswordRetrievalSchema):
+    recovery_code = fields.Int(strict=True)
 
 
 class OrderSchema(Schema):
-    id = fields.Int(strict=True)
     buyer_id = fields.String()
     seller_id = fields.String()
     product_id = fields.String()
@@ -200,17 +200,34 @@ class OrderSchema(Schema):
 
 
 class CommentSchema(Schema):
-    id = fields.Int(strict=True)
-    comment_id = fields.String()
     comment_title = fields.String()
     buyer_id = fields.String()
-    buyer_name = fields.String()
-    comment_place_id = fields.String()  # the id of the place the comment is created
-    comment_date = fields.DateTime()
+    product_id = fields.String()
+    seller_id = fields.String()
+    content = fields.String()
+
+class CommentRateSchema(CommentSchema):
+    rating = fields.Int()
 
 
 class FavoriteSchema(Schema):
-    id = fields.Int(strict=True)
     buyer_id = fields.String()
     favorite_item_id = fields.String()  # the id of the buyer favorite (seller or product)
     favorite_type = fields.String()  # seller or product
+
+
+class ChatMessageSchema(Schema):
+    id = fields.Int(dump_only=True)
+    room_id = fields.Int(required=True)
+    sender_id = fields.Int(required=True)
+    content = fields.Str(required=True)
+    timestamp = fields.DateTime(dump_only=True)
+    is_product_share = fields.Bool(default=False)
+    product_id = fields.Int(allow_none=True)
+
+
+class ChatRoomSchema(Schema):
+    id = fields.Int(dump_only=True)
+    buyer_id = fields.Int(required=True)
+    seller_id = fields.Int(required=True)
+    created_at = fields.DateTime(dump_only=True)

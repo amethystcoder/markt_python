@@ -16,13 +16,15 @@ product_request_bp = Blueprint("Product Request", "request", description="Api ca
 
 @product_request_bp.route("/new")
 class NewProductRequest(MethodView):
-    @product_request_bp.response(200, ProductRequestSchema)
+    @product_request_bp.arguments(ProductRequestSchema)
+    @product_request_bp.response(200, description="product request created successfully.")
     def post(self, product_request_data):
         try:
-            request = BuyerRequest(product_request_data["buyer_id"], product_request_data["product_description"],
-                                   product_request_data["category"])
+            request = BuyerRequest(buyer_id=product_request_data["buyer_id"],product_description= product_request_data["product_description"],category=product_request_data["category"])
             request.save_to_db()
+            return {"message": "product request created successfully."}, 201
         except Exception as e:
+            print(str(e))
             abort(500, "could not create request")
 
 
@@ -35,7 +37,7 @@ class ProductRequest(MethodView):
         user_details = UserAddress.query.filter_by(user_id=buyer.user_id)
         return parse_requests(BuyerRequest.get_requests_through_id(unique_id), buyer, user_details)
 
-    def delete(self, unique_id):
+    def delete(self, unique_id):  
         try:
             request_to_delete = BuyerRequest(unique_id=unique_id)
             request_to_delete.delete_from_db()

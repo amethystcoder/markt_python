@@ -15,7 +15,7 @@ product_bp = Blueprint("products", "product", description="Endpoint for all API 
 @product_bp.route("/new")
 class Products(MethodView):
     @product_bp.arguments(ProductSchema)
-    @product_bp.response(201, ProductSchema)
+    @product_bp.response(201, description="product created successfully")
     def post(self, product_data):
         """
       Creates a new product
@@ -23,10 +23,8 @@ class Products(MethodView):
       Returns:_dict_ | bool: the product
       """
         try:
-            product = Product(product_data["seller_id"], product_data["product_name"],
-                              product_data["description"], product_data["product_price"],
-                              product_data["quantity"], product_data["category"])
-            product.setproductid()
+            product = Product(seller_id=product_data["seller_id"], name=product_data["name"], description=product_data["description"], price=product_data["price"],stock_quantity=product_data["stock_quantity"], category=product_data["category"])
+            product.set_product_id()
             product_images = request.files
             for key, file in product_images.items():
                 # Product images would be added to uploads folder and database
@@ -40,9 +38,10 @@ class Products(MethodView):
                         new_image = ImageNameStore(saved_image_name, 'products', product.product_id)
                         new_image.save_to_db()
             product.save_to_db()
-            return parse_dict(product=product, images=[])
+            return parse_dict(product=product,images=product_images), 200
+            
         except Exception as e:
-            abort(500, message="Could not save Successfully")
+            abort(500, message="An error occured processing your request "+str(e))
 
 
 @product_bp.route("/<product_id>")
@@ -104,7 +103,7 @@ class Categories(MethodView):
 class RandomProducts(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, amount):
-        return [parse_dict(product=product, images=[ImageNameStore.getproductthumbnail(product.product_id)]) for product
+        return [parse_dict(product=product, images=[ImageNameStore.get_product_thumbnail(product.product_id)]) for product
                 in Product.get_random_products(amount)]
 
 
@@ -112,7 +111,7 @@ class RandomProducts(MethodView):
 class SellerProducts(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, seller_id):
-        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
+        return [parse_dict(product=product, images=ImageNameStore.get_product_thumbnail(product.product_id)) for product in
                 Product.get_products_using_sellerid(seller_id)]
 
 
@@ -120,16 +119,16 @@ class SellerProducts(MethodView):
 class ProductSearch(MethodView):
     @product_bp.response(200, ProductSchema)
     def get(self, name):
-        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
+        return [parse_dict(product=product, images=ImageNameStore.get_product_thumbnail(product.product_id)) for product in
                 Product.search_product_using_name(name)]
 
 
 @product_bp.route("/category/search/<name>")
 class ProductSearch(MethodView):
     @product_bp.response(200, ProductSchema)
-    def get(self, category_name):
-        return [parse_dict(product=product, images=ImageNameStore.getproductthumbnail(product.product_id)) for product in
-                Product.search_product_using_category(category_name)]
+    def get(self, name):
+        return [parse_dict(product=product, images=ImageNameStore.get_product_thumbnail(product.product_id)) for product in
+                Product.search_product_using_category(name)]
 
 
 # TODO: searchproductwithcategory

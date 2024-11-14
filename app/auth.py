@@ -37,7 +37,7 @@ class BuyerRegister(MethodView):
         if existing_user:
             abort(409, message="A buyer account with that email already exists.")
 
-        existing_username = Buyer.query.filter_by(username=buyer_data["username"]).first()
+        existing_username = User.query.filter_by(username=buyer_data["username"]).first()
         if existing_username:
             abort(409, message="A user with that username already exists.")
 
@@ -53,6 +53,7 @@ class BuyerRegister(MethodView):
         new_buyer = Buyer(
             user_id=new_user.id,
             password=buyer_data["password"],
+            buyername=buyer_data["buyername"],
             profile_picture=buyer_data.get("profile_picture", "defaultThumbnailImageUrl"),
             shipping_address=buyer_data.get("shipping_address")
         )
@@ -120,7 +121,7 @@ class SellerRegister(MethodView):
             address_data = seller_data['address']
             user_address = UserAddress(
                 user_id=new_user.id,
-                longitude=address_data.get('longitude'),
+                longtitude=address_data.get('longitude'),
                 latitude=address_data.get('latitude'),
                 house_number=address_data.get('house_number'),
                 street=address_data.get('street'),
@@ -139,25 +140,28 @@ class CreateBuyer(MethodView):
     @auth_blp.arguments(BuyerSchema)
     @auth_blp.response(201, description="Buyer account created successfully.")
     def post(self, user_data):
-        user = current_user
-        if user.is_buyer:
-            abort(409, message="User already has a buyer account.")
+        try:
+            user = current_user
+            if user.is_buyer:
+                abort(409, message="User already has a buyer account.")
 
-        user.is_buyer = True
-        user.current_role = "buyer"
-        user.save_to_db()
+            user.is_buyer = True
+            user.current_role = "buyer"
+            user.save_to_db()
 
-        new_buyer = Buyer(
-            user_id=user.id,
-            username=user_data["username"],
-            password=user_data["password"],
-            profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
-            shipping_address=user_data.get("shipping_address")
-        )
-        new_buyer.set_password(user_data["password"])
-        new_buyer.save_to_db()
+            new_buyer = Buyer(
+                user_id=user.id,
+                username=user_data["username"],
+                password=user_data["password"],
+                profile_picture=user_data.get("profile_picture", "defaultThumbnailImageUrl"),
+                shipping_address=user_data.get("shipping_address")
+            )
+            new_buyer.set_password(user_data["password"])
+            new_buyer.save_to_db()
 
-        return {"message": "Buyer account created successfully."}, 201
+            return {"message": "Buyer account created successfully."}, 201
+        except Exception as e:
+            abort(500, "An error occured "+str(e))
 
 
 @auth_blp.route("/create-seller")
@@ -254,5 +258,8 @@ class UserLogout(MethodView):
 class UserNameCheck(MethodView):
     @auth_blp.response(200, description="Username checked successfully")
     def get(self,user_name):
-        user_amount = User.query.filter_by(username=user_name).count() #count ?
-        return {"message": user_amount}, 200
+        user = User.query.filter_by(username=user_name).first()
+        if not user:
+            return {"message": "not found"}, 404
+        else:
+            return {"message": "User With this username exists"}, 200

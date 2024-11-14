@@ -11,7 +11,7 @@ class Order(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     order_status = db.Column(db.String(255), default='pending', nullable=False)
-    order_date = db.Column(db.TIMESTAMP, nullable=False)
+    order_date = db.Column(db.DateTime, default=func.now(), nullable=False)
     delivery_address = db.Column(db.String(400), nullable=False)
 
     # Define seller relationship
@@ -23,6 +23,7 @@ class Order(db.Model):
     buyer = db.relationship('Buyer', back_populates='orders')
 
     # Define product relationship (many-to-many)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     products = db.relationship('Product', secondary='products_orders', back_populates='orders')
 
     ''' def __repr__(self) -> str:
