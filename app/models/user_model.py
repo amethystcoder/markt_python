@@ -44,9 +44,9 @@ class User(UserMixin, db.Model):
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
 
-    @staticmethod
-    def get_user_location_data(_id):
-        data = UserAddress.query.filter_by(id=_id)
+    @classmethod
+    def get_user_location_data(cls):
+        data = UserAddress.query.filter_by(id=cls.id)
         return {
             "city": data.city,
             "country": data.country,

@@ -35,7 +35,7 @@ class Product(db.Model):
 
     @classmethod
     def get_product_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(product_id=_id).first()
 
     @classmethod
     def get_products_by_seller_id(cls, seller_id):

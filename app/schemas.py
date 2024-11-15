@@ -170,6 +170,16 @@ class ProductSchema(Schema):
     # product_image = fields.String()
 
 
+class CreateProductSchema(Schema):
+    id = fields.Int(strict=True)
+    name = fields.String()
+    description = fields.String()
+    price = fields.Float()
+    stock_quantity = fields.Int(strict=True)
+    category = fields.String()
+    # product_image = fields.String()
+
+
 class CategorySchema(Schema):
     categories = fields.List(fields.Raw(required=True))
 
@@ -187,6 +197,13 @@ class CartSchema(Schema):
 
 class ProductRequestSchema(Schema):
     buyer_id = fields.String()
+    product_description = fields.String()
+    category = fields.String()
+    created_at = fields.DateTime()
+    status = fields.String()
+
+
+class CreateProductRequestSchema(Schema):
     product_description = fields.String()
     category = fields.String()
     created_at = fields.DateTime()
