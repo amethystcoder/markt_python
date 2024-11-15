@@ -47,7 +47,8 @@ class BuyerResource(MethodView):
                 "email": current_user.email,
                 "phone_number": current_user.phone_number or None,
                 "profile_picture": buyer_info.profile_picture,
-                "shipping_address": buyer_info.shipping_address
+                "shipping_address": buyer_info.shipping_address,
+                "user_status": buyer_info.user_status
             }, 200
         abort(404, message="Buyer not found")
 
@@ -86,6 +87,7 @@ class SellerResource(MethodView):
                 "category": seller_info.category,
                 "total_rating": seller_info.total_rating,
                 "total_raters": seller_info.total_raters,
+                "user_status": seller_info.user_status,
             }, 200
 
         abort(404, message="Seller not found")
@@ -97,7 +99,7 @@ class SellerResource(MethodView):
         seller_info = Seller.query.filter_by(user_id=current_user.id).first()
         if seller_info:
             # Update seller information based on the data received
-            #seller_info.username = user_data.get("username", seller_info.username)
+            # seller_info.username = user_data.get("username", seller_info.username)
             seller_info.shop_name = user_data.get("shop_name", seller_info.shop_name)
             seller_info.save_to_db()
             return {"message": "Seller profile updated successfully."}, 200
@@ -149,7 +151,7 @@ class UserProfile(MethodView):
                 seller = Seller.query.filter_by(user_id=current_user.id).first()
                 if seller:
                     seller_info = {
-                        #"username": seller.username,
+                        # "username": seller.username,
                         "email": current_user.email,
                         "profile_picture": seller.profile_picture,
                         "shop_name": seller.shop_name,

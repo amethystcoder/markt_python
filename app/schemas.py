@@ -18,6 +18,7 @@ class BuyerSchema(UserSchema):
     buyername = fields.Str(required=True)
     password = fields.Str(required=True, load_only=True)
     shipping_address = fields.Str(required=True)  # We haven't thought of any buyer specific attr
+    user_status = fields.Str()
 
 
 class BuyerUpdateSchema(UserSchema):
@@ -34,6 +35,7 @@ class SellerSchema(UserSchema):
     category = fields.Str(required=True)
     total_rating = fields.Int(dump_only=True)
     total_raters = fields.Int(dump_only=True)
+    user_status = fields.Str()
 
 
 class SellerUpdateSchema(UserSchema):
@@ -61,6 +63,16 @@ class SellerRegisterSchema(SellerSchema):
     address = fields.Nested(AddressSchema, required=False)
 
 
+class CreateBuyerResponseSchema(Schema):
+    user = fields.Nested(UserSchema)
+    buyer = fields.Nested(BuyerSchema)
+
+
+class CreateSellerResponseSchema(Schema):
+    user = fields.Nested(UserSchema)
+    seller = fields.Nested(SellerSchema)
+
+
 class RoleSchema(Schema):
     is_buyer = fields.Bool()
     is_seller = fields.Bool()
@@ -68,7 +80,7 @@ class RoleSchema(Schema):
 
 class UserLoginSchema(Schema):
     email = fields.Str(required=True)
-    #username = fields.Str(required=True)
+    # username = fields.Str(required=True)
     password = fields.Str(required=True)
     account_type = fields.Str(required=True)
 
@@ -180,9 +192,11 @@ class ProductRequestSchema(Schema):
     created_at = fields.DateTime()
     status = fields.String()
 
+
 class CodeForPasswordRetrievalSchema(Schema):
     user_id = fields.String()
     email = fields.String()
+
 
 class PasswordRetrievalSchema(CodeForPasswordRetrievalSchema):
     recovery_code = fields.Int(strict=True)
@@ -205,6 +219,7 @@ class CommentSchema(Schema):
     product_id = fields.String()
     seller_id = fields.String()
     content = fields.String()
+
 
 class CommentRateSchema(CommentSchema):
     rating = fields.Int()
