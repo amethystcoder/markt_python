@@ -18,6 +18,9 @@ class Buyer(db.Model):
     # Add Buyer-specific attributes here
     shipping_address = db.Column(db.String(255), nullable=True)  # just for test
 
+    # Define back-reference to User
+    user = db.relationship('User', back_populates='buyer')
+
     # Define one-many relationship
     carts = db.relationship('Cart', back_populates='buyer')
     favorites = db.relationship('Favorite', back_populates='buyer')
