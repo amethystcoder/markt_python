@@ -51,7 +51,7 @@ class Products(MethodView):
                         new_image = ImageNameStore(saved_image_name, 'products', product.product_id)
                         new_image.save_to_db()
             product.save_to_db()
-            return parse_dict(product=product, images=product_images), 200
+            return parse_dict(product=product, images=list(product_images)), 200
 
         except Exception as e:
             abort(500, message="An error occurred processing your request " + str(e))

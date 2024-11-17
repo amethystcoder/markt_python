@@ -192,7 +192,18 @@ class CartSchema(Schema):
     has_discount = fields.Bool()
     discount_price = fields.Float()
     discount_percent = fields.Float()
+    product_image = fields.String()
     # order_status = db.Column(db.String(255), default='pending')
+
+
+class CartResponseSchema(Schema):
+    cart_id = fields.String()
+    buyer_id = fields.String()
+    product_id = fields.String()
+    quantity = fields.Int(strict=True)
+    has_discount = fields.Bool()
+    discount_price = fields.Float()
+    discount_percent = fields.Float()
 
 
 class ProductRequestSchema(Schema):

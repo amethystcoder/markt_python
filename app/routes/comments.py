@@ -1,7 +1,7 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort, request
-from ..schemas import(CommentSchema,CommentRateSchema)
+from ..schemas import (CommentSchema, CommentRateSchema)
 from ..models import (
     Comments,
     Seller
@@ -18,7 +18,8 @@ class CreateComment(MethodView):
     def post(self, comment_data):
         try:
             comment = Comments(comment_title=comment_data["comment_title"], buyer_id=comment_data["buyer_id"],
-                                content=comment_data["content"],seller_id=comment_data["seller_id"],product_id=comment_data["product_id"])
+                               content=comment_data["content"], seller_id=comment_data["seller_id"],
+                               product_id=comment_data["product_id"])
             comment.save_to_db()
             return {"message": "comment created successfully."}, 201
         except Exception as e:
@@ -32,7 +33,8 @@ class RateAndComment(MethodView):
     def post(self, comment_data):
         try:
             comment = Comments(comment_title=comment_data["comment_title"], buyer_id=comment_data["buyer_id"],
-                                content=comment_data["content"],seller_id=comment_data["seller_id"],product_id=comment_data["product_id"])
+                               content=comment_data["content"], seller_id=comment_data["seller_id"],
+                               product_id=comment_data["product_id"])
             seller = Seller.query.filter_by(unique_id=comment_data["seller_id"]).first()
             if seller is not None:
                 seller.update_rating(comment_data["rating"])

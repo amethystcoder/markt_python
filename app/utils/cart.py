@@ -1,5 +1,5 @@
 # Jsonify cart and related info
-def parse_cart(cart_item, image = None):
+def parse_cart(cart_item, image=None):
     return {
         "buyer_id": cart_item.buyer_id,
         "product_id": cart_item.product_id,
