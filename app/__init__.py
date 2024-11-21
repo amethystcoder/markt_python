@@ -27,7 +27,7 @@ def create_app(config_name="development"):
 
     # Flask Login for Session based auth
     login_manager = LoginManager(app)
-    login_manager.login_view = "auth.login"
+    login_manager.login_view = "auth.UserLogin"
     login_manager.init_app(app)
 
     # Initialize Flask-SocketIO with CORS

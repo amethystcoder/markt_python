@@ -9,6 +9,8 @@ from .schemas import (
     UserSchema,
     BuyerRegisterSchema,
     SellerRegisterSchema,
+    CreateBuyerResponseSchema,
+    CreateSellerResponseSchema,
     UserLoginSchema,
     UserLoginResponseSchema,
 )
@@ -25,7 +27,7 @@ auth_blp = Blueprint("auth", __name__, description="Endpoint for all API calls r
 @auth_blp.route("/register/buyer")
 class BuyerRegister(MethodView):
     @auth_blp.arguments(BuyerRegisterSchema)
-    @auth_blp.response(201, description="Buyer created successfully.")
+    @auth_blp.response(201, CreateBuyerResponseSchema)
     def post(self, buyer_data):
         existing_user = User.query.filter(
             and_(
@@ -37,7 +39,7 @@ class BuyerRegister(MethodView):
         if existing_user:
             abort(409, message="A buyer account with that email already exists.")
 
-        existing_username = Buyer.query.filter_by(username=buyer_data["username"]).first()
+        existing_username = User.query.filter_by(username=buyer_data["username"]).first()
         if existing_username:
             abort(409, message="A user with that username already exists.")
 
@@ -45,14 +47,14 @@ class BuyerRegister(MethodView):
             email=buyer_data["email"],
             username=buyer_data["username"],
             phone_number=buyer_data["phone_number"],
-            is_buyer=True,
-            current_role="buyer"
+            is_buyer=True
         )
         new_user.save_to_db()
 
         new_buyer = Buyer(
             user_id=new_user.id,
             password=buyer_data["password"],
+            buyername=buyer_data["buyername"],
             profile_picture=buyer_data.get("profile_picture", "defaultThumbnailImageUrl"),
             shipping_address=buyer_data.get("shipping_address")
         )
@@ -73,13 +75,38 @@ class BuyerRegister(MethodView):
             )
             user_address.save_to_db()
 
-        return {"message": "Buyer created successfully."}, 201
+        # Log in the user and store current role in session
+        login_user(new_user)
+        new_user.current_role = 'buyer'  # Set role in session
+
+        user_data = {
+            "id": new_user.id,
+            "username": new_user.username,
+            "email": new_user.email,
+            "phone_number": new_user.phone_number,
+            "profile_picture": new_user.profile_picture,
+        }
+
+        buyer_data = {
+            "id": new_buyer.id,
+            "buyername": new_buyer.buyername,
+            "shipping_address": new_buyer.shipping_address,
+            "user_status": new_buyer.user_status,
+        }
+
+        response = {
+            "user": user_data,
+            "buyer": buyer_data
+        }
+
+        # Return the response using the schema
+        return CreateBuyerResponseSchema().dump(response), 201
 
 
 @auth_blp.route("/register/seller")
 class SellerRegister(MethodView):
     @auth_blp.arguments(SellerRegisterSchema)
-    @auth_blp.response(201, description="Seller created successfully.")
+    @auth_blp.response(201, CreateSellerResponseSchema)
     def post(self, seller_data):
         existing_user = User.query.filter(
             and_(
@@ -99,8 +126,7 @@ class SellerRegister(MethodView):
             email=seller_data["email"],
             username=seller_data["username"],
             phone_number=seller_data["phone_number"],
-            is_seller=True,
-            current_role="seller"
+            is_seller=True
         )
         new_user.save_to_db()
 
@@ -130,14 +156,42 @@ class SellerRegister(MethodView):
             )
             user_address.save_to_db()
 
-        return {"message": "Seller created successfully."}, 201
+        # Log in the user and store current role in session
+        login_user(new_user)
+        new_user.current_role = 'seller'  # Set role in session
+
+        user_data = {
+            "id": new_user.id,
+            "username": new_user.username,
+            "email": new_user.email,
+            "phone_number": new_user.phone_number,
+            "profile_picture": new_user.profile_picture,
+        }
+
+        seller_data = {
+            "shop_name": new_seller.shop_name,
+            "description": new_seller.description,
+            "directions": new_seller.directions,
+            "category": new_seller.category,
+            "total_rating": new_seller.total_rating,
+            "total_raters": new_seller.total_raters,
+            "user_status": new_seller.user_status,
+        }
+
+        response = {
+            "user": user_data,
+            "seller": seller_data
+        }
+
+        # Return the response using the schema
+        return CreateSellerResponseSchema().dump(response), 201
 
 
 @auth_blp.route("/create-buyer")
 class CreateBuyer(MethodView):
     @login_required
     @auth_blp.arguments(BuyerSchema)
-    @auth_blp.response(201, description="Buyer account created successfully.")
+    @auth_blp.response(201, CreateBuyerResponseSchema)
     def post(self, user_data):
         user = current_user
         if user.is_buyer:
@@ -157,14 +211,30 @@ class CreateBuyer(MethodView):
         new_buyer.set_password(user_data["password"])
         new_buyer.save_to_db()
 
-        return {"message": "Buyer account created successfully."}, 201
+        user.current_role = 'buyer'
+
+        response = {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "current_role": user.current_role,
+            },
+            "buyer": {
+                "id": new_buyer.id,
+                "buyername": new_buyer.buyername,
+                "shipping_address": new_buyer.shipping_address,
+            }
+        }
+
+        return response, 201
 
 
 @auth_blp.route("/create-seller")
 class CreateSeller(MethodView):
     @login_required
     @auth_blp.arguments(SellerSchema)
-    @auth_blp.response(201, description="Seller account created successfully.")
+    @auth_blp.response(201, CreateSellerResponseSchema)
     def post(self, user_data):
         user = current_user
         if user.is_seller:
@@ -187,7 +257,25 @@ class CreateSeller(MethodView):
         new_seller.set_password(user_data["password"])
         new_seller.save_to_db()
 
-        return {"message": "Seller account created successfully."}, 201
+        user.current_role = 'seller'
+
+        response = {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "current_role": user.current_role,
+            },
+            "seller": {
+                "shop_name": new_seller.shop_name,
+                "description": new_seller.description,
+                "directions": new_seller.directions,
+                "category": new_seller.category,
+                "user_status": new_seller.user_status,
+            }
+        }
+
+        return response, 201
 
 
 @auth_blp.route("/switch-role")
@@ -198,11 +286,10 @@ class SwitchRole(MethodView):
         user = current_user
 
         if user.is_buyer or user.is_seller:
-            # Check if the user has both roles before switching
             if user.is_buyer and user.is_seller:
+                # Switch the role and store it in Flask-Login session
                 user.current_role = 'seller' if user.current_role == 'buyer' else 'buyer'
-                user.save_to_db()
-                return {"message": "User switched successfully."}, 200
+                return {"message": "User switched successfully.", "role": user.current_role}, 200
             else:
                 abort(400, message="User must have both buyer and seller accounts to switch roles.")
         else:
@@ -225,6 +312,7 @@ class UserLogin(MethodView):
             buyer_account = Buyer.query.filter_by(user_id=user.id).first()
             if buyer_account and buyer_account.check_password(password):
                 login_user(user)
+                user.current_role = 'buyer'
                 return {
                     "message": "Login successful",
                     "current_role": "buyer"
@@ -234,6 +322,7 @@ class UserLogin(MethodView):
             seller_account = Seller.query.filter_by(user_id=user.id).first()
             if seller_account and seller_account.check_password(password):
                 login_user(user)
+                user.current_role = 'seller'
                 return {
                     "message": "Login successful",
                     "current_role": "seller"
@@ -249,13 +338,14 @@ class UserLogout(MethodView):
     def post(self):
         logout_user()
         return {"message": "Logged out successful"}, 200
-    
+
+
 @auth_blp.route("/existinguser/<user_name>")
 class UserNameCheck(MethodView):
     @auth_blp.response(200, description="Username checked successfully")
-    def get(self,user_name):
-        user_amount = User.query.filter_by(username=user_name).first() #count ?
-        if user_amount:
+    def get(self, user_name):
+        user = User.query.filter_by(username=user_name).first()
+        if not user:
             return {"message": "not found"}, 404
         else:
-            return {"message": user_amount}, 200
+            return {"message": "User With this username exists"}, 200

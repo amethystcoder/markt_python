@@ -15,7 +15,6 @@ class User(UserMixin, db.Model):
 
     is_buyer = db.Column(db.Boolean, default=False)
     is_seller = db.Column(db.Boolean, default=False)
-    current_role = db.Column(db.String(10), default='none')  
 
     # Add other common attributes here
 
@@ -23,6 +22,17 @@ class User(UserMixin, db.Model):
     # Define a relationship with the Chat model
     chats = db.relationship('Chat', back_populates='users')
     """
+    # Add relationship to Buyer & Seller - One-to-one relationship
+    buyer = db.relationship('Buyer', back_populates='user', uselist=False)
+    seller = db.relationship('Seller', back_populate='user', useList=False)
+
+    @property
+    def current_role(self):
+        return getattr(self, '_current_role', None)
+
+    @current_role.setter
+    def current_role(self, role):
+        self._current_role = role
 
     def save_to_db(self):
         db.session.add(self)
@@ -37,9 +47,9 @@ class User(UserMixin, db.Model):
         unique_id = str(uuid.uuid4()).encode()
         return hashlib.sha256(unique_id).hexdigest()
 
-    @staticmethod
-    def get_user_location_data(_id):
-        data = UserAddress.query.filter_by(id=_id)
+    @classmethod
+    def get_user_location_data(cls):
+        data = UserAddress.query.filter_by(id=cls.id)
         return {
             "city": data.city,
             "country": data.country,

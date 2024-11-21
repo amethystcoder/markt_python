@@ -15,8 +15,10 @@ class UserSchema(Schema):
 
 
 class BuyerSchema(UserSchema):
+    buyername = fields.Str(required=True)
     password = fields.Str(required=True, load_only=True)
     shipping_address = fields.Str(required=True)  # We haven't thought of any buyer specific attr
+    user_status = fields.Str()
 
 
 class BuyerUpdateSchema(UserSchema):
@@ -33,6 +35,7 @@ class SellerSchema(UserSchema):
     category = fields.Str(required=True)
     total_rating = fields.Int(dump_only=True)
     total_raters = fields.Int(dump_only=True)
+    user_status = fields.Str()
 
 
 class SellerUpdateSchema(UserSchema):
@@ -60,6 +63,16 @@ class SellerRegisterSchema(SellerSchema):
     address = fields.Nested(AddressSchema, required=False)
 
 
+class CreateBuyerResponseSchema(Schema):
+    user = fields.Nested(UserSchema)
+    buyer = fields.Nested(BuyerSchema)
+
+
+class CreateSellerResponseSchema(Schema):
+    user = fields.Nested(UserSchema)
+    seller = fields.Nested(SellerSchema)
+
+
 class RoleSchema(Schema):
     is_buyer = fields.Bool()
     is_seller = fields.Bool()
@@ -67,7 +80,7 @@ class RoleSchema(Schema):
 
 class UserLoginSchema(Schema):
     email = fields.Str(required=True)
-    username = fields.Str(required=True)
+    # username = fields.Str(required=True)
     password = fields.Str(required=True)
     account_type = fields.Str(required=True)
 
@@ -157,6 +170,16 @@ class ProductSchema(Schema):
     # product_image = fields.String()
 
 
+class CreateProductSchema(Schema):
+    id = fields.Int(strict=True)
+    name = fields.String()
+    description = fields.String()
+    price = fields.Float()
+    stock_quantity = fields.Int(strict=True)
+    category = fields.String()
+    # product_image = fields.String()
+
+
 class CategorySchema(Schema):
     categories = fields.List(fields.Raw(required=True))
 
@@ -169,7 +192,18 @@ class CartSchema(Schema):
     has_discount = fields.Bool()
     discount_price = fields.Float()
     discount_percent = fields.Float()
+    product_image = fields.String()
     # order_status = db.Column(db.String(255), default='pending')
+
+
+class CartResponseSchema(Schema):
+    cart_id = fields.String()
+    buyer_id = fields.String()
+    product_id = fields.String()
+    quantity = fields.Int(strict=True)
+    has_discount = fields.Bool()
+    discount_price = fields.Float()
+    discount_percent = fields.Float()
 
 
 class ProductRequestSchema(Schema):
@@ -180,16 +214,23 @@ class ProductRequestSchema(Schema):
     status = fields.String()
 
 
-class PasswordRetrievalSchema(Schema):
-    id = fields.Int(strict=True)
-    recovery_code = fields.Int(strict=True)
+class CreateProductRequestSchema(Schema):
+    product_description = fields.String()
+    category = fields.String()
+    created_at = fields.DateTime()
+    status = fields.String()
+
+
+class CodeForPasswordRetrievalSchema(Schema):
     user_id = fields.String()
     email = fields.String()
-    expiration_time = fields.Int(strict=True)
+
+
+class PasswordRetrievalSchema(CodeForPasswordRetrievalSchema):
+    recovery_code = fields.Int(strict=True)
 
 
 class OrderSchema(Schema):
-    id = fields.Int(strict=True)
     buyer_id = fields.String()
     seller_id = fields.String()
     product_id = fields.String()
@@ -201,17 +242,18 @@ class OrderSchema(Schema):
 
 
 class CommentSchema(Schema):
-    id = fields.Int(strict=True)
-    comment_id = fields.String()
     comment_title = fields.String()
     buyer_id = fields.String()
-    buyer_name = fields.String()
-    comment_place_id = fields.String()  # the id of the place the comment is created
-    comment_date = fields.DateTime()
+    product_id = fields.String()
+    seller_id = fields.String()
+    content = fields.String()
+
+
+class CommentRateSchema(CommentSchema):
+    rating = fields.Int()
 
 
 class FavoriteSchema(Schema):
-    id = fields.Int(strict=True)
     buyer_id = fields.String()
     favorite_item_id = fields.String()  # the id of the buyer favorite (seller or product)
     favorite_type = fields.String()  # seller or product

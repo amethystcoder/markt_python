@@ -20,7 +20,10 @@ class Seller(db.Model):
     category = db.Column(db.String(255), nullable=False)
     total_rating = db.Column(db.Integer)
     total_raters = db.Column(db.Integer)
-    directions = db.Column(db.String(400)) 
+    directions = db.Column(db.String(400))
+
+    # Define back-reference to User
+    user = db.relationship('User', back_populates='seller')
 
     # Define a one-to-many relationship between Seller and Product
     products = db.relationship('Product', back_populates='seller')
@@ -52,6 +55,11 @@ class Seller(db.Model):
         if status in acceptable_status:
             self.user_status = status
             db.session.commit()
+
+    def update_rating(self, rating):
+        self.total_rating += rating
+        self.total_raters += 1
+        db.session.commit()
 
     def save_to_db(self):
         if not self.unique_id:

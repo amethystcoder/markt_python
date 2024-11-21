@@ -8,11 +8,11 @@ class Comments(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     comment_id = db.Column(db.String(400), nullable=False, unique=True)
+    comment_title = db.Column(db.String(400), nullable=False)
     buyer_id = db.Column(db.Integer, db.ForeignKey('buyers.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    comment_place_id = db.Column(db.String(400), nullable=False)  # the id of the place the comment is created
     created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     # Define buyer relationship

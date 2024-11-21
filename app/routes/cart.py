@@ -1,7 +1,7 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort
-from ..schemas import CartSchema
+from ..schemas import CartSchema, CartResponseSchema
 from sqlalchemy.exc import IntegrityError
 from ..models import (
     Cart,
@@ -16,14 +16,15 @@ cart_bp = Blueprint("cart", "cart", description="Endpoint for all API calls rela
 
 @cart_bp.route("/")
 class CreateCart(MethodView):
-    @cart_bp.response(201, CartSchema)
+    @cart_bp.arguments(CartSchema)
+    @cart_bp.response(201, CartResponseSchema)
     def post(self, cart_data):
         try:
             cart = Cart(buyer_id=cart_data["buyer_id"], product_id=cart_data["product_id"],
                         quantity=cart_data["quantity"], has_discount=cart_data["has_discount"],
                         discount_price=cart_data["discount_price"], discount_percent=cart_data["discount_percent"])
             cart.save_to_db()
-            return cart, 201
+            return parse_cart(cart), 201
         except ValueError as e:
             abort(400, str(e))
         except IntegrityError:
