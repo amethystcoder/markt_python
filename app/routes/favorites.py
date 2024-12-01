@@ -25,7 +25,7 @@ class AddFavorite(MethodView):
             abort(500, "could not save favorite")
 
 
-@favorite_bp.route("/<buyer_id>")
+@favorite_bp.route("/<string:buyer_id>")
 class BuyerFavorites(MethodView):
     @favorite_bp.response(201, FavoriteSchema)
     def get(self, buyer_id):
@@ -33,31 +33,43 @@ class BuyerFavorites(MethodView):
             buyer_favorite_list = []
             for favorites in Favorite.get_all_buyer_favorites(buyer_id):
                 if favorites.favorite_type == "seller":
-                    seller = Seller(id=favorites.favorite_item_id)  # TODO: TBD
+                    seller = Seller.query.filter_by(id=favorites.favorite_item_id)  # TODO: TBD
                     buyer_favorite_list.append(parse_favorite(favorite=favorites, image=seller.profile_picture))
                 elif favorites.favorite_type == "product":
-                    buyer_favorite_list.append(parse_favorite(favorite=favorites,
-                                                              image=ImageNameStore.getproductthumbnail(
-                                                                  product_id=favorites.favorite_item_id)))
+                    buyer_favorite_list.append(
+                        parse_favorite(
+                            favorite=favorites,
+                            image=ImageNameStore.getproductthumbnail(product_id=favorites.favorite_item_id)
+                        )
+                    )
             return buyer_favorite_list
         except Exception as e:
             abort(404, "not found")
 
-    @favorite_bp.response(201, FavoriteSchema)
+    @favorite_bp.response(200, description="Buyer's favorites deleted successfully.")
     def delete(self, buyer_id):
         try:
-            return Favorite.delete_all_buyer_favorites(buyer_id)
+            Favorite.delete_all_buyer_favorites(buyer_id)
+            return {"message": "Buyer's favorites deleted successfully."}, 200
         except Exception as e:
             abort(404, "not found")
 
 
-@favorite_bp.route("/<favorite_id>")
-class GetFavorite(MethodView):
-    @favorite_bp.arguments(FavoriteSchema)
-    @favorite_bp.response(201, FavoriteSchema)
+@favorite_bp.route("/<string:favorite_id>")
+class FavoriteResource(MethodView):
+    @favorite_bp.response(200, FavoriteSchema)
+    def get(self, favorite_id):
+        try:
+            favorite = Favorite.get_favorite_by_id(favorite_id)
+            return favorite, 200
+        except Exception as e:
+            abort(404, "not found")
+
+    @favorite_bp.response(200, description="Favorite item deleted successfully.")
     def delete(self, favorite_id):
         try:
-            favorite = Favorite(id=favorite_id)
+            favorite = Favorite.get_favorite_by_id(favorite_id)
             favorite.delete_from_db()
+            return {"message": "Favorite item deleted successfully."}, 200
         except Exception as e:
             abort(404, "not found")

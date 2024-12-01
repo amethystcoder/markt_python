@@ -196,6 +196,10 @@ class CartSchema(Schema):
     # order_status = db.Column(db.String(255), default='pending')
 
 
+class CartUpdateSchema(Schema):
+    quantity = fields.Int()
+
+
 class CartResponseSchema(Schema):
     cart_id = fields.String()
     buyer_id = fields.String()

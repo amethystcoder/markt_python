@@ -50,7 +50,7 @@ class ProductRequest(MethodView):
     @login_required
     def delete(self, unique_id):
         try:
-            request_to_delete = BuyerRequest(unique_id=unique_id)
+            request_to_delete = BuyerRequest.get_requests_through_id(unique_id)
             request_to_delete.delete_from_db()
         except Exception as e:
             abort(500, "Could not delete product request")

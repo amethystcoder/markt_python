@@ -23,8 +23,8 @@ class User(UserMixin, db.Model):
     chats = db.relationship('Chat', back_populates='users')
     """
     # Add relationship to Buyer & Seller - One-to-one relationship
-    buyer = db.relationship('Buyer', back_populates='user', uselist=False)
-    seller = db.relationship('Seller', back_populate='user', useList=False)
+    buyer = db.relationship('Buyer', back_populates='user')
+    seller = db.relationship('Seller', back_populates='user')
 
     @property
     def current_role(self):

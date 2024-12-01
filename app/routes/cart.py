@@ -1,7 +1,7 @@
 from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask import abort
-from ..schemas import CartSchema, CartResponseSchema
+from ..schemas import CartSchema, CartResponseSchema, CartUpdateSchema
 from sqlalchemy.exc import IntegrityError
 from ..models import (
     Cart,
@@ -41,26 +41,30 @@ class BuyerCart(MethodView):
                 for cart_item in Cart.get_buyer_cart_items(buyer_id=buyer_id)]
 
 
-@cart_bp.route("/<cart_id>")
+@cart_bp.route("/<string:cart_id>")
 class CartItem(MethodView):
-    @cart_bp.response(201, CartSchema)
-    def put(self, cart_id, new_quantity):
+    @cart_bp.arguments(CartUpdateSchema)
+    @cart_bp.response(200, CartSchema)
+    def put(self, cart_id, cart_data):
+        new_quantity = cart_data["quantity"]
         try:
-            cart = Cart(cart_id=cart_id)
-            product = Product(product_id=cart.product_id)
+            cart = Cart.get_cart_by_id(cart_id)
+            product = Product.get_product_by_id(cart.product_id)
             if product.stock_quantity > new_quantity:
                 # TODO: We need to find an appropriate status code for this response
                 abort(500, "internal server error")
             else:
                 cart.update_cart_quantity(new_quantity)
+                return cart, 200
         except Exception as e:
             abort(500, "internal server error")
 
-    @cart_bp.response(201, CartSchema)
+    @cart_bp.response(200, description="Cart deleted successfully.")
     def delete(self, cart_id):
         try:
-            cart = Cart(cart_id=cart_id)
+            cart = Cart.get_cart_by_id(cart_id)
             cart.delete_from_db()
+            return {"message": "Cart deleted successfully."}, 200
         except Exception as e:
             abort(404, "cart item not found")
 

@@ -60,9 +60,12 @@ class AcceptedOrders(MethodView):
     @order_bp.response(200, OrderSchema)
     def get(self, seller_id):
         try:
-            [parse_unaccepted_orders(order=order, buyer=Buyer(order.buyer_id), product=Product(order.product_id),
-                                     product_image=ImageNameStore.getproductthumbnail(order.product_id)) for order in
-             Order.get_seller_accepted_orders(seller_id)]
+            [parse_unaccepted_orders(order=order,
+                                     buyer=Buyer.find_by_unique_id(order.buyer_id),
+                                     product=Product.get_product_by_id(order.product_id),
+                                     product_image=ImageNameStore.getproductthumbnail(order.product_id))
+             for order in Order.get_seller_accepted_orders(seller_id)
+             ]
         except Exception as e:
             abort(500, "could not create")
 
@@ -74,8 +77,9 @@ class AcceptOrders(MethodView):
     # authentication would be needed
     def put(self, order_id):
         try:
-            order = Order(order_id=order_id)
+            order = Order.get_order_using_id(order_id)
             order.accept_order()
+            return order, 200
         except Exception as e:
             abort(404, "order not found")
 
@@ -87,8 +91,9 @@ class DeclineOrders(MethodView):
     # authentication would be needed
     def put(self, order_id):
         try:
-            order = Order(order_id=order_id)
+            order = Order.get_order_using_id(order_id)
             order.decline_order()
+            return order, 200
         except Exception as e:
             abort(404, "order not found")
 
@@ -98,10 +103,14 @@ class BuyerOrders(MethodView):
     @order_bp.response(200, OrderSchema)
     def get(self, buyer_id):
         try:
-            [parse_buyer_orders(order=order, buyer=Buyer(order.buyer_id), product=Product(order.product_id),
-                                seller=Seller(order.seller_id),
-                                product_image=ImageNameStore.getproductthumbnail(order.product_id)) for order in
-             Order.get_buyer_orders(buyer_id)]
+            [parse_buyer_orders(
+                order=order,
+                buyer=Buyer.find_by_unique_id(order.buyer_id),
+                product=Product.get_product_by_id(order.product_id),
+                seller=Seller.find_by_unique_id(order.seller_id),
+                product_image=ImageNameStore.getproductthumbnail(order.product_id))
+                for order in Order.get_buyer_orders(buyer_id)
+            ]
         except Exception as e:
             abort(500, "could not create")
 

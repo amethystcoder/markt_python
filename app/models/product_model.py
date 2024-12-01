@@ -63,6 +63,11 @@ class Product(db.Model):
 
     def set_product_id(self):
         self.product_id = self.generate_unique_id()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
     def update_product(self, product_data):
         """updates part or all of the current map/session of self(present class)

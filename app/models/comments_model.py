@@ -27,6 +27,10 @@ class Comments(db.Model):
         return str(uuid.uuid4())
 
     @classmethod
+    def get_comment_by_id(cls, comment_id):
+        return cls.query.filter_by(comment_id=comment_id).first()
+
+    @classmethod
     def get_comments_by_product_id(cls, product_id):
         return cls.query.filter_by(product_id=product_id).all()
 

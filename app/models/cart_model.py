@@ -26,7 +26,7 @@ class Cart(db.Model):
 
     @classmethod
     def get_cart_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(cart_id=_id).first()
 
     @classmethod
     def get_cart_by_buyer_id(cls, buyer_id):
@@ -37,8 +37,12 @@ class Cart(db.Model):
         return cls.query.filter_by(cart_id=cart_id).first()
 
     def update_cart_quantity(self, new_quantity):
-        self.quantity = new_quantity
-        db.session.commit()
+        try:
+            self.quantity = new_quantity
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return e
 
     @classmethod
     def delete_all_buyer_cart_items(cls, buyer_id):

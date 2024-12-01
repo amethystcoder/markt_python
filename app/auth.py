@@ -84,12 +84,12 @@ class BuyerRegister(MethodView):
             "username": new_user.username,
             "email": new_user.email,
             "phone_number": new_user.phone_number,
-            "profile_picture": new_user.profile_picture,
         }
 
         buyer_data = {
             "id": new_buyer.id,
             "buyername": new_buyer.buyername,
+            "profile_picture": new_buyer.profile_picture,
             "shipping_address": new_buyer.shipping_address,
             "user_status": new_buyer.user_status,
         }
@@ -165,11 +165,11 @@ class SellerRegister(MethodView):
             "username": new_user.username,
             "email": new_user.email,
             "phone_number": new_user.phone_number,
-            "profile_picture": new_user.profile_picture,
         }
 
         seller_data = {
             "shop_name": new_seller.shop_name,
+            "profile_picture": new_seller.profile_picture,
             "description": new_seller.description,
             "directions": new_seller.directions,
             "category": new_seller.category,
@@ -223,6 +223,7 @@ class CreateBuyer(MethodView):
             "buyer": {
                 "id": new_buyer.id,
                 "buyername": new_buyer.buyername,
+                "profile_picture": new_buyer.profile_picture,
                 "shipping_address": new_buyer.shipping_address,
             }
         }
@@ -268,6 +269,7 @@ class CreateSeller(MethodView):
             },
             "seller": {
                 "shop_name": new_seller.shop_name,
+                "profile_picture": new_seller.profile_picture,
                 "description": new_seller.description,
                 "directions": new_seller.directions,
                 "category": new_seller.category,

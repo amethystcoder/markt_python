@@ -65,7 +65,7 @@ class Products(MethodView):
       gets a particular product using its id, along with its images
       seller description, e.t.c
       """
-        product = Product.get_product_using_id(product_id)
+        product = Product.get_product_by_id(product_id)
 
         return parse_dict(product=product, images=ImageNameStore.getproductimages(product_id=product_id))
 
@@ -77,7 +77,7 @@ class Products(MethodView):
       product_data is a dictionary containing the product data to update
       """
         try:
-            product = Product(product_id=product_id)
+            product = Product.get_product_by_id(product_id)
             return product.update_product(product_data)
         except Exception as e:
             abort(404, message="Item not found.")
@@ -86,7 +86,7 @@ class Products(MethodView):
     @product_bp.response(200, ProductSchema)
     def delete(self, product_id):
         try:
-            product_to_delete = Product.query.filter_by(product_id=product_id).first()
+            product_to_delete = Product.get_product_by_id(product_id)
             product_to_delete.delete_from_db()
             return True
         except Exception as e:
@@ -136,7 +136,7 @@ class SellerProducts(MethodView):
                 product=product,
                 images=ImageNameStore.get_product_thumbnail(product.product_id)
             )
-            for product in Product.get_products_using_sellerid(seller_id)
+            for product in Product.get_products_by_seller_id(seller_id)
         ]
 
 

@@ -73,7 +73,7 @@ class Comment(MethodView):
     @comment_bp.response(201, CommentSchema)
     def delete(self, comment_id):
         try:
-            comment = Comments(comment_id=comment_id)
+            comment = Comments.get_comment_by_id(comment_id=comment_id)
             comment.delete_from_db()
         except Exception as e:
             abort(404, "not found")
