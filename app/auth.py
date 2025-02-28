@@ -230,6 +230,7 @@ class UserLogin(MethodView):
             if buyer_account and buyer_account.check_password(password):
                 login_user(user)
                 return {
+                    "id":buyer_account.unique_id,
                     "message": "Login successful",
                     "current_role": "buyer"
                 }, 200
@@ -239,6 +240,7 @@ class UserLogin(MethodView):
             if seller_account and seller_account.check_password(password):
                 login_user(user)
                 return {
+                    "id":seller_account.unique_id,
                     "message": "Login successful",
                     "current_role": "seller"
                 }, 200
